@@ -367,100 +367,30 @@ namespace sdsutil
 
         static void Main(string[] args)
         {
-           
-            if (args.Length == 0) { PrintUsage(); return; }
-            try
-            {
-                string command = args[0];
-                if (args.Length == 1 && (command.Contains('.') || command.Contains(':')))
-                {
-                    // Command cannot . or : for these are mean either extension or schema prefix.
-                    DoList(args[0]);
-                    return;
-                }
-                if (command == "list")
-                {
-                    if (!AssertNumberOfArgs(args, 2)) return;
-                    DoList(args[1]);
-                }
-                else if (command == "meta")
-                {
-                    if (!AssertNumberOfArgs(args, 2, int.MaxValue)) return;
-                    DoMeta(args[1], GetCommandArgs(args, 2));
-                }
-                else if (command == "update")
-                {
-                    if (!AssertNumberOfArgs(args, 4, int.MaxValue)) return;
-                    DoUpdate(args[1], GetCommandArgs(args, 2));
-                }
-                else if (command == "data")
-                {
-                    if (!AssertNumberOfArgs(args, 2, int.MaxValue)) return;
-                    DoData(args[1], GetCommandArgs(args, 2));
-                }
-                else if (command == "copy")
-                {
-                    if (!AssertNumberOfArgs(args, 3, int.MaxValue)) return;
-                    if (args.Length == 3)
-                        DoCopy(args[1], args[2]);
-                    else // slicing
-                    {
-                        string srcUri = args[1];
-                        Dictionary<string, Range> ranges = new Dictionary<string, Range>();
-                        int i;
-                        try
-                        {
-                            for (i = 2; i < args.Length - 1; i++)
-                            {
-                                string s = args[i];
-                                string[] parts = s.Split('=');
-                                Range r = DataSet.ReduceDim(int.Parse(parts[1]));
-                                ranges[parts[0]] = r;
-                            }
-                        }
-                        catch
-                        {
-                            WriteError("Range arguments are incorrect.");
-                            return;
-                        }
-                        string dstUri = args[i];
-                        DoSlice(srcUri, ranges, dstUri);
-                    }
-                }
-                else if (command == "merge")
-                {
-                    if (!AssertNumberOfArgs(args, 4, int.MaxValue)) return;
-                    string[] src = new string[args.Length - 2];
-                    Array.Copy(args, 1, src, 0, src.Length);
-                    DoMerge(src, args[args.Length - 1]);
-                }
-                else if (command == "info")
-                {
-                    if (!AssertNumberOfArgs(args, 1)) return;
-                    DoInfo();
-                }
-                else if (command == "/?" || command == "help")
-                {
-                    PrintUsage();
-                }
-                else
-                    WriteError("Unknown command.");
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\nFAILED: ");
-                do
-                {
-#if DEBUG
-                    Console.Error.WriteLine(ex);
-#else
-                    Console.Error.WriteLine(ex.Message);
-#endif
-                    ex = ex.InnerException;
-                } while (ex != null);
-                Console.ResetColor();
-            }
+
+            DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200308.nc");
+
+            Console.WriteLine(ds);
+
+
+            /* var life = ds["life"];
+             var temp = life.Metadata;
+             Array array =life.GetData();
+
+             Console.WriteLine(array.GetValue(0, 0));
+              for(int i = 0; i < 92; i++)
+             {
+                 for(int j = 0; j < 10000; j++) {
+
+                     Console.WriteLine(i+ " " + j);
+                    // Console.WriteLine(array.GetValue(i, j));
+             }
+             }*/
+
+
+
+
+            Console.ReadLine();
 
         }
         
