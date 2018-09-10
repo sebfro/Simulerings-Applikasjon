@@ -372,6 +372,74 @@ namespace sdsutil
 
             Console.WriteLine(ds);
 
+            bool foundLatLon = false;
+
+            var lat = ds["lat_rho"];
+            var lon = ds["lon_rho"];
+
+            int[] xiAndEta_rho = new int[2];
+
+            int counter = 0;
+
+            
+
+
+
+            for (int i = 0; i < 1202; i++)
+            {
+                for(int j = 0; j < 580; j++)
+                {
+                    if (!foundLatLon)
+                    {
+                        if (Math.Abs((double)lat.GetData().GetValue(i, j) - (double)48.5389500468397) < 0.01 && Math.Abs((double)lon.GetData().GetValue(i, j) - (double)-4.7722031108593) < 0.01 && !foundLatLon)
+                        {
+                            foundLatLon = true;
+                            Console.WriteLine(lat.GetData().GetValue(i, j));
+                            xiAndEta_rho[0] = i;
+                            xiAndEta_rho[1] = j;
+
+                            counter++;
+                        }
+                        else
+                        {
+                            counter++;
+                        }
+                    }
+                }
+            }
+
+            if (!foundLatLon) {
+                Console.WriteLine("Did not find any matching coordinates");
+            }
+
+            Console.WriteLine("Number of checks: " + counter);
+
+            Console.WriteLine("xi: " + xiAndEta_rho[0] + " eta: " + xiAndEta_rho[1]);
+
+            var depth = ds["h"];
+            Console.WriteLine("Depth at given coordinates: " + depth.GetData().GetValue(xiAndEta_rho[0], xiAndEta_rho[1]));
+
+            var temp = ds["temp"];
+            Console.WriteLine("Temperature at given coordinates: " + temp.GetData().GetValue(0, 0, xiAndEta_rho[0], xiAndEta_rho[1]));
+
+
+
+            /*
+            var depth = ds["h"];
+            Console.WriteLine(depth.GetData().GetValue(126, 1));
+            */
+
+
+            /*
+            var temp = ds["temp"];
+
+            Console.WriteLine(temp);
+
+            Console.WriteLine(temp.GetData().GetValue(0, 0, 126, 1));
+            */
+
+
+
 
             /* var life = ds["life"];
              var temp = life.Metadata;
