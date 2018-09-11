@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using System.Xml.Schema;
 
 namespace sdsutil
 {
@@ -365,39 +366,65 @@ namespace sdsutil
             return vargs;
         }
 
+        class PositionData
+        {
+            public int xi_rho { get; set; }
+            public int eta_rho { get; set; }
+            public double lon { get; set; }
+            public double lat { get; set; }
+            public bool valid { get; set; }
+
+            public PositionData(int xi_rho, int eta_rho, double lon, double lat)
+            {
+                this.xi_rho = xi_rho;
+                this.eta_rho = eta_rho;
+                this.lon = lon;
+                this.lat = lat;
+                valid = true;
+            }
+
+            public bool isValid()
+            {
+                return valid;
+            }
+        }
+
         static void Main(string[] args)
         {
 
-            DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200308.nc");
+            DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200309.nc");
 
             Console.WriteLine(ds);
 
             bool foundLatLon = false;
 
-            var lat = ds["lat_rho"];
-            var lon = ds["lon_rho"];
+            var lat = ds["lat_rho"].GetData();
+            var lon = ds["lon_rho"].GetData();
 
             int[] xiAndEta_rho = new int[2];
 
             int counter = 0;
 
+            double delta = 0.0;
+
+            ArrayList potentialPositionArray = new ArrayList();
             
+            Console.WriteLine(lat.GetType());
 
-
-
-            for (int i = 0; i < 1202; i++)
+            
+            for (int i = 0; i < 580; i++)
             {
-                for(int j = 0; j < 580; j++)
+                for(int j = 0; j < 1202; j++)
                 {
                     if (!foundLatLon)
                     {
-                        if (Math.Abs((double)lat.GetData().GetValue(i, j) - (double)48.5389500468397) < 0.01 && Math.Abs((double)lon.GetData().GetValue(i, j) - (double)-4.7722031108593) < 0.01 && !foundLatLon)
+                        if (Math.Abs((double)lat.GetValue(i, j) - (double)48.5389500468397) < 0.1 && Math.Abs((double)lon.GetValue(i, j) - (double)-4.7722031108593) < 0.1 && !foundLatLon)
                         {
-                            foundLatLon = true;
-                            Console.WriteLine(lat.GetData().GetValue(i, j));
+                            //foundLatLon = true;
+                            Console.WriteLine(lat.GetValue(i, j));
                             xiAndEta_rho[0] = i;
                             xiAndEta_rho[1] = j;
-
+                            potentialPositionArray.Add(new PositionData(i,j, (double)lat.GetValue(i,j), (double)lon.GetValue(i,j)));
                             counter++;
                         }
                         else
@@ -422,6 +449,15 @@ namespace sdsutil
             var temp = ds["temp"];
             Console.WriteLine("Temperature at given coordinates: " + temp.GetData().GetValue(0, 0, xiAndEta_rho[0], xiAndEta_rho[1]));
 
+            Console.WriteLine("PotentialPositionArray");
+            Console.WriteLine(potentialPositionArray.Count);
+
+            foreach (PositionData o in potentialPositionArray)
+            {
+                Console.WriteLine("eta: " + o.eta_rho + ", xi: " + o.xi_rho);
+                Console.WriteLine("lat: " + o.lat + ", lon: " + o.lon);
+            }
+            
 
 
             /*
