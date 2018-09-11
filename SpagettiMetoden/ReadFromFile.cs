@@ -31,8 +31,6 @@ namespace SpagettiMetoden
 
         public void readTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
         {
-
-            //string id = "742";
             const string DIRECTORY_PATH = @"C:\NCdata\Merkedata\Final_DST\Final_DST\10min_Sampling\Sampling_10min_2000s_Files";
 
             foreach (string id in KeyList)
@@ -53,6 +51,12 @@ namespace SpagettiMetoden
                         FishList[id].tagDataList = tagDataArray;
                     }
                     file.Close();
+                }
+                else
+                {
+                    //Fjerner key of fiske objekt hvis det ikke er merkedata for den fisken tilgjengelig
+                    FishList.Remove(id);
+                    KeyList.Remove(id);
                 }
             }
         }

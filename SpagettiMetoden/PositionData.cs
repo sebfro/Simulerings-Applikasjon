@@ -14,7 +14,7 @@ namespace SpagettiMetoden
         public double lat { get; set; }
         public bool valid { get; set; }
 
-        public PositionData(int xi_rho, int eta_rho, double lon, double lat)
+        public PositionData(int eta_rho, int xi_rho, double lat, double lon)
         {
             this.xi_rho = xi_rho;
             this.eta_rho = eta_rho;

@@ -20,10 +20,7 @@ namespace SpagettiMetoden
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
 
-            foreach (string f in KeyList)
-            {
-                Console.WriteLine("lat: " + FishList[f].captureLat + ", lon: " + FishList[f].captureLon);
-            }
+            
 
             DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200309.nc");
 
@@ -32,12 +29,18 @@ namespace SpagettiMetoden
 
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
 
+            Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
             ArrayList potentialPositionsArrayList = calculateXiAndEta.GeneratePositionDataArrayList(latArray, lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
 
-            foreach ( PositionData pData in potentialPositionsArrayList)
-            {
-                Console.WriteLine("lat: " + pData.lat + ", lon: " + pData.lon + ". eta_rho: " + pData.eta_rho + ", xi_rho: " + pData.xi_rho);
-            }
+            int[] etaAndXi = calculateXiAndEta.ConvertLatAndLonToEtaAndXi(potentialPositionsArrayList, FishList["742"]);
+
+            ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
+
+            double depth = extractDataFromEtaAndXi.getDepth(etaAndXi[0], etaAndXi[1], ds["h"].GetData());
+            Console.WriteLine("depth: " + depth);
+
+            double temp = extractDataFromEtaAndXi.getTemp(0, 0, etaAndXi[0], etaAndXi[1], ds["temp"].GetData());
+            Console.WriteLine("temp: " + temp);
 
             //DataSet ds = DataSet.Open(@"C:\NCdata\BW.nc");
             //Console.WriteLine(ds);

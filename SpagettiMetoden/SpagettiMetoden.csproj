@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalculateXiAndEta.cs" />
+    <Compile Include="ExtractDataFromEtaAndXi.cs" />
     <Compile Include="Fish.cs" />
     <Compile Include="PositionData.cs" />
     <Compile Include="Program.cs" />
