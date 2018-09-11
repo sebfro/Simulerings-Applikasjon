@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FetchClimate1", "FetchClimate1", "{540EC0ED-4A07-4AC9-A68E-E06BDD4FF89A}"
 EndProject
@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{031C2D
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpagettiMetoden", "SpagettiMetoden\SpagettiMetoden.csproj", "{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{71A8A1FB-1E6F-43BE-B531-3E377CFA90C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71A8A1FB-1E6F-43BE-B531-3E377CFA90C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71A8A1FB-1E6F-43BE-B531-3E377CFA90C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,5 +79,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{87558098-AEAB-46A0-8BEF-D838630AC90E} = {540EC0ED-4A07-4AC9-A68E-E06BDD4FF89A}
 		{B02F58BB-072E-4DC7-AAAB-674C14E01E9D} = {540EC0ED-4A07-4AC9-A68E-E06BDD4FF89A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F47172A-F9C6-4770-BE08-D91998203DFF}
 	EndGlobalSection
 EndGlobal
