@@ -31,7 +31,8 @@ namespace SpagettiMetoden
 
         public void readTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
         {
-            const string DIRECTORY_PATH = @"C:\NCdata\Merkedata\Final_DST\Final_DST\10min_Sampling\Sampling_10min_2000s_Files";
+            //Mappe strukturen er annerledes på HVL pc-en, fiks det slik at den er slik som den er under.
+            const string DIRECTORY_PATH = @"C:\NCdata\Merkedata\Final_DST\10min_Sampling\Sampling_10min_2000s_Files\";
 
             foreach (string id in KeyList)
             {

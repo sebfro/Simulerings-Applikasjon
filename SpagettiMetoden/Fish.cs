@@ -10,25 +10,27 @@ namespace SpagettiMetoden
     class Fish
     {
         public string id { get; set; }
-        public string releaseTemp { get; set; }
-        public string captureTemp { get; set; }
+        public string releaseDate { get; set; }
+        public string captureDate { get; set; }
         public double releaseLat { get; set; }
         public double releaseLon { get; set; }
         public double captureLat { get; set; }
         public double captureLon { get; set; }
         public List<TagData> tagDataList { get; set; }
+        public List<PositionData> PositionDataList { get; set; }
 
 
-        public Fish(string id, string releaseTemp, string captureTemp, string releaseLatLon, string captureLatLon)
+        public Fish(string id, string releaseDate, string captureDate, string releaseLatLon, string captureLatLon)
         {
             this.id = id;
-            this.captureTemp = captureTemp;
-            this.releaseTemp = releaseTemp;
+            this.captureDate = captureDate;
+            this.releaseDate = releaseDate;
             releaseLat = stringToDoubleLat(releaseLatLon);
             releaseLon = stringToDoubleLon(releaseLatLon);
             captureLat = stringToDoubleLat(captureLatLon);
             captureLon = stringToDoubleLon(captureLatLon);
             tagDataList = new List<TagData>();
+            PositionDataList = new List<PositionData>();
         }
 
         public double stringToDoubleLat(string latAndLon)

@@ -457,8 +457,8 @@ namespace sdsutil
                 Console.WriteLine("eta: " + o.eta_rho + ", xi: " + o.xi_rho);
                 Console.WriteLine("lat: " + o.lat + ", lon: " + o.lon);
             }
-            
 
+            
 
             /*
             var depth = ds["h"];

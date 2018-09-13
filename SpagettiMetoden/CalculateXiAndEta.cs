@@ -14,50 +14,53 @@ namespace SpagettiMetoden
         public const int Xi_Rho = 1202;
         public const double Delta = 0.1;
 
-        public ArrayList GeneratePositionDataArrayList(Array latDataSet, Array lonDataSet, double lat, double lon)
+        public PositionData GeneratePositionDataArrayList(Array latDataSet, Array lonDataSet, Fish fish)
         {
             
             ArrayList potentialPositionArray = new ArrayList();
 
-            for (int i = 0; i < Eta_Rho; i++)
+            for (int i = 0; i < GlobalVariables.eta_rho_size; i++)
             {
-                for (int j = 0; j < Xi_Rho; j++)
+                for (int j = 0; j < GlobalVariables.xi_rho_size; j++)
                 {
-                        if (Math.Abs((double)latDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)lonDataSet.GetValue(i, j) - lon) < Delta)
+                        if (Math.Abs((double)latDataSet.GetValue(i, j) - fish.releaseLat) < Delta && Math.Abs((double)lonDataSet.GetValue(i, j) - fish.releaseLon) < Delta)
                         {
                             potentialPositionArray.Add(new PositionData(i, j, (double)latDataSet.GetValue(i, j), (double)lonDataSet.GetValue(i, j)));
                         }
                 }
             }
-            return potentialPositionArray;
+
+            return ConvertLatAndLonToEtaAndXi(potentialPositionArray, fish);
         }
         //return an int[] with 2 var, index 0 is eta_rho and index 1 is xi_rho
-        public int[] ConvertLatAndLonToEtaAndXi(ArrayList potentialPositionsArrayList, Fish fish)
+        public PositionData ConvertLatAndLonToEtaAndXi(ArrayList potentialPositionsArrayList, Fish fish)
         {
             double minDelta = 0;
             bool deltaHasBeenSet = false;
-            int[] etaAndXi = new int[2];
+
+            PositionData positionData = new PositionData(0, 0, 0.0, 0.0);
+
             foreach (PositionData pData in potentialPositionsArrayList)
             {
                 double newDelta = Math.Abs(pData.lat - fish.releaseLat) + Math.Abs(pData.lon - fish.releaseLon);
                 if (!deltaHasBeenSet)
                 {
                     minDelta = newDelta;
+                    positionData = pData;
                     deltaHasBeenSet = true;
                 }
                 if (newDelta < minDelta)
                 {
                     minDelta = newDelta;
-                    etaAndXi[0] = pData.eta_rho;
-                    etaAndXi[1] = pData.xi_rho;
+                    positionData = pData;
                 }
 
                 Console.WriteLine("lat: " + pData.lat + ", lon: " + pData.lon + ". eta_rho: " + pData.eta_rho + ", xi_rho: " + pData.xi_rho + ". minDelta: " + minDelta);
             }
 
-            Console.WriteLine("minDelta: " + minDelta + ", eta_rho: " + etaAndXi[0] + ", xi_rho: " + etaAndXi[1]);
+            Console.WriteLine("minDelta: " + minDelta + ", eta_rho: " + positionData.eta_rho + ", xi_rho: " + positionData.xi_rho);
 
-            return etaAndXi;
+            return positionData;
         }
     }
 }
