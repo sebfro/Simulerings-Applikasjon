@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Research.Science.Data.Imperative;
 
 namespace SpagettiMetoden
 {
@@ -32,8 +33,40 @@ namespace SpagettiMetoden
             var Z_Array = dsOfZ["Z"].GetData();
 
 
-            
+            //Dette er første koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
             Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
+
+            //Regne ut posisjoner fisken kan dra til fra release lat lon basert på den første målingen i merkedata
+            //Lagre disse i en array
+
+            
+            //  foreach antall fisker som blir sendt ut
+                //  Velg en random posisjon
+                //  if randomposisjon.distanse > startposisjon.distanse fra capture.position
+                    //  30% sannsynlighet for å velge denne
+                //  else
+                    //  70% sannsynlighet  for å velge denne
+                //  if ikke velger denne posisjonen
+                    //  Velg ny random
+                //        
+                //  Lagre lat lon, temp for fisk og dybde for fisk --> Lagre temp og dybde slik at det blir lettere å modellere i 2D og 3D
+                //  foreach tagData i tagDataList
+                    //  Hent ut nåværende posisjon
+                    //  Regne ut posisjoner fisken kan dra til fra current lat lon basert på neste måling i merkedata
+                    //  Lagre disse i en array
+                        //  if array er tom ELIMINER
+                        // else
+                            //if randomposisjon.distanse > nåværende.distanse fra capture.position
+                                //  30% sannsynlighet for å velge denne
+                            //  else
+                                //  70% sannsynlighet  for å velge denne
+                            //  if ikke velger denne posisjonen
+                                //  Velg ny random
+                            //
+                            //  Lagre lat lon, temp for fisk og dybde for fisk --> Lagre temp og dybde slik at det blir lettere å modellere i 2D og 3D
+                            //  Kjør foreach på nytt
+            //  Slutt på foreach
+                
 
             //Bruke release lat lon til å finne eta_rho og xi_rho
             PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latArray, lonArray, FishList["742"]);
@@ -51,7 +84,7 @@ namespace SpagettiMetoden
             positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, ds["temp"].GetData());
             Console.WriteLine("temp: " + positionData.temp);
 
-            FishList["742"].PositionDataList.Add(positionData);
+            FishList["742"].PositionDataList[0].Add(positionData);
 
             //Slutten på foreach
 
@@ -61,7 +94,30 @@ namespace SpagettiMetoden
             Console.WriteLine(FishList["742"].PositionDataList[0].xi_rho);
             Console.WriteLine(FishList["742"].PositionDataList[0].depth);
             Console.WriteLine(FishList["742"].PositionDataList[0].temp);
-           
+
+            /*
+             foreach (TagData tagD in FishList["742"].tagDataList)
+            {
+                Console.WriteLine("Depth: " + tagD.depth + ", Temp: " + tagD.temp + ", Date: " + tagD.date + ", Time: " + tagD.time);
+            }
+             */
+
+            CalcDistance_BetweenTwoLonLatCoordinates calcDistanceBetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates();
+
+            double res = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(49.1715000, -121.7493500, 49.18258,
+                -121.75441);
+
+            Console.WriteLine("Distance in km: " + res);
+
+
+            DataSet dsTemp = DataSet.Open(@"C:\NCdata\VarmeModell\ocean_avg_20030801.nc");
+            var oceanTime = dsTemp["ocean_time"].GetData();
+
+            foreach (double ocTime in oceanTime)
+            {
+                Console.WriteLine("Oceantime: " + ocTime);
+            }
+
 
 
             System.Console.ReadLine();

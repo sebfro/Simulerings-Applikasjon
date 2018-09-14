@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalcDistance BetweenTwoLonLatCoordinates.cs" />
     <Compile Include="CalculateXiAndEta.cs" />
     <Compile Include="ExtractDataFromEtaAndXi.cs" />
     <Compile Include="Fish.cs" />
