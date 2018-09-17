@@ -18,15 +18,12 @@ namespace SpagettiMetoden
             {
                 string[] strArray;
                 strArray = line.Split('\t');
-
                 Fish currentFish = new Fish(strArray[0], strArray[1], strArray[2], strArray[3], strArray[4]);
                 FishList[strArray[0]] = currentFish;
 
                 KeyList.Add(strArray[0]);
             }
             file.Close();
-            // Suspend the screen.  
-            //System.Console.ReadLine();
         }
 
         public void readTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
@@ -46,7 +43,6 @@ namespace SpagettiMetoden
                     {
                         string[] strArray;
                         strArray = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-
                         TagData tagData = new TagData(strArray[0], strArray[1], strArray[2], strArray[3]);
                         tagDataArray.Add(tagData);
                         FishList[id].tagDataList = tagDataArray;
