@@ -36,9 +36,10 @@ namespace SpagettiMetoden
             var distance = (speed * time)/6; //Gir km i timen, derfor deler vi på 6 for å få for hvert tiende minutt.
             int radius = 6371;            //Earth radius in Km
 
-            LatLon[] latLonArray = new LatLon[360];
-
-            for (int bearing = 0; bearing < 360; bearing++)
+            int size = 8;
+            LatLon[] latLonArray = new LatLon[size];
+            int bearing = 0;
+            for (int i = 0; i < size; i++)
             {
                 var lat2 = Math.Asin(Math.Sin(Math.PI / 180 * lat) * Math.Cos(distance / radius) +
                                      Math.Cos(Math.PI / 180 * lat) * Math.Sin(distance / radius) * Math.Cos(Math.PI / 180 * bearing));
@@ -46,7 +47,8 @@ namespace SpagettiMetoden
                                Math.Sin(Math.PI / 180 * bearing) * Math.Sin(distance / radius) * Math.Cos(Math.PI / 180 * lat),
                                Math.Cos(distance / radius) - Math.Sin(Math.PI / 180 * lat) * Math.Sin(lat2));
 
-                latLonArray[bearing] = new LatLon(180 / Math.PI * lat2, 180 / Math.PI * lon2);
+                latLonArray[i] = new LatLon(180 / Math.PI * lat2, 180 / Math.PI * lon2);
+                bearing += 45;
             }
 
             return latLonArray;
@@ -60,7 +62,6 @@ namespace SpagettiMetoden
             List<PositionData> positionDataList = new List<PositionData>();
             ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
             
-
             for (int i = 0; i < latLon.Length; i++)
             {
                 PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latDataArray, lonDataArray, latLon[i].lat,
@@ -71,8 +72,9 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
 
-                if ((positionData.depth - (-tagData.depth)) > 0 && Math.Abs(positionData.temp - tagData.temp) < 1)
+                if ((positionData.depth - (-tagData.depth)) > 0 && Math.Abs(positionData.temp - tagData.temp) < 3)
                 {
+                    //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
                     positionDataList.Add(positionData);
                 }
             }

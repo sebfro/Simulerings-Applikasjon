@@ -14,7 +14,7 @@ namespace SpagettiMetoden
         public double lat { get; set; }
         public double depth { get; set; }
         public double temp { get; set; }
-        public bool valid { get; set; }
+        public bool alive { get; set; }
 
         public PositionData(int eta_rho, int xi_rho, double lat, double lon)
         {
@@ -24,12 +24,19 @@ namespace SpagettiMetoden
             this.lat = lat;
             depth = 0;
             temp = 0;
-            valid = true;
+            alive = true;
         }
 
-        public bool isValid()
+        public PositionData(double lat, double lon, double depth, double temp)
         {
-            return valid;
+            xi_rho = 0;
+            eta_rho = 0;
+            this.lon = lon;
+            this.lat = lat;
+            this.depth = depth;
+            this.temp = temp;
+            alive = true;
         }
+        
     }
 }

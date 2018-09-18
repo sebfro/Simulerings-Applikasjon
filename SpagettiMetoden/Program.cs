@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Research.Science.Data.Imperative;
+using System.Diagnostics;
 
 namespace SpagettiMetoden
 {
@@ -48,7 +49,7 @@ namespace SpagettiMetoden
 
 
             //Dette er første koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
-            Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
+            //Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
 
 
             //Regne ut posisjoner fisken kan dra til fra release lat lon basert på den første målingen i merkedata
@@ -61,39 +62,94 @@ namespace SpagettiMetoden
              * LatLon[] latLons =
                 calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
              */
-
-            PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latArray, lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
-
-
-            positionData.depth = extractDataFromEtaAndXi.getDepth(positionData.eta_rho, positionData.xi_rho, ds["h"].GetData());
-            Console.WriteLine("depth: " + positionData.depth);
-
-            DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(positionData.eta_rho, positionData.xi_rho, positionData.depth, Z_Array);
-
-            positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, ds["temp"].GetData());
-            Console.WriteLine("temp: " + positionData.temp);
-
-            for (int i = 0; i < FishList["742"].tagDataList.Count; i++)
+             
+            var watch = Stopwatch.StartNew();
+            Random random = new Random();
+            int randInt = 0;
+            Array depthArray = ds["h"].GetData();
+            Array tempArray = ds["temp"].GetData();
+            int counter = 0;
+            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
             {
                 //Må hente riktig varmemodell
-                Array depthArray = ds["h"].GetData();
-                Array tempArray = ds["temp"].GetData();
+                //Array depthArray = ds["h"].GetData();
+                //Array tempArray = ds["temp"].GetData();
                 if (i == 0)
                 {
                     LatLon[] latLons =
                         calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
 
-                    List<PositionData> positionDataList =
+                    List<PositionData> validPositionsDataList =
                         calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, FishList["742"].tagDataList[i], depthArray, tempArray, Z_Array);
-                    foreach (var p in positionDataList)
+
+                    for (int j = 0; j < GlobalVariables.releasedFish; j++)
+                    {
+                        if (validPositionsDataList.Count > 0)
+                        {
+                            randInt = random.Next(validPositionsDataList.Count);
+                            FishList["742"].FishRouteList.Add(new FishRoute("742"));
+                            FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(FishList["742"].releaseLat,
+                                FishList["742"].releaseLon, 0.0, 0.0)));
+                            FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(
+                                validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon,
+                                validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp)));
+                        }
+                        else
+                        {
+                            Console.WriteLine("No possible positions found");
+                            return;
+                        }
+                    }
+
+                    foreach (var p in validPositionsDataList)
                     {
                         Console.WriteLine("Lat: " + p.lat + ", lon: " + p.lon);
+                        Console.WriteLine("eta: " + p.eta_rho + ", xi: " + p.xi_rho);
                     }
+
+                    counter = 2;
                 }
                 else
                 {
+                    List<FishRoute> fishRoutes = FishList["742"].FishRouteList;
+                    TagData tagData = FishList["742"].tagDataList[i];
+                    for (int j = 0; j < GlobalVariables.releasedFish; j++)
+                    {
+                        FishRoute fishRoute = fishRoutes[j];
+
+                            if(fishRoute.alive)
+                            {
+                                PositionData pData = fishRoute.PositionDataList[counter - 1];
+                                LatLon[] latLons =
+                                    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 20, 1);
+                                List<PositionData> validPositionsDataList =
+                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, tagData, depthArray, tempArray, Z_Array);
+
+                                if (validPositionsDataList.Count > 0)
+                                {
+                                    randInt = random.Next(validPositionsDataList.Count);
+                                    fishRoutes[j].PositionDataList.Add((new PositionData(validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon, validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp)));
+                                }
+                                else
+                                {
+                                    fishRoute.commitNotAlive();
+                                }
+                            }
+
+                    }
+                    
+                    counter++;
                 }
+                watch.Stop();
+                double elapsedMs = watch.ElapsedMilliseconds;
+                //Console.WriteLine("Hvor lang tid tok en interasjon: " + elapsedMs);
             }
+
+            foreach (var fishRoute in FishList["742"].FishRouteList)
+            {
+                Console.WriteLine("Is fish alive?: " + fishRoute.alive);
+            }
+            
             /*
              * List<PositionData> positionDataList =
                 calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray);

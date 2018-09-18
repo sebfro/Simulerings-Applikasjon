@@ -51,6 +51,7 @@
     <Compile Include="CalculateXiAndEta.cs" />
     <Compile Include="ExtractDataFromEtaAndXi.cs" />
     <Compile Include="Fish.cs" />
+    <Compile Include="FishRoute.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="PositionData.cs" />
     <Compile Include="Program.cs" />

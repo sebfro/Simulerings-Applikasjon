@@ -17,7 +17,7 @@ namespace SpagettiMetoden
         public double captureLat { get; set; }
         public double captureLon { get; set; }
         public List<TagData> tagDataList { get; set; }
-        public List<PositionData> PositionDataList { get; set; }
+        public List<FishRoute> FishRouteList { get; set; }
 
 
         public Fish(string id, string releaseDate, string captureDate, string releaseLatLon, string captureLatLon)
@@ -30,7 +30,7 @@ namespace SpagettiMetoden
             captureLat = stringToDoubleLat(captureLatLon);
             captureLon = stringToDoubleLon(captureLatLon);
             tagDataList = new List<TagData>();
-            PositionDataList = new List<PositionData>();
+            FishRouteList = new List<FishRoute>();
         }
 
         public double stringToDoubleLat(string latAndLon)

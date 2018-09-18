@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ namespace SpagettiMetoden
 
         public double getDepth(int eta_rho, int xi_rho, Array depthArray)
         {
-            Console.WriteLine("eta: " + (eta_rho - 1) + ", xi: " + (xi_rho - 1));
             return (double)depthArray.GetValue(eta_rho, xi_rho);
         }
         //Vet ikke helt hvorfor, men double fungerer ikke. Det er en single som blir returnert fra netcdf filen
@@ -26,13 +26,21 @@ namespace SpagettiMetoden
 
         public DepthData getS_rhoValues(int eta_rho, int xi_rho, double depth, Array Z_Array)
         {
+            // the code that you want to measure comes here
+            
             double deltaDepth = 20;
 
             ArrayList potentialDepthArray = new ArrayList();
 
-            for(int k = 0; k < GlobalVariables.Z_rho_size; k++)
+            for (int k = 0; k < GlobalVariables.Z_rho_size; k++)
             {
-                for (int i = 0; i < GlobalVariables.eta_rho_size; i++)
+                double z_rho = (double)Z_Array.GetValue(k, eta_rho, xi_rho);
+                if (Math.Abs(z_rho - (-depth)) < deltaDepth)
+                {
+                    potentialDepthArray.Add(new DepthData(k, eta_rho, xi_rho, z_rho));
+                }
+                /*
+                 * for (int i = 0; i < GlobalVariables.eta_rho_size; i++)
                 {
                     for (int j = 0; j < GlobalVariables.xi_rho_size; j++)
                     {
@@ -42,8 +50,8 @@ namespace SpagettiMetoden
                         }
                     }
                 }
+                 */
             }
-
             //Sammenligne eta_rho og xi_rho fra de potensielle dybdene med den faktiske dybden og velge denn med minst differanse
 
             double minDelta = 0.0;
@@ -76,6 +84,8 @@ namespace SpagettiMetoden
             {
                 Console.WriteLine("Did not find matching eta_rho and xi_rho");
             }
+
+            
 
             return depthData;
             
