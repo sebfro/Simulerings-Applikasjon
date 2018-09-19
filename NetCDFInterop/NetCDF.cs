@@ -570,7 +570,7 @@ namespace NetCDFInterop
             }
         }
         
-        [DllImport(@"C:\Program Files (x86)\netCDF 4.3.3.1\bin\netcdf.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"C:\Program Files (x86)\netCDF 4.6.1\bin\netcdf.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int nc_set_chunk_cache(IntPtr size, IntPtr nelems, float preemption);
         [DllImport("netcdf.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int nc_open(string path, CreateMode mode, out int ncidp);

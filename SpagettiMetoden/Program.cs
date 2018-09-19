@@ -101,11 +101,13 @@ namespace SpagettiMetoden
                         }
                     }
 
+
                     foreach (var p in validPositionsDataList)
                     {
                         Console.WriteLine("Lat: " + p.lat + ", lon: " + p.lon);
                         Console.WriteLine("eta: " + p.eta_rho + ", xi: " + p.xi_rho);
                     }
+                    System.Console.ReadLine();
 
                     counter = 2;
                 }

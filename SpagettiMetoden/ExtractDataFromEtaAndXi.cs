@@ -11,7 +11,7 @@ namespace SpagettiMetoden
 {
     class ExtractDataFromEtaAndXi
     {
-
+        
         public double getDepth(int eta_rho, int xi_rho, Array depthArray)
         {
             return (double)depthArray.GetValue(eta_rho, xi_rho);
@@ -35,6 +35,7 @@ namespace SpagettiMetoden
             for (int k = 0; k < GlobalVariables.Z_rho_size; k++)
             {
                 double z_rho = (double)Z_Array.GetValue(k, eta_rho, xi_rho);
+                //depth her er dybden til punktet (Havbunne), skal være dybde fra merkedata. MÅ ENDRES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if (Math.Abs(z_rho - (-depth)) < deltaDepth)
                 {
                     potentialDepthArray.Add(new DepthData(k, eta_rho, xi_rho, z_rho));
@@ -60,8 +61,11 @@ namespace SpagettiMetoden
 
             foreach (DepthData dData in potentialDepthArray)
             {
+                //Trenger ikke denne if-en lenger (kanskje) Vi henter bare ut verdiene som har eta og xi vi gir inn
                 if (dData.eta_rho == eta_rho && dData.xi_rho == xi_rho)
                 {
+                    //depth her er dybden til punktet (Havbunne), skal være dybde fra merkedata. MÅ ENDRES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    //Gjelder alle depth i denne funksjonen!!!
                     double newDelta = Math.Abs(dData.depth - (-depth));
 
                     if (!deltaHasBeenSet)
