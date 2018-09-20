@@ -141,7 +141,7 @@ namespace SpagettiMetoden
                                 {
                                     fishRoute.commitNotAlive();
                                 Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000 + " ELIMINERT");
-                                Console.WriteLine("dybde: " + fishRoute.PositionDataList[j].tagDataDepth + ", temp: " + fishRoute.PositionDataList[j].tagDataTemp);
+                                Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
                                 }
                             }
 
@@ -153,16 +153,17 @@ namespace SpagettiMetoden
                 double elapsedMs = watch.ElapsedMilliseconds;
                 //Console.WriteLine("Hvor lang tid tok en interasjon: " + elapsedMs);
             }
-
+            var count = 1;
             foreach (var fishRoute in FishList["742"].FishRouteList)
             {
                 Console.WriteLine("Is fish alive?: " + fishRoute.alive);
-
+                
                 if(fishRoute.alive)
                 {
                     string[] fishData = fishRoute.fromListToString();
 
-                    File.WriteAllLines(@"C:\NCdata\fishData\fishData" + fishRoute.id + ".txt", fishData);
+                    File.WriteAllLines(@"C:\NCdata\fishData\fishData" + fishRoute.id +"_" + count + ".txt", fishData);
+                    count++;
                 }
             }
             

@@ -26,11 +26,13 @@ namespace SpagettiMetoden
 
         public string[] fromListToString()
         {
-            int counter = 0;
-            string[] strArray = new string[PositionDataList.Count];
-            foreach(PositionData pData in PositionDataList)
+            int counter = 1;
+            string[] strArray = new string[PositionDataList.Count+1];
+            strArray[0] = "Latitude:" + "\t" + "Longitude:" + "\t" + "Tagdata Depth:" + "\t" + "Sea depth:" + "\t" + "Tagdata Temp" + "\t" + "Sea temp";
+            foreach (PositionData pData in PositionDataList)
             {
-               strArray[counter] = pData.lat + "\t" + pData.lon + "\t" + pData.tagDataDepth + "\t" + pData.tagDataTemp + "\t" + pData.depth + "\t" + pData.temp; 
+               strArray[counter] = pData.lat + "\t" + pData.lon + "\t" + pData.tagDataDepth + "\t" + pData.depth +  "\t" + pData.tagDataTemp + "\t" + pData.temp;
+                counter++;
             }
 
             return strArray;
