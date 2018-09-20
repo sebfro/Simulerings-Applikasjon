@@ -24,7 +24,7 @@ namespace SpagettiMetoden
         }
 
 
-        public DepthData getS_rhoValues(int eta_rho, int xi_rho, double depth, Array Z_Array)
+        public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, Array Z_Array)
         {
             // the code that you want to measure comes here
             
@@ -34,11 +34,11 @@ namespace SpagettiMetoden
 
             for (int k = 0; k < GlobalVariables.Z_rho_size; k++)
             {
-                double z_rho = (double)Z_Array.GetValue(k, eta_rho, xi_rho);
-                //depth her er dybden til punktet (Havbunne), skal være dybde fra merkedata. MÅ ENDRES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                if (Math.Abs(z_rho - (-depth)) < deltaDepth)
+                double depthFromZ_rho = (double)Z_Array.GetValue(k, eta_rho, xi_rho);
+                
+                if (Math.Abs (depthFromZ_rho - tagDataDepth) < deltaDepth)
                 {
-                    potentialDepthArray.Add(new DepthData(k, eta_rho, xi_rho, z_rho));
+                    potentialDepthArray.Add(new DepthData(k, eta_rho, xi_rho, depthFromZ_rho));
                 }
                 /*
                  * for (int i = 0; i < GlobalVariables.eta_rho_size; i++)
@@ -61,16 +61,11 @@ namespace SpagettiMetoden
 
             foreach (DepthData dData in potentialDepthArray)
             {
-                //Trenger ikke denne if-en lenger (kanskje) Vi henter bare ut verdiene som har eta og xi vi gir inn
-                if (dData.eta_rho == eta_rho && dData.xi_rho == xi_rho)
-                {
-                    //depth her er dybden til punktet (Havbunne), skal være dybde fra merkedata. MÅ ENDRES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    //Gjelder alle depth i denne funksjonen!!!
-                    double newDelta = Math.Abs(dData.depth - (-depth));
+                    double newDelta = Math.Abs(dData.depth - (-tagDataDepth));
 
                     if (!deltaHasBeenSet)
                     {
-                        minDelta = dData.depth - (-depth);
+                        minDelta = newDelta;
                         depthData = dData;
 
                         deltaHasBeenSet = true;
@@ -81,12 +76,11 @@ namespace SpagettiMetoden
                         minDelta =  newDelta;
                         depthData = dData;
                     }
-                }
             }
 
             if(!deltaHasBeenSet)
             {
-                Console.WriteLine("Did not find matching eta_rho and xi_rho");
+                depthData.valid = false;
             }
 
             
@@ -103,6 +97,7 @@ namespace SpagettiMetoden
         public int eta_rho { get; set; }
         public double depth { get; set; }
         public int z_rho { get; set; }
+        public bool valid { get; set; }
 
         public DepthData(int z_rho, int eta_rho, int xi_rho, double depth)
         {
@@ -110,6 +105,7 @@ namespace SpagettiMetoden
             this.eta_rho = eta_rho;
             this.depth = depth;
             this.z_rho = z_rho;
+            valid = true;
         }
 
     }

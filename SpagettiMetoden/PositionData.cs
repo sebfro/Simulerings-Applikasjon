@@ -14,6 +14,8 @@ namespace SpagettiMetoden
         public double lat { get; set; }
         public double depth { get; set; }
         public double temp { get; set; }
+        public double tagDataDepth { get; set; }
+        public double tagDataTemp { get; set; }
         public bool alive { get; set; }
 
         public PositionData(int eta_rho, int xi_rho, double lat, double lon)
@@ -27,7 +29,7 @@ namespace SpagettiMetoden
             alive = true;
         }
 
-        public PositionData(double lat, double lon, double depth, double temp)
+        public PositionData(double lat, double lon, double depth, double temp, double tagDataDepth, double tagDataTemp)
         {
             xi_rho = 0;
             eta_rho = 0;
@@ -35,6 +37,8 @@ namespace SpagettiMetoden
             this.lat = lat;
             this.depth = depth;
             this.temp = temp;
+            this.tagDataDepth = tagDataDepth;
+            this.tagDataTemp = tagDataTemp;
             alive = true;
         }
         

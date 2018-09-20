@@ -23,5 +23,19 @@ namespace SpagettiMetoden
         {
             alive = false;
         }
+
+        public string[] fromListToString()
+        {
+            int counter = 0;
+            string[] strArray = new string[PositionDataList.Count];
+            foreach(PositionData pData in PositionDataList)
+            {
+               strArray[counter] = pData.lat + "\t" + pData.lon + "\t" + pData.tagDataDepth + "\t" + pData.tagDataTemp + "\t" + pData.depth + "\t" + pData.temp; 
+            }
+
+            return strArray;
+
+
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace SpagettiMetoden
         public static int xi_rho_size = 1202;
         public static int s_rho_size = 32;
         public static int Z_rho_size = 32;
-        public static int releasedFish = 500;
+        public static int releasedFish = 50;
         //Ikke implemetert ennå
         public static double Delta = 0.1;
     }

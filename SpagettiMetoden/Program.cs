@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Research.Science.Data.Imperative;
 using System.Diagnostics;
+using System.IO;
 
 namespace SpagettiMetoden
 {
@@ -84,15 +85,17 @@ namespace SpagettiMetoden
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
+                        Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 1000);
                         if (validPositionsDataList.Count > 0)
                         {
+                            //Legg inn sannsynlighet og vekting av å velge en ny posisjon ved å se på distansen fra punktet fisken ble captured.
                             randInt = random.Next(validPositionsDataList.Count);
                             FishList["742"].FishRouteList.Add(new FishRoute("742"));
                             FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(FishList["742"].releaseLat,
-                                FishList["742"].releaseLon, 0.0, 0.0)));
+                                FishList["742"].releaseLon, 0.0, 0.0, 0.0 , 0.0)));
                             FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(
                                 validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon,
-                                validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp)));
+                                validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, FishList["742"].tagDataList[i].depth, FishList["742"].tagDataList[i].temp)));
                         }
                         else
                         {
@@ -104,10 +107,10 @@ namespace SpagettiMetoden
 
                     foreach (var p in validPositionsDataList)
                     {
-                        Console.WriteLine("Lat: " + p.lat + ", lon: " + p.lon);
-                        Console.WriteLine("eta: " + p.eta_rho + ", xi: " + p.xi_rho);
+                        //Console.WriteLine("Lat: " + p.lat + ", lon: " + p.lon);
+                       // Console.WriteLine("eta: " + p.eta_rho + ", xi: " + p.xi_rho);
                     }
-                    System.Console.ReadLine();
+                   // System.Console.ReadLine();
 
                     counter = 2;
                 }
@@ -117,6 +120,7 @@ namespace SpagettiMetoden
                     TagData tagData = FishList["742"].tagDataList[i];
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
+                        Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000);
                         FishRoute fishRoute = fishRoutes[j];
 
                             if(fishRoute.alive)
@@ -129,12 +133,15 @@ namespace SpagettiMetoden
 
                                 if (validPositionsDataList.Count > 0)
                                 {
+                                    //Legg inn sannsynlighet og vekting av å velge en ny posisjon ved å se på distansen fra punktet fisken ble captured.
                                     randInt = random.Next(validPositionsDataList.Count);
-                                    fishRoutes[j].PositionDataList.Add((new PositionData(validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon, validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp)));
+                                    fishRoutes[j].PositionDataList.Add((new PositionData(validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon, validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, tagData.depth, tagData.temp)));
                                 }
                                 else
                                 {
                                     fishRoute.commitNotAlive();
+                                Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000 + " ELIMINERT");
+                                Console.WriteLine("dybde: " + fishRoute.PositionDataList[j].tagDataDepth + ", temp: " + fishRoute.PositionDataList[j].tagDataTemp);
                                 }
                             }
 
@@ -150,6 +157,13 @@ namespace SpagettiMetoden
             foreach (var fishRoute in FishList["742"].FishRouteList)
             {
                 Console.WriteLine("Is fish alive?: " + fishRoute.alive);
+
+                if(fishRoute.alive)
+                {
+                    string[] fishData = fishRoute.fromListToString();
+
+                    File.WriteAllLines(@"C:\NCdata\fishData\fishData" + fishRoute.id + ".txt", fishData);
+                }
             }
             
             /*

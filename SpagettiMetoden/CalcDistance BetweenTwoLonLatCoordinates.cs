@@ -33,7 +33,7 @@ namespace SpagettiMetoden
         public LatLon[] calculatePossibleLatLon(double lat, double lon, double speed, int time)
         {
 
-            var distance = (speed * time)/6; //Gir km i timen, derfor deler vi på 6 for å få for hvert tiende minutt.
+            var distance = (speed * time); //Gir km i timen, derfor deler vi på 6 for å få for hvert tiende minutt.
             int radius = 6371;            //Earth radius in Km
 
             int size = 8;
@@ -67,18 +67,22 @@ namespace SpagettiMetoden
                 PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latDataArray, lonDataArray, latLon[i].lat,
                     latLon[i].lon);
                 positionData.depth = extractDataFromEtaAndXi.getDepth(positionData.eta_rho, positionData.xi_rho, depthArray);
-                DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(positionData.eta_rho, positionData.xi_rho, positionData.depth, Z_Array);
-                Console.WriteLine("s_rho: " + depthData.z_rho);
-                positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
-
-                Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
-
-                if ((positionData.depth - (-tagData.depth)) > 0 && Math.Abs(positionData.temp - tagData.temp) < 3)
+                DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(positionData.eta_rho, positionData.xi_rho, tagData.depth, Z_Array);
+                if(depthData.valid)
                 {
-                    //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
-                    positionDataList.Add(positionData);
+                    //Console.WriteLine("s_rho: " + depthData.z_rho);
+                    positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
+
+                    //Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
+
+                    if ((positionData.depth - (-tagData.depth)) > 0 && Math.Abs(positionData.temp - tagData.temp) < 5)
+                    {
+                        //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
+                        positionDataList.Add(positionData);
+                    }
                 }
             }
+
             return positionDataList;
         }
         
