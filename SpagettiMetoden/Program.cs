@@ -1,11 +1,6 @@
 using Microsoft.Research.Science.Data;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Research.Science.Data.Imperative;
 using System.Diagnostics;
 using System.IO;
 
@@ -23,30 +18,16 @@ namespace SpagettiMetoden
             //DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200309.nc");
             DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\ocean_avg_20030801.nc");
 
-            /*
-             * string temp = ds.URI.Split('_','.')[2];
-            int startIndex = 4;
-            int endIndex = temp.Length - 6;
-            int month = int.Parse(temp.Substring(startIndex, endIndex));
-             */
             DataSet dsOfZ = DataSet.Open(@"C:\NCdata\VarmeModell\NS4MI_Z.nc");
+            Array Z_Array = dsOfZ["Z"].GetData();
 
             ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             CalcDistance_BetweenTwoLonLatCoordinates calcDistanceBetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates();
+            
 
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
-            
-
-            string[] dateStrings = FishList["742"].tagDataList[0].date.Split('-');
-
-
-
-            var latArray = ds["lat_rho"].GetData();
-            var lonArray = ds["lon_rho"].GetData();
-            var ocean_time = ds["ocean_time"].GetData();
-            var Z_Array = dsOfZ["Z"].GetData();
 
 
             //Dette er f�rste koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
@@ -63,34 +44,41 @@ namespace SpagettiMetoden
              * LatLon[] latLons =
                 calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
              */
-             
-            var watch = Stopwatch.StartNew();
+
             Random random = new Random();
             int randInt = 0;
-            Array depthArray = ds["h"].GetData();
+           
             //Array tempArray = ds["temp"].GetData();
             int counter = 0;
-            
+
+            HeatMap heatMap = new HeatMap("2003","08");
+
             for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
             {
+                Console.WriteLine("I iterasjon: " + i / 1000);
                 bool chosenPosition = false;
                 double randDouble = 0.0;
                 double originalPosition = 0.0;
                 double newPosition = 0.0;
-                //M� hente riktig varmemodell
-                //Array depthArray = ds["h"].GetData();
-                //Array tempArray = ds["temp"].GetData();
+                int chosenPositionCounter = 0;
+                if (FishList["742"].tagDataList[i].month != heatMap.month ||
+                    FishList["742"].tagDataList[i].year != heatMap.year)
+                {
+                    Console.WriteLine("Fishlist month: " + FishList["742"].tagDataList[i].month + "heatMap month: " + heatMap.month + " Fishlist year: " + FishList["742"].tagDataList[i].year + " heatMap year: " + heatMap.year);
+                    heatMap = new HeatMap(FishList["742"].tagDataList[i].year, FishList["742"].tagDataList[i].month);
+                }
+
                 if (i == 0)
                 {
                     LatLon[] latLons =
                         calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
 
                     List<PositionData> validPositionsDataList =
-                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, FishList["742"].tagDataList[i], depthArray, Z_Array);
+                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array);
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
-                        Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 1000);
+                        //Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 1000);
                         if (validPositionsDataList.Count > 0)
                         {
                             FishList["742"].FishRouteList.Add(new FishRoute("742"));
@@ -101,10 +89,11 @@ namespace SpagettiMetoden
                             originalPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(FishList["742"].releaseLat,
                                 FishList["742"].releaseLon, FishList["742"].captureLat, FishList["742"].captureLon);
 
-                            while(!chosenPosition) {
+                            chosenPositionCounter = 0;
+                            while(!chosenPosition && (chosenPositionCounter < 2)) {
                                 randDouble = random.NextDouble();
                                 randInt = random.Next(validPositionsDataList.Count);
-                                newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(FvalidPositionsDataList[randInt].lat,
+                                newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(validPositionsDataList[randInt].lat,
                                     validPositionsDataList[randInt].lon, FishList["742"].captureLat, FishList["742"].captureLon);
                                 
                                 
@@ -113,6 +102,7 @@ namespace SpagettiMetoden
                                 } else if(newPosition >= originalPosition && randDouble >= 0.7) {
                                     chosenPosition = true;
                                 }
+                                chosenPositionCounter++;
                             }
 
                             FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(
@@ -142,26 +132,28 @@ namespace SpagettiMetoden
                     TagData tagData = FishList["742"].tagDataList[i];
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
-                        Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000);
+                        //Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000);
                         FishRoute fishRoute = fishRoutes[j];
 
                             if(fishRoute.alive)
                             {
                                 PositionData pData = fishRoute.PositionDataList[counter - 1];
                                 LatLon[] latLons =
-                                    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 20, 1);
+                                    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 10, 167);
                                 List<PositionData> validPositionsDataList =
-                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, tagData, depthArray, Z_Array);
+                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array);
 
                                 if (validPositionsDataList.Count > 0)
                                 {
                                     originalPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(pData.lat,
                                         pData.lon, FishList["742"].captureLat, FishList["742"].captureLon);
 
-                                    while(!chosenPosition) {
-                                        randDouble = random.NextDouble();
+                                chosenPositionCounter = 0;
+                                    while (!chosenPosition && (chosenPositionCounter < 2))
+                                    {
+                                    randDouble = random.NextDouble();
                                         randInt = random.Next(validPositionsDataList.Count);
-                                        newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(FvalidPositionsDataList[randInt].lat,
+                                        newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(validPositionsDataList[randInt].lat,
                                             validPositionsDataList[randInt].lon, FishList["742"].captureLat, FishList["742"].captureLon);
                                 
                                         if(newPosition <= originalPosition && randDouble <= 0.7) {
@@ -188,9 +180,7 @@ namespace SpagettiMetoden
                     
                     counter++;
                 }
-                watch.Stop();
-                double elapsedMs = watch.ElapsedMilliseconds;
-                //Console.WriteLine("Hvor lang tid tok en interasjon: " + elapsedMs);
+                
             }
             var count = 1;
             foreach (var fishRoute in FishList["742"].FishRouteList)

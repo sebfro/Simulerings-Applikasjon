@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Research.Science.Data;
 
 namespace SpagettiMetoden
 {
@@ -16,13 +10,6 @@ namespace SpagettiMetoden
         {
             return (double)depthArray.GetValue(eta_rho, xi_rho);
         }
-        //Vet ikke helt hvorfor, men double fungerer ikke. Det er en single som blir returnert fra netcdf filen
-        //antar det er en single precision og derfor kan kun bli castet til float. En double kan ta mot den senere.
-        public float getTemp(int ocean_time, int s_rho, int eta_rho, int xi_rho, Array tempArray)
-        {
-            return (float)tempArray.GetValue(ocean_time, s_rho, eta_rho, xi_rho);
-        }
-
 
         public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, Array Z_Array)
         {
@@ -40,18 +27,6 @@ namespace SpagettiMetoden
                 {
                     potentialDepthArray.Add(new DepthData(k, eta_rho, xi_rho, depthFromZ_rho));
                 }
-                /*
-                 * for (int i = 0; i < GlobalVariables.eta_rho_size; i++)
-                {
-                    for (int j = 0; j < GlobalVariables.xi_rho_size; j++)
-                    {
-                        if (Math.Abs((double)Z_Array.GetValue(k, i, j) - (-depth)) < deltaDepth)
-                        {
-                            potentialDepthArray.Add(new DepthData(k, i, j, (double)Z_Array.GetValue(k,i,j)));
-                        }
-                    }
-                }
-                 */
             }
             //Sammenligne eta_rho og xi_rho fra de potensielle dybdene med den faktiske dybden og velge denn med minst differanse
 
@@ -77,16 +52,11 @@ namespace SpagettiMetoden
                         depthData = dData;
                     }
             }
-
             if(!deltaHasBeenSet)
             {
                 depthData.valid = false;
             }
-
-            
-
             return depthData;
-            
         }
         
     }

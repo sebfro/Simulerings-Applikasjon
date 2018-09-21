@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Research.Science.Data;
+using System.Diagnostics;
 
 namespace SpagettiMetoden
 {
@@ -69,15 +66,23 @@ namespace SpagettiMetoden
                     latLon[i].lon);
                 positionData.depth = extractDataFromEtaAndXi.getDepth(positionData.eta_rho, positionData.xi_rho, depthArray);
                 DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(positionData.eta_rho, positionData.xi_rho, tagData.depth, Z_Array);
-                if(depthData.valid)
+                if(depthData.valid && (positionData.depth - (-tagData.depth)) > 0)
                 {
                     //Console.WriteLine("s_rho: " + depthData.z_rho);
-                    positionData.temp = callPython.getTempFromOceanAvg(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, "08");
+
+                    var watch = Stopwatch.StartNew();
+
+                    positionData.temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tagData.year, tagData.month);
+
+                    watch.Stop();
+                    double elapsedMs = watch.ElapsedMilliseconds;
+                    Console.WriteLine("Hvor lang tid tok det å hente temp med python: " + elapsedMs);
+
                     //positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
 
                     //Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
 
-                    if ((positionData.depth - (-tagData.depth)) > 0 && Math.Abs(positionData.temp - tagData.temp) < 5)
+                    if (Math.Abs(positionData.temp - tagData.temp) < 2)
                     {
                         //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
                         positionDataList.Add(positionData);

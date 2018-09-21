@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SpagettiMetoden
 {
@@ -27,6 +23,23 @@ namespace SpagettiMetoden
         public string[] fromListToString()
         {
             int counter = 1;
+            string[] strArray = new string[PositionDataList.Count + 1];
+            strArray[0] = "Latitude:" + "\t" + "Longitude:";
+            foreach (PositionData pData in PositionDataList)
+            {
+                strArray[counter] = pData.lat + "\t" + pData.lon;
+                counter++;
+            }
+
+            return strArray;
+
+
+        }
+
+        /*
+         public string[] fromListToString()
+        {
+            int counter = 1;
             string[] strArray = new string[PositionDataList.Count+1];
             strArray[0] = "Latitude:" + "\t" + "Longitude:" + "\t" + "Tagdata Depth:" + "\t" + "Sea depth:" + "\t" + "Tagdata Temp" + "\t" + "Sea temp";
             foreach (PositionData pData in PositionDataList)
@@ -39,5 +52,6 @@ namespace SpagettiMetoden
 
 
         }
+         */
     }
 }

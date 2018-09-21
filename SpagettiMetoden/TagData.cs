@@ -1,25 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpagettiMetoden
 {
     class TagData
     {
-        public string date { get; set; }
-        public string time { get; set; }
+        public string year { get; set; }
+        public string month { get; set; }
+        public string day { get; set; }
         public double temp { get; set; }
         public double depth { get; set; }
 
-        public TagData(string date, string time, string temp, string depth)
+        public TagData(string line)
         {
-            this.date = date;
-            this.time = time;
-            this.temp = double.Parse(temp, CultureInfo.InvariantCulture);
-            this.depth = double.Parse(depth, CultureInfo.InvariantCulture);
+            string[] strArray = line.Split(new char[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+            year = strArray[0];
+            month = strArray[1];
+            day = strArray[2];
+            temp = double.Parse(strArray[4], CultureInfo.InvariantCulture);
+            //Minus foran for å gjøre den negativ
+            depth = -(double.Parse(strArray[5], CultureInfo.InvariantCulture));
         }
     }
 }

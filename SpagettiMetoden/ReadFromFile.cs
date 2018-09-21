@@ -41,9 +41,8 @@ namespace SpagettiMetoden
                     StreamReader file = new StreamReader(tagFileName);
                     while ((line = file.ReadLine()) != null)
                     {
-                        string[] strArray;
-                        strArray = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                        TagData tagData = new TagData(strArray[0], strArray[1], strArray[2], strArray[3]);
+                        string[] strArray = line.Split(new char[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+                        TagData tagData = new TagData(line);
                         tagDataArray.Add(tagData);
                         FishList[id].tagDataList = tagDataArray;
                     }

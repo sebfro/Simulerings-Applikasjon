@@ -1,20 +1,16 @@
 ﻿using MathNet.Numerics;
 using Microsoft.Research.Science.Data;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpagettiMetoden
 {
     class CallPython
     {
         //Denne metoden kaller ett python script som henter ut temperatur fra ocean_avg og returnerer verdien som en double
-        public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string month)
+        public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string year, string month)
         {
             // full path of python interpreter 
             string python = @"C:\Users\Torbastian\AppData\Local\Programs\Python\Python37\python.exe";
@@ -32,7 +28,7 @@ namespace SpagettiMetoden
             // start python app with 3 arguments  
             // 1st arguments is pointer to itself,  
             // The other values are actual arguments we want to send (ocean_time to month)
-            myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + month;
+            myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + year + " " + month;
 
             Process myProcess = new Process();
             // assign start information to the process 
