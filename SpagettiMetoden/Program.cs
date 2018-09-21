@@ -15,18 +15,13 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
-
-            temp t = new temp();
-            t.callPython();
-
-            Console.ReadLine();
             ReadFromFile file = new ReadFromFile();
 
             Dictionary<string, Fish> FishList = new Dictionary<string, Fish>();
             List<string> KeyList = new List<string>();
 
-            DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200309.nc");
-            //DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\ocean_avg_20030801.nc");
+            //DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\mndmean_avg_200309.nc");
+            DataSet ds = DataSet.Open(@"C:\NCdata\VarmeModell\ocean_avg_20030801.nc");
 
             /*
              * string temp = ds.URI.Split('_','.')[2];
@@ -73,7 +68,7 @@ namespace SpagettiMetoden
             Random random = new Random();
             int randInt = 0;
             Array depthArray = ds["h"].GetData();
-            Array tempArray = ds["temp"].GetData();
+            //Array tempArray = ds["temp"].GetData();
             int counter = 0;
             for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
             {
@@ -86,7 +81,7 @@ namespace SpagettiMetoden
                         calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
 
                     List<PositionData> validPositionsDataList =
-                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, FishList["742"].tagDataList[i], depthArray, tempArray, Z_Array);
+                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, FishList["742"].tagDataList[i], depthArray, Z_Array);
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
@@ -134,7 +129,7 @@ namespace SpagettiMetoden
                                 LatLon[] latLons =
                                     calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 20, 1);
                                 List<PositionData> validPositionsDataList =
-                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, tagData, depthArray, tempArray, Z_Array);
+                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray, tagData, depthArray, Z_Array);
 
                                 if (validPositionsDataList.Count > 0)
                                 {
@@ -262,7 +257,7 @@ namespace SpagettiMetoden
             }
             Console.WriteLine(counter);
             */
-            System.Console.ReadLine();
+            Console.ReadLine();
         }
     }
 }

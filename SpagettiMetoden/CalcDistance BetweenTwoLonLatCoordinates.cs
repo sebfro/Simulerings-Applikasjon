@@ -56,11 +56,12 @@ namespace SpagettiMetoden
 
         }
 
-        public List<PositionData> FindValidLatLons(LatLon[] latLon, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array tempArray, Array Z_Array)
+        public List<PositionData> FindValidLatLons(LatLon[] latLon, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             List<PositionData> positionDataList = new List<PositionData>();
             ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
+            CallPython callPython = new CallPython();
             
             for (int i = 0; i < latLon.Length; i++)
             {
@@ -71,7 +72,8 @@ namespace SpagettiMetoden
                 if(depthData.valid)
                 {
                     //Console.WriteLine("s_rho: " + depthData.z_rho);
-                    positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
+                    positionData.temp = callPython.getTempFromOceanAvg(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, "08");
+                    //positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
 
                     //Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
 

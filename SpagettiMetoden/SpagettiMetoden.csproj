@@ -59,7 +59,7 @@
     <Compile Include="ReadFromFile.cs" />
     <Compile Include="ReadNcFile.cs" />
     <Compile Include="TagData.cs" />
-    <Compile Include="temp.cs" />
+    <Compile Include="CallPython.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

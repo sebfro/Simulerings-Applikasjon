@@ -3,6 +3,7 @@ using Microsoft.Research.Science.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,22 +11,16 @@ using System.Threading.Tasks;
 
 namespace SpagettiMetoden
 {
-    class temp
+    class CallPython
     {
-        public void callPython()
+        //Denne metoden kaller ett python script som henter ut temperatur fra ocean_avg og returnerer verdien som en double
+        public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string month)
         {
             // full path of python interpreter 
             string python = @"C:\Users\Torbastian\AppData\Local\Programs\Python\Python37\python.exe";
 
             // python app to call 
-            string myPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
-
-            // dummy parameters to send Python script 
-            int ocean_time = 30;
-            int s_rho = 31;
-            int eta_rho = 500;
-            int xi_rho = 1200;
-            string month = "08";
+            string myPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";            
 
             // Create new process start info 
             ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(python);
@@ -36,14 +31,14 @@ namespace SpagettiMetoden
 
             // start python app with 3 arguments  
             // 1st arguments is pointer to itself,  
-            // 2nd and 3rd are actual arguments we want to send 
+            // The other values are actual arguments we want to send (ocean_time to month)
             myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + month;
 
             Process myProcess = new Process();
             // assign start information to the process 
             myProcess.StartInfo = myProcessStartInfo;
 
-            Console.WriteLine("Calling Python script with arguments {0}, {1}, {2} and {3}", ocean_time, s_rho, eta_rho, xi_rho);
+            //Console.WriteLine("Calling Python script with arguments {0}, {1}, {2}, {3} and {4}", ocean_time, s_rho, eta_rho, xi_rho, month);
             // start the process 
             myProcess.Start();
 
@@ -61,7 +56,8 @@ namespace SpagettiMetoden
             myProcess.Close();
 
             // write the output we got from python app 
-            Console.WriteLine("Value received from script: " + myString);
+            //Console.WriteLine("Value received from script: " + myString);
+            return double.Parse(myString, CultureInfo.InvariantCulture);
         }
 
         public void calc(DataSet ds, string stagger, int vTransform)
