@@ -15,6 +15,11 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
+
+            temp t = new temp();
+            t.callPython();
+
+            Console.ReadLine();
             ReadFromFile file = new ReadFromFile();
 
             Dictionary<string, Fish> FishList = new Dictionary<string, Fish>();
