@@ -27,7 +27,7 @@ namespace SpagettiMetoden
 
             return ConvertLatAndLonToEtaAndXi(potentialPositionArray, lat, lon);
         }
-        //return an int[] with 2 var, index 0 is eta_rho and index 1 is xi_rho
+
         public PositionData ConvertLatAndLonToEtaAndXi(ArrayList potentialPositionsArrayList, double lat, double lon)
         {
             double minDelta = 0;

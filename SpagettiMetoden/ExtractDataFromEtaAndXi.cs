@@ -11,6 +11,11 @@ namespace SpagettiMetoden
             return (double)depthArray.GetValue(eta_rho, xi_rho);
         }
 
+        public double getLatorLon(int eta_rho, int xi_rho, Array latorLonArray)
+        {
+            return (double)latorLonArray.GetValue(eta_rho, xi_rho);
+        }
+
         public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, Array Z_Array)
         {
             // the code that you want to measure comes here
@@ -25,14 +30,14 @@ namespace SpagettiMetoden
                 
                 if (Math.Abs (depthFromZ_rho - tagDataDepth) < deltaDepth)
                 {
-                    potentialDepthArray.Add(new DepthData(k, eta_rho, xi_rho, depthFromZ_rho));
+                    potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
                 }
             }
             //Sammenligne eta_rho og xi_rho fra de potensielle dybdene med den faktiske dybden og velge denn med minst differanse
 
             double minDelta = 0.0;
             bool deltaHasBeenSet = false;
-            DepthData depthData = new DepthData(0, 0, 0, 0.0);
+            DepthData depthData = new DepthData(0, 0.0);
 
             foreach (DepthData dData in potentialDepthArray)
             {
@@ -63,16 +68,12 @@ namespace SpagettiMetoden
 
     class DepthData
     {
-        public int xi_rho { get; set; }
-        public int eta_rho { get; set; }
         public double depth { get; set; }
         public int z_rho { get; set; }
         public bool valid { get; set; }
 
-        public DepthData(int z_rho, int eta_rho, int xi_rho, double depth)
+        public DepthData(int z_rho, double depth)
         {
-            this.xi_rho = xi_rho;
-            this.eta_rho = eta_rho;
             this.depth = depth;
             this.z_rho = z_rho;
             valid = true;

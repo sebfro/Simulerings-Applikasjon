@@ -13,10 +13,10 @@ namespace SpagettiMetoden
         public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string year, string month)
         {
             // full path of python interpreter 
-            string python = @"C:\Users\Torbastian\AppData\Local\Programs\Python\Python37\python.exe";
+            string python = @"C:\python\python.exe";
 
             // python app to call 
-            string myPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";            
+            string myPythonApp = @"C:\Users\a22001\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";            
 
             // Create new process start info 
             ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(python);
@@ -28,6 +28,13 @@ namespace SpagettiMetoden
             // start python app with 3 arguments  
             // 1st arguments is pointer to itself,  
             // The other values are actual arguments we want to send (ocean_time to month)
+            if(ocean_time > 29)
+            {
+                ocean_time = 29;
+            } else
+            {
+                ocean_time--;
+            }
             myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + year + " " + month;
 
             Process myProcess = new Process();

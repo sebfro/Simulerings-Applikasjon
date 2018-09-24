@@ -30,11 +30,11 @@ namespace SpagettiMetoden
             file.readTagData(FishList, KeyList);
 
 
-            //Dette er f�rste koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
+            //Dette er første koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
             //Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
 
 
-            //Regne ut posisjoner fisken kan dra til fra release lat lon basert p� den f�rste m�lingen i merkedata
+            //Regne ut posisjoner fisken kan dra til fra release lat lon basert pø den første målingen i merkedata
             //Lagre disse i en array
 
             //Returnerer 360 lat lon verdier, 1 for hver vinkel
@@ -48,21 +48,22 @@ namespace SpagettiMetoden
             Random random = new Random();
             int randInt = 0;
            
-            //Array tempArray = ds["temp"].GetData();
             int counter = 0;
 
-            HeatMap heatMap = new HeatMap("2003","08");
-
-            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
+            HeatMap heatMap = new HeatMap();
+            EtaXi[] etaXis = new EtaXi[0];
+            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=500)
             {
-                Console.WriteLine("I iterasjon: " + i / 1000);
+                var watch = Stopwatch.StartNew();
+                Console.WriteLine("I iterasjon: " + i / 500);
                 bool chosenPosition = false;
                 double randDouble = 0.0;
                 double originalPosition = 0.0;
                 double newPosition = 0.0;
                 int chosenPositionCounter = 0;
+                //heatMap month og year er ikke inistialisert, sjekk om det ødelegger
                 if (FishList["742"].tagDataList[i].month != heatMap.month ||
-                    FishList["742"].tagDataList[i].year != heatMap.year)
+                    FishList["742"].tagDataList[i].year != heatMap.year || !heatMap.initialized)
                 {
                     Console.WriteLine("Fishlist month: " + FishList["742"].tagDataList[i].month + "heatMap month: " + heatMap.month + " Fishlist year: " + FishList["742"].tagDataList[i].year + " heatMap year: " + heatMap.year);
                     heatMap = new HeatMap(FishList["742"].tagDataList[i].year, FishList["742"].tagDataList[i].month);
@@ -70,20 +71,22 @@ namespace SpagettiMetoden
 
                 if (i == 0)
                 {
-                    LatLon[] latLons =
-                        calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
+                    PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
+                    etaXis = calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho);
+                    //LatLon[] latLons =
+                    //calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
 
                     List<PositionData> validPositionsDataList =
-                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array);
+                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(etaXis, heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array);
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
-                        //Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 1000);
+                        //Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 500);
                         if (validPositionsDataList.Count > 0)
                         {
                             FishList["742"].FishRouteList.Add(new FishRoute("742"));
                             FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(FishList["742"].releaseLat,
-                                FishList["742"].releaseLon, 0.0, 0.0, 0.0 , 0.0)));
+                                FishList["742"].releaseLon)));
 
 
                             originalPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(FishList["742"].releaseLat,
@@ -107,7 +110,8 @@ namespace SpagettiMetoden
 
                             FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(
                                 validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon,
-                                validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, FishList["742"].tagDataList[i].depth, FishList["742"].tagDataList[i].temp)));
+                                validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, FishList["742"].tagDataList[i].depth,
+                                FishList["742"].tagDataList[i].temp, validPositionsDataList[randInt].eta_rho, validPositionsDataList[randInt].xi_rho)));
                         }
                         else
                         {
@@ -132,16 +136,18 @@ namespace SpagettiMetoden
                     TagData tagData = FishList["742"].tagDataList[i];
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
-                        //Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000);
+                        //Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 500);
                         FishRoute fishRoute = fishRoutes[j];
 
                             if(fishRoute.alive)
                             {
                                 PositionData pData = fishRoute.PositionDataList[counter - 1];
-                                LatLon[] latLons =
-                                    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 10, 167);
+                                //LatLon[] latLons =
+                                //    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 10, 167);
+
+                                etaXis = calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
                                 List<PositionData> validPositionsDataList =
-                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array);
+                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(etaXis, heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array);
 
                                 if (validPositionsDataList.Count > 0)
                                 {
@@ -166,13 +172,16 @@ namespace SpagettiMetoden
 
 
                                     randInt = random.Next(validPositionsDataList.Count);
-                                    fishRoutes[j].PositionDataList.Add((new PositionData(validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon, validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, tagData.depth, tagData.temp)));
+                                    fishRoutes[j].PositionDataList.Add((new PositionData(validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon,
+                                        validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, tagData.depth, tagData.temp,
+                                        validPositionsDataList[randInt].eta_rho, validPositionsDataList[randInt].xi_rho)));
                                 }
                                 else
                                 {
                                     fishRoute.commitNotAlive();
-                                Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000 + " ELIMINERT");
+                                Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 500 + " ELIMINERT");
                                 Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
+                                Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
                                 }
                             }
 
@@ -180,7 +189,10 @@ namespace SpagettiMetoden
                     
                     counter++;
                 }
-                
+                watch.Stop();
+                double elapsedMs = watch.ElapsedMilliseconds;
+                Console.WriteLine("Hvor lang tid tok interasjon " + i + ": " + elapsedMs);
+
             }
             var count = 1;
             foreach (var fishRoute in FishList["742"].FishRouteList)
@@ -207,37 +219,37 @@ namespace SpagettiMetoden
             //  foreach antall fisker som blir sendt ut
             //  Velg en random posisjon
             //  if randomposisjon.distanse > startposisjon.distanse fra capture.position
-            //  30% sannsynlighet for � velge denne
+            //  30% sannsynlighet for å velge denne
             //  else
-            //  70% sannsynlighet  for � velge denne
+            //  70% sannsynlighet  for å velge denne
             //  if ikke velger denne posisjonen
             //  Velg ny random
             //        
-            //  Lagre lat lon, temp for fisk og dybde for fisk --> Lagre temp og dybde slik at det blir lettere � modellere i 2D og 3D
+            //  Lagre lat lon, temp for fisk og dybde for fisk --> Lagre temp og dybde slik at det blir lettere å modellere i 2D og 3D
             //  foreach tagData i tagDataList
-            //  Hent ut n�v�rende posisjon
-            //  Regne ut posisjoner fisken kan dra til fra current lat lon basert p� neste m�ling i merkedata
+            //  Hent ut nåvårende posisjon
+            //  Regne ut posisjoner fisken kan dra til fra current lat lon basert på neste måling i merkedata
             //  Lagre disse i en array
             //  if array er tom ELIMINER
             // else
-            //if randomposisjon.distanse > n�v�rende.distanse fra capture.position
-            //  30% sannsynlighet for � velge denne
+            //if randomposisjon.distanse > nåvårende.distanse fra capture.position
+            //  30% sannsynlighet for å velge denne
             //  else
-            //  70% sannsynlighet  for � velge denne
+            //  70% sannsynlighet  for å velge denne
             //  if ikke velger denne posisjonen
             //  Velg ny random
             //
-            //  Lagre lat lon, temp for fisk og dybde for fisk --> Lagre temp og dybde slik at det blir lettere � modellere i 2D og 3D
-            //  Kj�r foreach p� nytt
-            //  Slutt p� foreach
+            //  Lagre lat lon, temp for fisk og dybde for fisk --> Lagre temp og dybde slik at det blir lettere å modellere i 2D og 3D
+            //  Kjår foreach på nytt
+            //  Slutt på foreach
 
 
-            //Bruke release lat lon til � finne eta_rho og xi_rho
+            //Bruke release lat lon til å finne eta_rho og xi_rho
 
 
 
 
-            //Kalkulerer for en fisk for �yeblikket for release lat og lon
+            //Kalkulerer for en fisk for åyeblikket for release lat og lon
 
             /*
              * positionData.depth = extractDataFromEtaAndXi.getDepth(positionData.eta_rho, positionData.xi_rho, ds["h"].GetData());
@@ -251,7 +263,7 @@ namespace SpagettiMetoden
 
             //FishList["742"].PositionDataList[0].Add(positionData);
 
-            //Slutten p� foreach
+            //Slutten på foreach
 
             /*
             Console.WriteLine(FishList["742"].PositionDataList[0].lat);

@@ -12,17 +12,23 @@ namespace SpagettiMetoden
         public Array lonArray { get; set;}
         //public Array ocean_time { get; set;}
         public Array depthArray { get; set;}
+        public bool initialized { get; set; }
 
         public HeatMap(string year, string month)
         {
             this.year = year;
             this.month = month;
-            ds = DataSet.Open(@"E:\VarmeModell\ocean_avg_" + year + month + "01.nc");
-            Console.WriteLine(@"E:\VarmeModell\ocean_avg_" + year + month + "01.nc");
+            ds = DataSet.Open(@"C:\NCdata\VarmeModell\ocean_avg_" + year + month + "01.nc");
+            Console.WriteLine(@"C:\NCdata\VarmeModell\ocean_avg_" + year + month + "01.nc");
             latArray = ds["lat_rho"].GetData();
             lonArray = ds["lon_rho"].GetData();
             //Array ocean_time = ds["ocean_time"].GetData();
             depthArray = ds["h"].GetData();
+            initialized = true;
+        }
+        public HeatMap()
+        {
+            initialized = false;
         }
     }
 }

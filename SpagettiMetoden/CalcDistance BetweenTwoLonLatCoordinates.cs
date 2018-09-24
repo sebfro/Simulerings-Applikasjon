@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SpagettiMetoden
 {
@@ -26,7 +27,7 @@ namespace SpagettiMetoden
         {
             return deg * (Math.PI / 180);
         }
-        //speed er i km og time er timer
+        //speed er i km og time er timer. OBS!! Deprecated (kanskje)
         public LatLon[] calculatePossibleLatLon(double lat, double lon, double speed, int time)
         {
 
@@ -47,44 +48,76 @@ namespace SpagettiMetoden
                 latLonArray[i] = new LatLon(180 / Math.PI * lat2, 180 / Math.PI * lon2);
                 bearing += 45;
             }
-
             return latLonArray;
+        }
 
+        public EtaXi[] calculatePossibleEtaXi(int eta, int xi)
+        {
+            int increment = 5;
+            int increment2 = 2;
+
+            EtaXi[] etaXis = new EtaXi[17] {
+                new EtaXi(eta+increment, xi-increment),
+                new EtaXi(eta+increment, xi),
+                new EtaXi(eta+increment, xi+increment),
+                new EtaXi(eta, xi-increment),
+                new EtaXi(eta-increment, xi-increment),
+                new EtaXi(eta-increment, xi),
+                new EtaXi(eta-increment, xi+increment),
+                new EtaXi(eta, xi+increment),
+                new EtaXi(eta, xi),
+                new EtaXi(eta+increment2, xi-increment2),
+                new EtaXi(eta+increment2, xi),
+                new EtaXi(eta+increment2, xi+increment2),
+                new EtaXi(eta, xi-increment2),
+                new EtaXi(eta-increment2, xi-increment2),
+                new EtaXi(eta-increment2, xi),
+                new EtaXi(eta-increment2, xi+increment2),
+                new EtaXi(eta, xi+increment2)};
+
+            return etaXis.Where(etaXi => etaXi.valid).ToArray();
 
         }
 
-        public List<PositionData> FindValidLatLons(LatLon[] latLon, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
+        public List<PositionData> FindValidLatLons(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             List<PositionData> positionDataList = new List<PositionData>();
             ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
             CallPython callPython = new CallPython();
+            PositionData positionData = new PositionData();
             
-            for (int i = 0; i < latLon.Length; i++)
+            for (int i = 0; i < etaXis.Length; i++)
             {
-                PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latDataArray, lonDataArray, latLon[i].lat,
-                    latLon[i].lon);
-                positionData.depth = extractDataFromEtaAndXi.getDepth(positionData.eta_rho, positionData.xi_rho, depthArray);
-                DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(positionData.eta_rho, positionData.xi_rho, tagData.depth, Z_Array);
+                //PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latDataArray, lonDataArray, latLon[i].lat,
+                //    latLon[i].lon);
+                positionData.depth = extractDataFromEtaAndXi.getDepth(etaXis[i].eta_rho, etaXis[i].xi_rho, depthArray);
+                DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.depth, Z_Array);
                 if(depthData.valid && (positionData.depth - (-tagData.depth)) > 0)
                 {
                     //Console.WriteLine("s_rho: " + depthData.z_rho);
 
-                    var watch = Stopwatch.StartNew();
+                    //var watch = Stopwatch.StartNew();
 
-                    positionData.temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tagData.year, tagData.month);
+                    positionData.temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.year, tagData.month);
 
-                    watch.Stop();
+                    /*
+                     * watch.Stop();
                     double elapsedMs = watch.ElapsedMilliseconds;
                     Console.WriteLine("Hvor lang tid tok det å hente temp med python: " + elapsedMs);
+                     */
 
                     //positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
 
                     //Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
 
-                    if (Math.Abs(positionData.temp - tagData.temp) < 2)
+                    if (Math.Abs(positionData.temp - tagData.temp) < 3.5)
                     {
                         //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
+                        positionData.eta_rho = etaXis[i].eta_rho;
+                        positionData.xi_rho = etaXis[i].xi_rho;
+                        positionData.lat = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, latDataArray);
+                        positionData.lon = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, lonDataArray);
                         positionDataList.Add(positionData);
                     }
                 }
@@ -93,6 +126,21 @@ namespace SpagettiMetoden
             return positionDataList;
         }
         
+    }
+
+    class EtaXi
+    {
+        public int eta_rho { get; set; }
+        public int xi_rho { get; set; }
+        public bool valid { get; set; }
+
+        public EtaXi(int eta, int xi)
+        {
+            valid = eta <= GlobalVariables.eta_rho_size && eta >= 0 && xi <= GlobalVariables.xi_rho_size && xi >= 0;
+            eta_rho = eta;
+            xi_rho = xi;
+        }
+        public EtaXi() { }
     }
 
     class LatLon
