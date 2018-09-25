@@ -1,13 +1,22 @@
 using Microsoft.Research.Science.Data;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
+using MathNet.Numerics.Statistics;
 
 namespace SpagettiMetoden
 {
     class Program
     {
+        private readonly object randomLock = new object();
+        private static readonly ThreadLocal<Random> ThreadSafeRandom
+            = new ThreadLocal<Random>(() => new Random());
+
         static void Main(string[] args)
         {
             ReadFromFile file = new ReadFromFile();
@@ -29,34 +38,38 @@ namespace SpagettiMetoden
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
 
-
-            //Dette er første koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
-            //Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
+            
 
 
-            //Regne ut posisjoner fisken kan dra til fra release lat lon basert pø den første målingen i merkedata
-            //Lagre disse i en array
-
-            //Returnerer 360 lat lon verdier, 1 for hver vinkel
 
 
-            /*
-             * LatLon[] latLons =
-                calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
-             */
+        //Dette er første koordinat til alle fisker som blir sluppet ut i tilfeldige retninger fra denne koordinaten
+        //Console.WriteLine("Lat: " + FishList["742"].releaseLat + ", Lon: " + FishList["742"].releaseLon);
 
-            Random random = new Random();
+
+        //Regne ut posisjoner fisken kan dra til fra release lat lon basert pø den første målingen i merkedata
+        //Lagre disse i en array
+
+        //Returnerer 360 lat lon verdier, 1 for hver vinkel
+
+
+        /*
+         * LatLon[] latLons =
+            calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
+         */
+
+        Random random = new Random();
             int randInt = 0;
            
             int counter = 0;
 
             HeatMap heatMap = new HeatMap();
             EtaXi[] etaXis = new EtaXi[0];
-            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=500)
+            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
             {
                 var watch = Stopwatch.StartNew();
-                Console.WriteLine("I iterasjon: " + i / 500);
-                bool chosenPosition = false;
+                Console.WriteLine("I iterasjon: " + i / 1000);
+                bool chosenPosition;
                 double randDouble = 0.0;
                 double originalPosition = 0.0;
                 double newPosition = 0.0;
@@ -73,19 +86,21 @@ namespace SpagettiMetoden
                 {
                     PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
                     etaXis = calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho);
+
                     //LatLon[] latLons =
                     //calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(FishList["742"].releaseLat, FishList["742"].releaseLon, 20, 1);
 
-                    List<PositionData> validPositionsDataList =
-                        calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(etaXis, heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array);
+                    BlockingCollection<PositionData> validPositionsDataList =
+                        calcDistanceBetweenTwoLonLatCoordinates.FindValidPositions(etaXis, heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array);
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
-                        //Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 500);
+                        chosenPosition = false;
+                        //Console.WriteLine("Fisk nr: " + j + " , i iterasjon: " + i / 1000);
                         if (validPositionsDataList.Count > 0)
                         {
                             FishList["742"].FishRouteList.Add(new FishRoute("742"));
-                            FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(FishList["742"].releaseLat,
+                            FishList["742"].FishRouteList.ElementAt(j).PositionDataList.Add((new PositionData(FishList["742"].releaseLat,
                                 FishList["742"].releaseLon)));
 
 
@@ -93,11 +108,11 @@ namespace SpagettiMetoden
                                 FishList["742"].releaseLon, FishList["742"].captureLat, FishList["742"].captureLon);
 
                             chosenPositionCounter = 0;
-                            while(!chosenPosition && (chosenPositionCounter < 2)) {
+                            while(!chosenPosition) {
                                 randDouble = random.NextDouble();
                                 randInt = random.Next(validPositionsDataList.Count);
-                                newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(validPositionsDataList[randInt].lat,
-                                    validPositionsDataList[randInt].lon, FishList["742"].captureLat, FishList["742"].captureLon);
+                                newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(validPositionsDataList.ElementAt(randInt).lat,
+                                    validPositionsDataList.ElementAt(randInt).lon, FishList["742"].captureLat, FishList["742"].captureLon);
                                 
                                 
                                 if(newPosition <= originalPosition && randDouble <= 0.7) {
@@ -108,10 +123,10 @@ namespace SpagettiMetoden
                                 chosenPositionCounter++;
                             }
 
-                            FishList["742"].FishRouteList[j].PositionDataList.Add((new PositionData(
-                                validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon,
-                                validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, FishList["742"].tagDataList[i].depth,
-                                FishList["742"].tagDataList[i].temp, validPositionsDataList[randInt].eta_rho, validPositionsDataList[randInt].xi_rho)));
+                            FishList["742"].FishRouteList.ElementAt(j).PositionDataList.Add((new PositionData(
+                                validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon,
+                                validPositionsDataList.ElementAt(randInt).depth, validPositionsDataList.ElementAt(randInt).temp, FishList["742"].tagDataList[i].depth,
+                                FishList["742"].tagDataList[i].temp, validPositionsDataList.ElementAt(randInt).eta_rho, validPositionsDataList.ElementAt(randInt).xi_rho)));
                         }
                         else
                         {
@@ -119,79 +134,88 @@ namespace SpagettiMetoden
                             return;
                         }
                     }
-
-
-                    foreach (var p in validPositionsDataList)
-                    {
-                        //Console.WriteLine("Lat: " + p.lat + ", lon: " + p.lon);
-                       // Console.WriteLine("eta: " + p.eta_rho + ", xi: " + p.xi_rho);
-                    }
-                   // System.Console.ReadLine();
-
                     counter = 2;
                 }
                 else
                 {
-                    List<FishRoute> fishRoutes = FishList["742"].FishRouteList;
+                    BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].tagDataList[i];
-                    for (int j = 0; j < GlobalVariables.releasedFish; j++)
+
+                    Parallel.ForEach(fishRoutes, (fishRoute) =>
                     {
-                        //Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 500);
-                        FishRoute fishRoute = fishRoutes[j];
+                        lock (new Program().randomLock)
+                        {
+                            
 
-                            if(fishRoute.alive)
+                        chosenPosition = false;
+
+
+                        //Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 1000);
+                        //FishRoute fishRoute = fishRoutes[j];
+
+                        if (fishRoute.alive)
+                        {
+                            PositionData pData = fishRoute.PositionDataList[counter - 1];
+                            //LatLon[] latLons =
+                            //    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 10, 167);
+
+                            etaXis = calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho,
+                                pData.xi_rho);
+                            BlockingCollection<PositionData> validPositionsDataList =
+                                calcDistanceBetweenTwoLonLatCoordinates.FindValidPositions(etaXis, heatMap.latArray,
+                                    heatMap.lonArray, tagData, heatMap.depthArray, Z_Array);
+
+                            if (validPositionsDataList.Count > 0)
                             {
-                                PositionData pData = fishRoute.PositionDataList[counter - 1];
-                                //LatLon[] latLons =
-                                //    calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleLatLon(pData.lat, pData.lon, 10, 167);
-
-                                etaXis = calcDistanceBetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
-                                List<PositionData> validPositionsDataList =
-                                    calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(etaXis, heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array);
-
-                                if (validPositionsDataList.Count > 0)
-                                {
-                                    originalPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(pData.lat,
-                                        pData.lon, FishList["742"].captureLat, FishList["742"].captureLon);
-
-                                chosenPositionCounter = 0;
-                                    while (!chosenPosition && (chosenPositionCounter < 2))
-                                    {
-                                    randDouble = random.NextDouble();
-                                        randInt = random.Next(validPositionsDataList.Count);
-                                        newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(validPositionsDataList[randInt].lat,
-                                            validPositionsDataList[randInt].lon, FishList["742"].captureLat, FishList["742"].captureLon);
+                                originalPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(
+                                    pData.lat,
+                                    pData.lon, FishList["742"].captureLat, FishList["742"].captureLon);
                                 
-                                        if(newPosition <= originalPosition && randDouble <= 0.7) {
-                                            chosenPosition = true;
-                                        } else if(newPosition >= originalPosition && randDouble >= 0.7) {
-                                            chosenPosition = true;
-                                        }
-                                    }
-
-
-
-                                    randInt = random.Next(validPositionsDataList.Count);
-                                    fishRoutes[j].PositionDataList.Add((new PositionData(validPositionsDataList[randInt].lat, validPositionsDataList[randInt].lon,
-                                        validPositionsDataList[randInt].depth, validPositionsDataList[randInt].temp, tagData.depth, tagData.temp,
-                                        validPositionsDataList[randInt].eta_rho, validPositionsDataList[randInt].xi_rho)));
-                                }
-                                else
+                                while (!chosenPosition)
                                 {
-                                    fishRoute.commitNotAlive();
-                                Console.WriteLine("Fisk nr: " + j + ", i iterasjon: " + i / 500 + " ELIMINERT");
+                                    randDouble = ThreadSafeRandom.Value.NextDouble();
+                                    randInt = ThreadSafeRandom.Value.Next(0, validPositionsDataList.Count);
+                                    newPosition = calcDistanceBetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(
+                                        validPositionsDataList.ElementAt(randInt).lat,
+                                        validPositionsDataList.ElementAt(randInt).lon, FishList["742"].captureLat,
+                                        FishList["742"].captureLon);
+
+                                    if (newPosition <= originalPosition && randDouble <= 0.7)
+                                    {
+                                        chosenPosition = true;
+                                    }
+                                    else if (newPosition >= originalPosition && randDouble >= 0.7)
+                                    {
+                                        chosenPosition = true;
+                                    }
+                                }
+
+                                fishRoute.PositionDataList.Add((new PositionData(
+                                    validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon,
+                                    validPositionsDataList.ElementAt(randInt).depth, validPositionsDataList.ElementAt(randInt).temp,
+                                    tagData.depth, tagData.temp,
+                                    validPositionsDataList.ElementAt(randInt).eta_rho, validPositionsDataList.ElementAt(randInt).xi_rho)));
+                            }
+                            
+                            else
+                            {
+                                fishRoute.commitNotAlive();
+                                Console.WriteLine("I iterasjon: " + i / 1000 + " ELIMINERT");
+                                Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
                                 Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
                                 Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
-                                }
                             }
+                        }
 
-                    }
+                        }
+                    });
+                    
                     
                     counter++;
                 }
                 watch.Stop();
                 double elapsedMs = watch.ElapsedMilliseconds;
-                Console.WriteLine("Hvor lang tid tok interasjon " + i + ": " + elapsedMs);
+                Console.WriteLine("Hvor lang tid tok interasjon " + i / 1000 + ": " + elapsedMs);
 
             }
             var count = 1;
@@ -210,7 +234,7 @@ namespace SpagettiMetoden
             
             /*
              * List<PositionData> positionDataList =
-                calcDistanceBetweenTwoLonLatCoordinates.FindValidLatLons(latLons, latArray, lonArray);
+                calcDistanceBetweenTwoLonLatCoordinates.FindValidPositions(latLons, latArray, lonArray);
              */
 
 

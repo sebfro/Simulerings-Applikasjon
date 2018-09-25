@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SpagettiMetoden
         {
             string line;
 
-            StreamReader file = new StreamReader(@"C:\NCdata\Merkedata\DataOversiktTekst.txt");
+            StreamReader file = new StreamReader(@"E:\Merkedata\DataOversiktTekst.txt");
             while ((line = file.ReadLine()) != null)
             {
                 string[] strArray;
@@ -29,7 +30,7 @@ namespace SpagettiMetoden
         public void readTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
         {
             //Mappe strukturen er annerledes på HVL pc-en, fiks det slik at den er slik som den er under.
-            const string DIRECTORY_PATH = @"C:\NCdata\Merkedata\Final_DST\10min_Sampling\Sampling_10min_2000s_Files\";
+            const string DIRECTORY_PATH = @"E:\Merkedata\Final_DST\10min_Sampling\Sampling_10min_2000s_Files\";
 
             foreach (string id in KeyList)
             {

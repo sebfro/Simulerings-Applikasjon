@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -75,31 +76,36 @@ namespace SpagettiMetoden
                 new EtaXi(eta-increment2, xi+increment2),
                 new EtaXi(eta, xi+increment2)};
 
-            return etaXis.Where(etaXi => etaXi.valid).ToArray();
+            return etaXis.Where(etaXi => etaXi.valid).ToArray();;
 
         }
 
-        public List<PositionData> FindValidLatLons(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
+        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
-            List<PositionData> positionDataList = new List<PositionData>();
+            BlockingCollection<PositionData> positionDataList = new BlockingCollection<PositionData>();
             ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
             CallPython callPython = new CallPython();
             PositionData positionData = new PositionData();
+            double depth = 0.0;
+            double temp = 0.0;
+            double lat = 0.0;
+            double lon = 0.0;
             
             for (int i = 0; i < etaXis.Length; i++)
             {
+                
                 //PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latDataArray, lonDataArray, latLon[i].lat,
                 //    latLon[i].lon);
-                positionData.depth = extractDataFromEtaAndXi.getDepth(etaXis[i].eta_rho, etaXis[i].xi_rho, depthArray);
+                depth = extractDataFromEtaAndXi.getDepth(etaXis[i].eta_rho, etaXis[i].xi_rho, depthArray);
                 DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.depth, Z_Array);
-                if(depthData.valid && (positionData.depth - (-tagData.depth)) > 0)
+                if(depthData.valid && (depth - (-tagData.depth)) > 0)
                 {
                     //Console.WriteLine("s_rho: " + depthData.z_rho);
 
                     //var watch = Stopwatch.StartNew();
 
-                    positionData.temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.year, tagData.month);
+                    temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.year, tagData.month);
 
                     /*
                      * watch.Stop();
@@ -111,18 +117,17 @@ namespace SpagettiMetoden
 
                     //Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
 
-                    if (Math.Abs(positionData.temp - tagData.temp) < 3.5)
+                    if (Math.Abs(temp - tagData.temp) < 5)
                     {
                         //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
-                        positionData.eta_rho = etaXis[i].eta_rho;
-                        positionData.xi_rho = etaXis[i].xi_rho;
-                        positionData.lat = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, latDataArray);
-                        positionData.lon = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, lonDataArray);
-                        positionDataList.Add(positionData);
+               
+                        lat = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, latDataArray);
+                        lon = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, lonDataArray);
+                        
+                        positionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].eta_rho, etaXis[i].xi_rho));
                     }
                 }
             }
-
             return positionDataList;
         }
         

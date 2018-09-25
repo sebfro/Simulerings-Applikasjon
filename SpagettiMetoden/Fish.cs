@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace SpagettiMetoden
@@ -13,7 +14,7 @@ namespace SpagettiMetoden
         public double captureLat { get; set; }
         public double captureLon { get; set; }
         public List<TagData> tagDataList { get; set; }
-        public List<FishRoute> FishRouteList { get; set; }
+        public BlockingCollection<FishRoute> FishRouteList { get; set; }
 
 
         public Fish(string id, string releaseDate, string captureDate, string releaseLatLon, string captureLatLon)
@@ -26,7 +27,7 @@ namespace SpagettiMetoden
             captureLat = stringToDoubleLat(captureLatLon);
             captureLon = stringToDoubleLon(captureLatLon);
             tagDataList = new List<TagData>();
-            FishRouteList = new List<FishRoute>();
+            FishRouteList = new BlockingCollection<FishRoute>();
         }
 
         public double stringToDoubleLat(string latAndLon)
