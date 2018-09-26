@@ -14,7 +14,7 @@ namespace SpagettiMetoden
         {
             string line;
 
-            StreamReader file = new StreamReader(@"E:\Merkedata\DataOversiktTekst.txt");
+            StreamReader file = new StreamReader(GlobalVariables.pathToNcTagData + "DataOversiktTekst.txt");
             while ((line = file.ReadLine()) != null)
             {
                 string[] strArray;
@@ -29,12 +29,9 @@ namespace SpagettiMetoden
 
         public void readTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
         {
-            //Mappe strukturen er annerledes på HVL pc-en, fiks det slik at den er slik som den er under.
-            const string DIRECTORY_PATH = @"E:\Merkedata\Final_DST\10min_Sampling\Sampling_10min_2000s_Files\";
-
             foreach (string id in KeyList)
             {
-                string tagFileName = Directory.GetFiles(DIRECTORY_PATH, "Tag" + id + "asc.DATA")[0];
+                string tagFileName = Directory.GetFiles(GlobalVariables.pathToNcTagData + @"Final_DST\10min_Sampling\Sampling_10min_2000s_Files\", "Tag" + id + "asc.DATA")[0];
                 if (tagFileName != null)
                 {
                     List<TagData> tagDataArray = new List<TagData>();

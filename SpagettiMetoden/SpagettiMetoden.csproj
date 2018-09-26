@@ -60,6 +60,7 @@
     <Compile Include="ReadFromFile.cs" />
     <Compile Include="TagData.cs" />
     <Compile Include="CallPython.cs" />
+    <Compile Include="RouteChooser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

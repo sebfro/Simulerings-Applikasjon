@@ -13,10 +13,10 @@ namespace SpagettiMetoden
         public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string year, string month)
         {
             // full path of python interpreter 
-            string python = @"C:\Users\Torbastian\AppData\Local\Programs\Python\Python37\python.exe";
+            string python = @"C:\python\python.exe";
 
             // python app to call 
-            string myPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";            
+            string myPythonApp = @"C:\Users\a22001\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";            
 
             // Create new process start info 
             ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(python);

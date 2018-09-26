@@ -9,7 +9,7 @@ namespace SpagettiMetoden
         public const int Xi_Rho = 1202;
         public const double Delta = 0.1;
 
-        public PositionData GeneratePositionDataArrayList(Array latDataSet, Array lonDataSet, double lat, double lon)
+        public static PositionData GeneratePositionDataArrayList(Array latDataSet, Array lonDataSet, double lat, double lon)
         {
             
             ArrayList potentialPositionArray = new ArrayList();
@@ -28,7 +28,7 @@ namespace SpagettiMetoden
             return ConvertLatAndLonToEtaAndXi(potentialPositionArray, lat, lon);
         }
 
-        public PositionData ConvertLatAndLonToEtaAndXi(ArrayList potentialPositionsArrayList, double lat, double lon)
+        public static PositionData ConvertLatAndLonToEtaAndXi(ArrayList potentialPositionsArrayList, double lat, double lon)
         {
             double minDelta = 0;
             bool deltaHasBeenSet = false;

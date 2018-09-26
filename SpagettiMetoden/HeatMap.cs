@@ -18,8 +18,8 @@ namespace SpagettiMetoden
         {
             this.year = year;
             this.month = month;
-            ds = DataSet.Open(@"E:\VarmeModell\ocean_avg_" + year + month + "01.nc");
-            Console.WriteLine(@"E:\VarmeModell\ocean_avg_" + year + month + "01.nc");
+            ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps + year + month + "01.nc");
+            Console.WriteLine(GlobalVariables.pathToNcHeatMaps + year + month + "01.nc");
             latArray = ds["lat_rho"].GetData();
             lonArray = ds["lon_rho"].GetData();
             //Array ocean_time = ds["ocean_time"].GetData();

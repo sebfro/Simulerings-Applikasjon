@@ -9,7 +9,7 @@ namespace SpagettiMetoden
     class CalcDistance_BetweenTwoLonLatCoordinates
     {
         //Gir i km
-        public double getDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double lon2)
+        public static double getDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double lon2)
         {
             var R = 6371; // Radius of the earth in km
             var dLat = deg2rad(lat2 - lat1);  // deg2rad below
@@ -24,12 +24,12 @@ namespace SpagettiMetoden
             return d;
         }
 
-        public double deg2rad(double deg)
+        public static double deg2rad(double deg)
         {
             return deg * (Math.PI / 180);
         }
         //speed er i km og time er timer. OBS!! Deprecated (kanskje)
-        public LatLon[] calculatePossibleLatLon(double lat, double lon, double speed, int time)
+        public static LatLon[] calculatePossibleLatLon(double lat, double lon, double speed, int time)
         {
 
             var distance = (speed * time); //Gir km i timen, derfor deler vi på 6 for å få for hvert tiende minutt.
@@ -52,7 +52,7 @@ namespace SpagettiMetoden
             return latLonArray;
         }
 
-        public EtaXi[] calculatePossibleEtaXi(int eta, int xi)
+        public static EtaXi[] calculatePossibleEtaXi(int eta, int xi)
         {
             int increment = 5;
             int increment2 = 2;
@@ -80,7 +80,7 @@ namespace SpagettiMetoden
 
         }
 
-        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
+        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             BlockingCollection<PositionData> positionDataList = new BlockingCollection<PositionData>();
@@ -94,35 +94,17 @@ namespace SpagettiMetoden
             
             for (int i = 0; i < etaXis.Length; i++)
             {
-                
-                //PositionData positionData = calculateXiAndEta.GeneratePositionDataArrayList(latDataArray, lonDataArray, latLon[i].lat,
-                //    latLon[i].lon);
                 depth = extractDataFromEtaAndXi.getDepth(etaXis[i].eta_rho, etaXis[i].xi_rho, depthArray);
                 DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.depth, Z_Array);
                 if(depthData.valid && (depth - (-tagData.depth)) > 0)
                 {
-                    //Console.WriteLine("s_rho: " + depthData.z_rho);
-
-                    //var watch = Stopwatch.StartNew();
-
                     temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.year, tagData.month);
-
-                    /*
-                     * watch.Stop();
-                    double elapsedMs = watch.ElapsedMilliseconds;
-                    Console.WriteLine("Hvor lang tid tok det å hente temp med python: " + elapsedMs);
-                     */
-
-                    //positionData.temp = extractDataFromEtaAndXi.getTemp(0, depthData.z_rho, positionData.eta_rho, positionData.xi_rho, tempArray);
-
-                    //Console.WriteLine("position data depth: " + positionData.depth + " , tagdata depth: " + tagData.depth + " , position data temp: " + positionData.temp + " , tag data temp: " + tagData.temp);
 
                     if (Math.Abs(temp - tagData.temp) < 5)
                     {
-                        //Console.WriteLine("Inni for-løkken sin if, Noe ble valid");
                
-                        lat = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, latDataArray);
-                        lon = extractDataFromEtaAndXi.getLatorLon(positionData.eta_rho, positionData.xi_rho, lonDataArray);
+                        lat = extractDataFromEtaAndXi.getLatorLon(etaXis[i].eta_rho, etaXis[i].xi_rho, latDataArray);
+                        lon = extractDataFromEtaAndXi.getLatorLon(etaXis[i].eta_rho, etaXis[i].xi_rho, lonDataArray);
                         
                         positionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].eta_rho, etaXis[i].xi_rho));
                     }

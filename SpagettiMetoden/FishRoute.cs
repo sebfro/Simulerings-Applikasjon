@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace SpagettiMetoden
 {
@@ -6,13 +7,13 @@ namespace SpagettiMetoden
     {
         public string id { get; set; }
         public bool alive { get; set; }
-        public List<PositionData> PositionDataList { get; set; }
+        public BlockingCollection<PositionData> PositionDataList { get; set; }
 
         public FishRoute(string id)
         {
             this.id = id;
             alive = true;
-            PositionDataList = new List<PositionData>();
+            PositionDataList = new BlockingCollection<PositionData>();
         }
         //Mord fisken, lurte du virkelig?
         public void commitNotAlive()
