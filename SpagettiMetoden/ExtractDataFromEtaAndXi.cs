@@ -11,9 +11,9 @@ namespace SpagettiMetoden
             return (double)depthArray.GetValue(eta_rho, xi_rho);
         }
 
-        public double getLatorLon(int eta_rho, int xi_rho, Array latorLonArray)
+        public double getLatOrLon(int eta_rho, int xi_rho, Array latOrLonArray)
         {
-            return (double)latorLonArray.GetValue(eta_rho, xi_rho);
+            return (double)latOrLonArray.GetValue(eta_rho, xi_rho);
         }
 
         public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, Array Z_Array)

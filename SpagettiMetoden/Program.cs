@@ -18,23 +18,46 @@ namespace SpagettiMetoden
         {
             ReadFromFile file = new ReadFromFile();
 
-
             Dictionary<string, Fish> FishList = new Dictionary<string, Fish>();
             List<string> KeyList = new List<string>();
 
-            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps + "20030801.nc");
+            //DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps + "20030801.nc");
+            /*
+            DataSet ds = DataSet.Open(@"I:\VarmeModell\norkyst_800m_avg.nc");
 
+            var latArray = ds["lat_rho"].GetData();
+            var lonArray = ds["lon_rho"].GetData();
+            var temp = ds["temp"].GetData();
+            var vTransformArray = ds["Vtransform"].GetData();
+            Console.WriteLine(vTransformArray.GetValue(0));
+            var vStretchingArray = ds["Vstretching"].GetData();
+            var theta_s = ds["theta_s"].GetData();
+            var theta_b = ds["theta_b"].GetData();
+            var Tcline = ds["Tcline"].GetData();
+
+            
+
+            Console.WriteLine("theta_s: {0}, theta_b: {1}, Tcline: {2}", theta_s.GetValue(0), theta_b.GetValue(0), Tcline.GetValue(0));
+            foreach(var v in temp)
+            {
+                Console.WriteLine(v);
+            }
+
+            Console.WriteLine("Success");
+            Console.ReadLine();
+            */
             DataSet dsOfZ = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NS4MI_Z.nc");
             Array Z_Array = dsOfZ["Z"].GetData();
 
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
-                        
            
             int counter = 0;
 
             HeatMap heatMap = new HeatMap();
             EtaXi[] etaXis = new EtaXi[0];
+            int day = 27;
+
             for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
             {
                 int randInt = 0;
@@ -42,6 +65,7 @@ namespace SpagettiMetoden
                 Console.WriteLine("I iterasjon: " + i / 1000);
                 bool chosenPosition;
 
+                /*
                 //heatMap month og year er ikke inistialisert, sjekk om det ødelegger
                 if (FishList["742"].tagDataList[i].month != heatMap.month ||
                     FishList["742"].tagDataList[i].year != heatMap.year || !heatMap.initialized)
@@ -49,15 +73,15 @@ namespace SpagettiMetoden
                     Console.WriteLine("Fishlist month: " + FishList["742"].tagDataList[i].month + "heatMap month: " + heatMap.month + " Fishlist year: " + FishList["742"].tagDataList[i].year + " heatMap year: " + heatMap.year);
                     heatMap = new HeatMap(FishList["742"].tagDataList[i].year, FishList["742"].tagDataList[i].month);
                 }
+                */
 
                 if (i == 0)
                 {
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
                     
-
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho), 
-                        heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array);
+                        heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array, day);
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
@@ -88,7 +112,6 @@ namespace SpagettiMetoden
                         else
                         {
                             Console.WriteLine("No possible positions found");
-                            return;
                         }
                     }
                     counter = 2;
@@ -108,8 +131,7 @@ namespace SpagettiMetoden
 
                             BlockingCollection<PositionData> validPositionsDataList =
                                 CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho,
-                                pData.xi_rho), heatMap.latArray,
-                                    heatMap.lonArray, tagData, heatMap.depthArray, Z_Array);
+                                pData.xi_rho), heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array, day);
 
                             if (validPositionsDataList.Count > 0)
                             {
@@ -141,6 +163,7 @@ namespace SpagettiMetoden
                     
                     counter++;
                 }
+                day += 7;
                 watch.Stop();
                 double elapsedMs = watch.ElapsedMilliseconds;
                 Console.WriteLine("Hvor lang tid tok interasjon " + i / 1000 + ": " + elapsedMs);
@@ -163,3 +186,4 @@ namespace SpagettiMetoden
         }
     }
 }  
+   

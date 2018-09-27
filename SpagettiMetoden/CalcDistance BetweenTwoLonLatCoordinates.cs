@@ -28,29 +28,7 @@ namespace SpagettiMetoden
         {
             return deg * (Math.PI / 180);
         }
-        //speed er i km og time er timer. OBS!! Deprecated (kanskje)
-        public static LatLon[] calculatePossibleLatLon(double lat, double lon, double speed, int time)
-        {
-
-            var distance = (speed * time); //Gir km i timen, derfor deler vi på 6 for å få for hvert tiende minutt.
-            int radius = 6371;            //Earth radius in Km
-
-            int size = 8;
-            LatLon[] latLonArray = new LatLon[size];
-            int bearing = 0;
-            for (int i = 0; i < size; i++)
-            {
-                var lat2 = Math.Asin(Math.Sin(Math.PI / 180 * lat) * Math.Cos(distance / radius) +
-                                     Math.Cos(Math.PI / 180 * lat) * Math.Sin(distance / radius) * Math.Cos(Math.PI / 180 * bearing));
-                var lon2 = Math.PI / 180 * lon + Math.Atan2(
-                               Math.Sin(Math.PI / 180 * bearing) * Math.Sin(distance / radius) * Math.Cos(Math.PI / 180 * lat),
-                               Math.Cos(distance / radius) - Math.Sin(Math.PI / 180 * lat) * Math.Sin(lat2));
-
-                latLonArray[i] = new LatLon(180 / Math.PI * lat2, 180 / Math.PI * lon2);
-                bearing += 45;
-            }
-            return latLonArray;
-        }
+        
 
         public static EtaXi[] calculatePossibleEtaXi(int eta, int xi)
         {
@@ -80,7 +58,7 @@ namespace SpagettiMetoden
 
         }
 
-        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array)
+        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array, int day)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             BlockingCollection<PositionData> positionDataList = new BlockingCollection<PositionData>();
@@ -98,13 +76,13 @@ namespace SpagettiMetoden
                 DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.depth, Z_Array);
                 if(depthData.valid && (depth - (-tagData.depth)) > 0)
                 {
-                    temp = callPython.getTempFromOceanAvg(int.Parse(tagData.day), depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.year, tagData.month);
+                    temp = callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
 
                     if (Math.Abs(temp - tagData.temp) < 5)
                     {
                
-                        lat = extractDataFromEtaAndXi.getLatorLon(etaXis[i].eta_rho, etaXis[i].xi_rho, latDataArray);
-                        lon = extractDataFromEtaAndXi.getLatorLon(etaXis[i].eta_rho, etaXis[i].xi_rho, lonDataArray);
+                        lat = extractDataFromEtaAndXi.getLatOrLon(etaXis[i].eta_rho, etaXis[i].xi_rho, latDataArray);
+                        lon = extractDataFromEtaAndXi.getLatOrLon(etaXis[i].eta_rho, etaXis[i].xi_rho, lonDataArray);
                         
                         positionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].eta_rho, etaXis[i].xi_rho));
                     }
@@ -128,17 +106,5 @@ namespace SpagettiMetoden
             xi_rho = xi;
         }
         public EtaXi() { }
-    }
-
-    class LatLon
-    {
-        public double lat { get; set; }
-        public double lon { get; set; }
-
-        public LatLon(double lat, double lon)
-        {
-            this.lat = lat;
-            this.lon = lon;
-        }
     }
 }
