@@ -8,12 +8,13 @@ namespace SpagettiMetoden
         
         public double getDepth(int eta_rho, int xi_rho, Array depthArray)
         {
-            return (double)depthArray.GetValue(eta_rho, xi_rho);
+
+            return (double)depthArray.GetValue(eta_rho-1, xi_rho-1);
         }
 
         public double getLatOrLon(int eta_rho, int xi_rho, Array latOrLonArray)
         {
-            return (double)latOrLonArray.GetValue(eta_rho, xi_rho);
+            return (double)latOrLonArray.GetValue(eta_rho-1, xi_rho-1);
         }
 
         public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, Array Z_Array)
@@ -26,7 +27,7 @@ namespace SpagettiMetoden
 
             for (int k = 0; k < GlobalVariables.Z_rho_size; k++)
             {
-                double depthFromZ_rho = (double)Z_Array.GetValue(k, eta_rho, xi_rho);
+                double depthFromZ_rho = (double)Z_Array.GetValue(k, eta_rho-1, xi_rho-1);
                 
                 if (Math.Abs (depthFromZ_rho - tagDataDepth) < deltaDepth)
                 {

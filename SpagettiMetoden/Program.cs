@@ -46,7 +46,7 @@ namespace SpagettiMetoden
             Console.WriteLine("Success");
             Console.ReadLine();
             */
-            DataSet dsOfZ = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NS4MI_Z.nc");
+            DataSet dsOfZ = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc");
             Array Z_Array = dsOfZ["Z"].GetData();
 
             file.readReleaseAndCapture(FishList, KeyList);
@@ -57,12 +57,13 @@ namespace SpagettiMetoden
             HeatMap heatMap = new HeatMap();
             EtaXi[] etaXis = new EtaXi[0];
             int day = 27;
+            int tagStep = 500;
 
-            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=1000)
+            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=tagStep)
             {
-                int randInt = 0;
+                
                 var watch = Stopwatch.StartNew();
-                Console.WriteLine("I iterasjon: " + i / 1000);
+                Console.WriteLine("I iterasjon: " + i / tagStep);
                 bool chosenPosition;
 
                 /*
@@ -77,6 +78,7 @@ namespace SpagettiMetoden
 
                 if (i == 0)
                 {
+                    int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
                     
                     BlockingCollection<PositionData> validPositionsDataList =
@@ -106,7 +108,7 @@ namespace SpagettiMetoden
                                 validPositionsDataList.ElementAt(randInt).depth, validPositionsDataList.ElementAt(randInt).temp, FishList["742"].tagDataList[i].depth,
                                 FishList["742"].tagDataList[i].temp, validPositionsDataList.ElementAt(randInt).eta_rho, validPositionsDataList.ElementAt(randInt).xi_rho)));
 
-                            Console.WriteLine("New Position. Lat: {0}, lon: {1}", validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon);
+                            //Console.WriteLine("New Position. Lat: {0}, lon: {1}", validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon);
 
                         }
                         else
@@ -123,6 +125,7 @@ namespace SpagettiMetoden
 
                     Parallel.ForEach(fishRoutes, (fishRoute) =>
                     {
+                        int randInt = 0;
                         chosenPosition = false;
 
                         if (fishRoute.alive)
@@ -141,8 +144,7 @@ namespace SpagettiMetoden
                                     randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
                                     chosenPosition = routeChooser.chosenRoute(validPositionsDataList, randInt);
                                 }
-                                
-                            fishRoute.PositionDataList.Add((new PositionData(
+                                fishRoute.PositionDataList.Add((new PositionData(
                                     validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon,
                                     validPositionsDataList.ElementAt(randInt).depth, validPositionsDataList.ElementAt(randInt).temp,
                                     tagData.depth, tagData.temp,
@@ -152,7 +154,7 @@ namespace SpagettiMetoden
                             else
                             {
                                 fishRoute.commitNotAlive();
-                                Console.WriteLine("I iterasjon: " + i / 1000 + " ELIMINERT");
+                                Console.WriteLine("I iterasjon: " + i / tagStep + " ELIMINERT");
                                 Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
                                 Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
                                 Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
@@ -163,10 +165,10 @@ namespace SpagettiMetoden
                     
                     counter++;
                 }
-                day += 7;
+                day += 3;
                 watch.Stop();
                 double elapsedMs = watch.ElapsedMilliseconds;
-                Console.WriteLine("Hvor lang tid tok interasjon " + i / 1000 + ": " + elapsedMs);
+                Console.WriteLine("Hvor lang tid tok interasjon " + i / tagStep + ": " + elapsedMs);
 
             }
             var count = 1;

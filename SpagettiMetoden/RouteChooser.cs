@@ -31,8 +31,8 @@ namespace SpagettiMetoden
                                         validPositionsDataList.ElementAt(randInt).lat,
                                         validPositionsDataList.ElementAt(randInt).lon, captureLat,
                                         captureLon);
-
-            return (newDistanceFromCapture <= currDistanceFromCapture && randDouble <= 0.7 || newDistanceFromCapture >= currDistanceFromCapture && randDouble >= 0.7);
+            double weight = 0.6;
+            return (newDistanceFromCapture <= currDistanceFromCapture && randDouble <= weight || newDistanceFromCapture >= currDistanceFromCapture && randDouble >= weight);
         }
     }
 }

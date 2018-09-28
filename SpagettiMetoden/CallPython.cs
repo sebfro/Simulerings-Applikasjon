@@ -89,6 +89,10 @@ namespace SpagettiMetoden
             {
                 ocean_time--;
             }
+
+            eta_rho -= 1;
+            xi_rho -= 1;
+
             myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho;
 
             Process myProcess = new Process();

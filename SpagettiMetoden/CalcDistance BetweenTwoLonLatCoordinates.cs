@@ -32,8 +32,8 @@ namespace SpagettiMetoden
 
         public static EtaXi[] calculatePossibleEtaXi(int eta, int xi)
         {
-            int increment = 5;
-            int increment2 = 2;
+            int increment = 40;
+            int increment2 = 20;
 
             EtaXi[] etaXis = new EtaXi[17] {
                 new EtaXi(eta+increment, xi-increment),
