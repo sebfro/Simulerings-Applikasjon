@@ -5,7 +5,13 @@ namespace SpagettiMetoden
 {
     class ExtractDataFromEtaAndXi
     {
-        
+        //Sjekker om et eta og xi punkt er på land. Returnerer true hvis det er på land, false hvis punktet
+        //er i havet
+        public static bool isOnLand(int eta_rho, int xi_rho, Array mask_rhoArray)
+        {
+            return (double)mask_rhoArray.GetValue(eta_rho-1, xi_rho-1) == 0.0;
+        }
+
         public double getDepth(int eta_rho, int xi_rho, Array depthArray)
         {
 
@@ -21,15 +27,13 @@ namespace SpagettiMetoden
         {
             // the code that you want to measure comes here
             
-            double deltaDepth = 20;
-
             ArrayList potentialDepthArray = new ArrayList();
 
             for (int k = 0; k < GlobalVariables.Z_rho_size; k++)
             {
                 double depthFromZ_rho = (double)Z_Array.GetValue(k, eta_rho-1, xi_rho-1);
                 
-                if (Math.Abs (depthFromZ_rho - tagDataDepth) < deltaDepth)
+                if (Math.Abs (depthFromZ_rho - tagDataDepth) < GlobalVariables.DepthDelta)
                 {
                     potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
                 }

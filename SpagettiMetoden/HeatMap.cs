@@ -12,6 +12,9 @@ namespace SpagettiMetoden
         public Array latArray { get; set;}
         public Array lonArray { get; set;}
         public Array depthArray { get; set;}
+        //mask_rho brukes til å sjekke om et eta og xi punkt er på land eller ikke
+        //0.0 for land og 1.0 for hav
+        public Array mask_rhoArray { get; set; }
         public bool initialized { get; set; }
 
         public HeatMap()
@@ -22,6 +25,9 @@ namespace SpagettiMetoden
             Console.WriteLine(GlobalVariables.pathToNcHeatMaps);
             latArray = ds["lat_rho"].GetData();
             lonArray = ds["lon_rho"].GetData();
+            //mask_rho brukes til å sjekke om et eta og xi punkt er på land eller ikke
+            //0.0 for land og 1.0 for hav
+            mask_rhoArray = ds["mask_rho"].GetData();
             depthArray = ds["h"].GetData();
             initialized = true;
         }

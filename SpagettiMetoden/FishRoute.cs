@@ -20,7 +20,7 @@ namespace SpagettiMetoden
         {
             alive = false;
         }
-
+        /*
         public string[] fromListToString()
         {
             int counter = 1;
@@ -36,8 +36,8 @@ namespace SpagettiMetoden
 
 
         }
-
-        /*
+        */
+        
          public string[] fromListToString()
         {
             int counter = 1;
@@ -53,6 +53,6 @@ namespace SpagettiMetoden
 
 
         }
-         */
+        
     }
 }

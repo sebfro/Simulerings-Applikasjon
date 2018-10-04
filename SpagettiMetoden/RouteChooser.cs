@@ -25,24 +25,14 @@ namespace SpagettiMetoden
 
         public bool chosenRoute(BlockingCollection<PositionData> validPositionsDataList, int randInt)
         {
-            randDouble = rand.NextDouble();
+            randDouble = ThreadSafeRandom.NextDouble();
 
             double newDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(
                                         validPositionsDataList.ElementAt(randInt).lat,
                                         validPositionsDataList.ElementAt(randInt).lon, captureLat,
                                         captureLon);
-            double weight = 0.6;
-            return (newDistanceFromCapture <= currDistanceFromCapture && randDouble <= weight || newDistanceFromCapture >= currDistanceFromCapture && randDouble >= weight);
+            double weight = GlobalVariables.probability;
+            return (newDistanceFromCapture < currDistanceFromCapture && randDouble < weight || newDistanceFromCapture >= currDistanceFromCapture && randDouble >= weight);
         }
-    }
-}
-
-public static class ThreadSafeRandom
-{
-    private static Random _inst = new Random();
-
-    public static int Next(int range)
-    {
-        lock (_inst) return _inst.Next(range);
     }
 }

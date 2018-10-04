@@ -30,29 +30,29 @@ namespace SpagettiMetoden
         }
         
 
-        public static EtaXi[] calculatePossibleEtaXi(int eta, int xi)
+        public static EtaXi[] calculatePossibleEtaXi(int eta, int xi, Array mask_rhoArray)
         {
-            int increment = 40;
-            int increment2 = 20;
+            int increment = GlobalVariables.increment;
+            int increment2 = GlobalVariables.increment2;
 
             EtaXi[] etaXis = new EtaXi[17] {
-                new EtaXi(eta+increment, xi-increment),
-                new EtaXi(eta+increment, xi),
-                new EtaXi(eta+increment, xi+increment),
-                new EtaXi(eta, xi-increment),
-                new EtaXi(eta-increment, xi-increment),
-                new EtaXi(eta-increment, xi),
-                new EtaXi(eta-increment, xi+increment),
-                new EtaXi(eta, xi+increment),
-                new EtaXi(eta, xi),
-                new EtaXi(eta+increment2, xi-increment2),
-                new EtaXi(eta+increment2, xi),
-                new EtaXi(eta+increment2, xi+increment2),
-                new EtaXi(eta, xi-increment2),
-                new EtaXi(eta-increment2, xi-increment2),
-                new EtaXi(eta-increment2, xi),
-                new EtaXi(eta-increment2, xi+increment2),
-                new EtaXi(eta, xi+increment2)};
+                new EtaXi(eta+increment, xi-increment, eta, xi, mask_rhoArray),
+                new EtaXi(eta+increment, xi, eta, xi, mask_rhoArray),
+                new EtaXi(eta+increment, xi+increment, eta, xi, mask_rhoArray),
+                new EtaXi(eta, xi-increment, eta, xi, mask_rhoArray),
+                new EtaXi(eta-increment, xi-increment, eta, xi, mask_rhoArray),
+                new EtaXi(eta-increment, xi, eta, xi, mask_rhoArray),
+                new EtaXi(eta-increment, xi+increment, eta, xi, mask_rhoArray),
+                new EtaXi(eta, xi+increment, eta, xi, mask_rhoArray),
+                new EtaXi(eta, xi, eta, xi, mask_rhoArray),
+                new EtaXi(eta+increment2, xi-increment2, eta, xi, mask_rhoArray),
+                new EtaXi(eta+increment2, xi, eta, xi, mask_rhoArray),
+                new EtaXi(eta+increment2, xi+increment2, eta, xi, mask_rhoArray),
+                new EtaXi(eta, xi-increment2, eta, xi, mask_rhoArray),
+                new EtaXi(eta-increment2, xi-increment2, eta, xi, mask_rhoArray),
+                new EtaXi(eta-increment2, xi, eta, xi, mask_rhoArray),
+                new EtaXi(eta-increment2, xi+increment2, eta, xi, mask_rhoArray),
+                new EtaXi(eta, xi+increment2, eta, xi, mask_rhoArray)};
 
             return etaXis.Where(etaXi => etaXi.valid).ToArray();;
 
@@ -78,7 +78,8 @@ namespace SpagettiMetoden
                 {
                     temp = callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
 
-                    if (Math.Abs(temp - tagData.temp) < 5)
+
+                    if (Math.Abs(temp - tagData.temp) < GlobalVariables.TempDelta)
                     {
                
                         lat = extractDataFromEtaAndXi.getLatOrLon(etaXis[i].eta_rho, etaXis[i].xi_rho, latDataArray);
@@ -88,6 +89,7 @@ namespace SpagettiMetoden
                     }
                 }
             }
+
             return positionDataList;
         }
         
@@ -99,9 +101,110 @@ namespace SpagettiMetoden
         public int xi_rho { get; set; }
         public bool valid { get; set; }
 
-        public EtaXi(int eta, int xi)
+        public EtaXi(int eta, int xi, int org_eta, int org_xi, Array mask_rhoArray)
         {
             valid = eta <= GlobalVariables.eta_rho_size && eta >= 0 && xi <= GlobalVariables.xi_rho_size && xi >= 0;
+            if (valid)
+            {
+                int etaDiff = org_eta - eta;
+                int xiDiff = org_xi - xi;
+                if (etaDiff > 0 && xiDiff == 0)
+                {
+                    for (int i = 1; i < etaDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta + i, xi, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff == 0 && xiDiff > 0)
+                {
+                    for (int i = 1; i < xiDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta, xi + i, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff < 0 && xiDiff == 0)
+                {
+                    for (int i = 1; i < etaDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta - i, xi, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff == 0 && xiDiff < 0)
+                {
+                    for (int i = 1; i < xiDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta, xi - i, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff > 0 && xiDiff > 0)
+                {
+                    for (int i = 1; i < etaDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta + i, xi + i, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff < 0 && xiDiff < 0)
+                {
+                    for (int i = 1; i < etaDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta - i, xi - i, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff < 0 && xiDiff > 0)
+                {
+                    for (int i = 1; i < etaDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta - i, xi + i, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+                else if (etaDiff > 0 && xiDiff < 0)
+                {
+                    for (int i = 1; i < etaDiff; i++)
+                    {
+                        if (ExtractDataFromEtaAndXi.isOnLand(eta + i, xi - i, mask_rhoArray))
+                        {
+                            valid = false;
+                            Console.WriteLine("Path invalid");
+                            return;
+                        }
+                    }
+                }
+            }
             eta_rho = eta;
             xi_rho = xi;
         }
