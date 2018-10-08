@@ -457,44 +457,11 @@ namespace sdsutil
                 Console.WriteLine("eta: " + o.eta_rho + ", xi: " + o.xi_rho);
                 Console.WriteLine("lat: " + o.lat + ", lon: " + o.lon);
             }
-
             
 
-            /*
-            var depth = ds["h"];
-            Console.WriteLine(depth.GetData().GetValue(126, 1));
-            */
-
-
-            /*
-            var temp = ds["temp"];
-
-            Console.WriteLine(temp);
-
-            Console.WriteLine(temp.GetData().GetValue(0, 0, 126, 1));
-            */
 
 
 
-
-            /* var life = ds["life"];
-             var temp = life.Metadata;
-             Array array =life.GetData();
-
-             Console.WriteLine(array.GetValue(0, 0));
-              for(int i = 0; i < 92; i++)
-             {
-                 for(int j = 0; j < 10000; j++) {
-
-                     Console.WriteLine(i+ " " + j);
-                    // Console.WriteLine(array.GetValue(i, j));
-             }
-             }*/
-
-
-
-
-            Console.ReadLine();
 
         }
         

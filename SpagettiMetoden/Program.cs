@@ -16,6 +16,9 @@ namespace SpagettiMetoden
 
         static void Main(string[] args)
         {
+            //SimpleGPUAcceleration.startUp();
+            //Console.ReadKey();
+
             ReadFromFile file = new ReadFromFile();
 
             Dictionary<string, Fish> FishList = new Dictionary<string, Fish>();
@@ -33,14 +36,15 @@ namespace SpagettiMetoden
             int day = GlobalVariables.day;
 
             var watch = Stopwatch.StartNew();
-            for (int i = 500; i < FishList["742"].tagDataList.Count; i+=GlobalVariables.tagStep)
+            //Har prøvd å endre i fra 500 til GlobalVariables.tagStep
+            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=GlobalVariables.tagStep)
             {
                 
                 
                 Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep);
                 bool chosenPosition;
 
-                if (i == 500)
+                if (i == 0)
                 {
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
@@ -146,7 +150,7 @@ namespace SpagettiMetoden
                 {
                     string[] fishData = fishRoute.fromListToString();
 
-                    File.WriteAllLines(@"C:\NCdata\fishData\fishData" + fishRoute.id +"_" + count + ".txt", fishData);
+                    File.WriteAllLines(GlobalVariables.pathToSaveFishData + "\\" + fishRoute.id +"_" + count + ".txt", fishData);
                     count++;
                 }
             }

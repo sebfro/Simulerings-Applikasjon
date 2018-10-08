@@ -12,14 +12,8 @@ namespace SpagettiMetoden
         //Denne metoden kaller ett python script som henter ut temperatur fra ocean_avg og returnerer verdien som en double
         public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string year, string month)
         {
-            // full path of python interpreter 
-            string python = @"C:\python\python.exe";
-
-            // python app to call 
-            string myPythonApp = @"C:\Users\a22001\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";            
-
             // Create new process start info 
-            ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(python);
+            ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(GlobalVariables.pathToPythonExe);
 
             // make sure we can read the output from stdout 
             myProcessStartInfo.UseShellExecute = false;
@@ -35,7 +29,7 @@ namespace SpagettiMetoden
             {
                 ocean_time--;
             }
-            myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + year + " " + month;
+            myProcessStartInfo.Arguments = GlobalVariables.pathToPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + year + " " + month;
 
             Process myProcess = new Process();
             // assign start information to the process 
@@ -65,14 +59,9 @@ namespace SpagettiMetoden
 
         public double getTempFromNorKyst(int ocean_time, int s_rho, int eta_rho, int xi_rho)
         {
-            // full path of python interpreter 
-            string python = @"C:\python\python.exe";
-
-            // python app to call 
-            string myPythonApp = @"C:\Users\a22001\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
 
             // Create new process start info 
-            ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(python);
+            ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(GlobalVariables.pathToPythonExe);
 
             // make sure we can read the output from stdout 
             myProcessStartInfo.UseShellExecute = false;
@@ -93,8 +82,8 @@ namespace SpagettiMetoden
             eta_rho -= 1;
             xi_rho -= 1;
 
-            myProcessStartInfo.Arguments = myPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho;
-
+            myProcessStartInfo.Arguments = GlobalVariables.pathToPythonApp + " " + ocean_time + " " + s_rho + " " + eta_rho + " " + xi_rho + " " + GlobalVariables.pathToNcHeatMaps.Replace('\\', '/');
+            
             Process myProcess = new Process();
             // assign start information to the process 
             myProcess.StartInfo = myProcessStartInfo;
@@ -118,6 +107,8 @@ namespace SpagettiMetoden
 
             // write the output we got from python app 
             //Console.WriteLine("Value received from script: " + myString);
+            //Console.ReadKey();
+
             return double.Parse(myString, CultureInfo.InvariantCulture);
         }
 
