@@ -12,7 +12,7 @@ namespace SpagettiMetoden
         public static int xi_rho_size = 2602;
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
-        public static int releasedFish = 100;
+        public static int releasedFish = 200;
         public static string pathToNcHeatMaps = @"D:\NCdata\VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapFolder = @"D:\NCdata\VarmeModell\";
         public static string pathToNcTagData = @"D:\NCdata\Merkedata\";
@@ -35,7 +35,7 @@ namespace SpagettiMetoden
         //Hvor langt fisken beveger seg per iterasjon
         //Standard er 85 og 40
         public static int increment = 30;
-        public static int increment2 = 64;
+        public static int increment2 = 70;
 
         //Hvor mange dager per iterasjon
         public static int dayIncrement = 3;
@@ -46,7 +46,7 @@ namespace SpagettiMetoden
         /// Men første posisjonen hvis skal beregne i iterasjon 0 er posisjonen etter
         /// release posisjon. derfor day + dayIncrement
         /// </summary>
-        public static int day = 30;
+        public static int day = 29;
 
         //Sannsynlighet for å velge en path som er nærmere "capture point"
         public static double probability = 0.7;

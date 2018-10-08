@@ -22,7 +22,7 @@ namespace SpagettiMetoden
             captureLat = currFish.captureLat;
             captureLon = currFish.captureLon;
         }
-
+        //TODO Vi må google eller snakke med veileder og finne ut om denne metoden er trådsikker
         public bool chosenRoute(BlockingCollection<PositionData> validPositionsDataList, int randInt)
         {
             randDouble = ThreadSafeRandom.NextDouble();
