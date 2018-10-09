@@ -13,32 +13,35 @@ namespace SpagettiMetoden
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
         public static int releasedFish = 200;
-        public static string pathToNcHeatMaps = @"D:\NCdata\VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapFolder = @"D:\NCdata\VarmeModell\";
-        public static string pathToNcTagData = @"D:\NCdata\Merkedata\";
+        public static string pathToNcHeatMaps = @"C:\NCdata\VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapFolder = @"C:\NCdata\VarmeModell\";
+        public static string pathToNcTagData = @"C:\NCdata\Merkedata\";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
-        public static string pathToSaveFishData = @"D:\NCdata\fishData";
+        public static string pathToSaveFishData = @"C:\NCdata\fishData";
         //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
-        public static string pathToPythonApp = @"D:\MasterWorkSpace\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
+        public static string pathToPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
         //Husk å endre på forskjellige pcer, sier hvilken hvor python.exe er på pcen
-        public static string pathToPythonExe = @"C:\Python27\python.exe";
+        public static string pathToPythonExe = @"C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe";
         //ALL THE DELTAS:
         public static double TempDelta = 2;
         public static double DepthDelta = 10;
+
+        //Ocean_time max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)
+        public static int ocean_time_Max = 274;
 
         /// <summary>
         /// Endrer dewnne til 580, utifra utregningene mine er et døgin i 10 min merkedata 145 step i mellom
         /// Derfor skal tagstep hver 580 istedenfor (145*4 = 580)
         /// Testet også med tre dager (435)
         /// </summary>
-        public static int tagStep = 435;
+        public static int tagStep = 580;
         //Hvor langt fisken beveger seg per iterasjon
         //Standard er 85 og 40
-        public static int increment = 30;
-        public static int increment2 = 70;
+        public static int increment = 40;
+        public static int increment2 = 85;
 
         //Hvor mange dager per iterasjon
-        public static int dayIncrement = 3;
+        public static int dayIncrement = 4;
 
         //Først dag i merkedataen
         /// <summary>

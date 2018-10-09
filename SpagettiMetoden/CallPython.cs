@@ -70,14 +70,17 @@ namespace SpagettiMetoden
             // start python app with 3 arguments  
             // 1st arguments is pointer to itself,  
             // The other values are actual arguments we want to send (ocean_time to month)
-            if (ocean_time > 29)
+            if (ocean_time >= GlobalVariables.ocean_time_Max)
             {
-                ocean_time = 29;
+                ocean_time = GlobalVariables.ocean_time_Max-1;
             }
+            /*
+             Denne har blitt kommentert ut inntil videre for å skjekke om den trengs eller ikke.
             else
             {
                 ocean_time--;
             }
+             */
 
             eta_rho -= 1;
             xi_rho -= 1;
@@ -106,8 +109,8 @@ namespace SpagettiMetoden
             myProcess.Close();
 
             // write the output we got from python app 
-            //Console.WriteLine("Value received from script: " + myString);
-            //Console.ReadKey();
+            Console.WriteLine("Value received from script: " + myString);
+            Console.ReadKey();
 
             return double.Parse(myString, CultureInfo.InvariantCulture);
         }
