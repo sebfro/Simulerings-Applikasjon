@@ -109,8 +109,8 @@ namespace SpagettiMetoden
             myProcess.Close();
 
             // write the output we got from python app 
-            Console.WriteLine("Value received from script: " + myString);
-            Console.ReadKey();
+            //Console.WriteLine("Value received from script: " + myString);
+            //Console.ReadKey();
 
             return double.Parse(myString, CultureInfo.InvariantCulture);
         }

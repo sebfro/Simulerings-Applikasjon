@@ -12,7 +12,7 @@ namespace SpagettiMetoden
         public static int xi_rho_size = 2602;
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
-        public static int releasedFish = 200;
+        public static int releasedFish = 50;
         public static string pathToNcHeatMaps = @"C:\NCdata\VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapFolder = @"C:\NCdata\VarmeModell\";
         public static string pathToNcTagData = @"C:\NCdata\Merkedata\";
@@ -21,7 +21,8 @@ namespace SpagettiMetoden
         //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
         public static string pathToPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
         //Husk å endre på forskjellige pcer, sier hvilken hvor python.exe er på pcen
-        public static string pathToPythonExe = @"C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe";
+        //Ikke alle python.exe har netCDF4 installert, så prøv andre python.exe hvis den først ikke fungerer
+        public static string pathToPythonExe = @"C:\Users\Torbastian\AppData\Local\Programs\Python\Python37\python.exe";
         //ALL THE DELTAS:
         public static double TempDelta = 2;
         public static double DepthDelta = 10;
@@ -37,8 +38,8 @@ namespace SpagettiMetoden
         public static int tagStep = 580;
         //Hvor langt fisken beveger seg per iterasjon
         //Standard er 85 og 40
-        public static int increment = 40;
-        public static int increment2 = 85;
+        public static int increment = 45;
+        public static int increment2 = 75;
 
         //Hvor mange dager per iterasjon
         public static int dayIncrement = 4;
@@ -52,7 +53,7 @@ namespace SpagettiMetoden
         public static int day = 29;
 
         //Sannsynlighet for å velge en path som er nærmere "capture point"
-        public static double probability = 0.7;
+        public static double probability = 0.85;
 
     }
 
