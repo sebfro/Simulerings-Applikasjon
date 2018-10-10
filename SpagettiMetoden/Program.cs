@@ -16,9 +16,8 @@ namespace SpagettiMetoden
 
         static void Main(string[] args)
         {
-            //SimpleGPUAcceleration.startUp();
-            //Console.ReadKey();
 
+            
             ReadFromFile file = new ReadFromFile();
 
             Dictionary<string, Fish> FishList = new Dictionary<string, Fish>();
@@ -34,7 +33,7 @@ namespace SpagettiMetoden
             HeatMap heatMap = new HeatMap();
             EtaXi[] etaXis = new EtaXi[0];
             int day = GlobalVariables.day;
-
+            CallPython callPython = new CallPython();
             var watch = Stopwatch.StartNew();
             //Har prøvd å endre i fra 500 til GlobalVariables.tagStep
             for (int i = 0; i < FishList["742"].tagDataList.Count; i+=GlobalVariables.tagStep)
@@ -50,7 +49,7 @@ namespace SpagettiMetoden
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, heatMap.mask_rhoArray), 
-                        heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array, day);
+                        heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array, day, callPython);
 
                     for (int j = 0; j < GlobalVariables.releasedFish; j++)
                     {
@@ -87,6 +86,7 @@ namespace SpagettiMetoden
                 }
                 else
                 {
+                    callPython.updateTempArray(day);
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].tagDataList[i];
 
@@ -101,7 +101,7 @@ namespace SpagettiMetoden
 
                             BlockingCollection<PositionData> validPositionsDataList =
                                 CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho,
-                                pData.xi_rho, heatMap.mask_rhoArray), heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array, day);
+                                pData.xi_rho, heatMap.mask_rhoArray), heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array, day, callPython);
 
                             if (validPositionsDataList.Count > 0)
                             {
@@ -153,7 +153,7 @@ namespace SpagettiMetoden
                     count++;
                 }
             }
-
+            Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs/60000);
             Console.ReadLine();
         }
     }

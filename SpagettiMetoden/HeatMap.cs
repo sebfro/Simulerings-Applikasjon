@@ -31,11 +31,6 @@ namespace SpagettiMetoden
             depthArray = ds["h"].GetData();
             initialized = true;
         }
-        /*
-        public HeatMap()
-        {
-            initialized = false;
-        }
-        */
+        
     }
 }

@@ -8,6 +8,8 @@ namespace SpagettiMetoden
 {
     class CalcDistance_BetweenTwoLonLatCoordinates
     {
+        public Array _TempArray { get; set; }
+
         //Gir i km
         public static double getDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double lon2)
         {
@@ -58,12 +60,11 @@ namespace SpagettiMetoden
 
         }
 
-        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array, int day)
+        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array, int day, CallPython callPython)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             BlockingCollection<PositionData> positionDataList = new BlockingCollection<PositionData>();
             ExtractDataFromEtaAndXi extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
-            CallPython callPython = new CallPython();
             PositionData positionData = new PositionData();
             double depth = 0.0;
             double temp = 0.0;
@@ -76,7 +77,8 @@ namespace SpagettiMetoden
                 DepthData depthData = extractDataFromEtaAndXi.getS_rhoValues(etaXis[i].eta_rho, etaXis[i].xi_rho, tagData.depth, Z_Array);
                 if(depthData.valid && (depth - (-tagData.depth)) > 0)
                 {
-                    temp = callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                    temp = callPython.getTemp(depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                        //callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
 
 
                     if (Math.Abs(temp - tagData.temp) < GlobalVariables.TempDelta)

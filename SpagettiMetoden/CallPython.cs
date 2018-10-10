@@ -9,6 +9,23 @@ namespace SpagettiMetoden
 {
     class CallPython
     {
+        public Array tempArray;
+        public CallPython()
+        {
+            tempArray = DataSet.Open(@"D:\NCdata\VarmeModell\TestFiles\ocean_time" + GlobalVariables.day + ".nc")["temp"].GetData();
+        }
+
+        public void updateTempArray(int day)
+        {
+            tempArray = DataSet.Open(@"D:\NCdata\VarmeModell\TestFiles\ocean_time" + day + ".nc")["temp"].GetData();
+        }
+
+        public double getTemp(int z_rho, int eta_rho, int xi_rho)
+        {
+            eta_rho -= 1;
+            xi_rho -= 1;
+            return (double)tempArray.GetValue(z_rho, eta_rho, xi_rho);
+        }
         //Denne metoden kaller ett python script som henter ut temperatur fra ocean_avg og returnerer verdien som en double
         public double getTempFromOceanAvg(int ocean_time, int s_rho, int eta_rho, int xi_rho, string year, string month)
         {

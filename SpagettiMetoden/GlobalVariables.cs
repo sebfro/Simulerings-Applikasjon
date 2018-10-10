@@ -12,19 +12,19 @@ namespace SpagettiMetoden
         public static int xi_rho_size = 2602;
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
-        public static int releasedFish = 50;
-        public static string pathToNcHeatMaps = @"C:\NCdata\VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapFolder = @"C:\NCdata\VarmeModell\";
-        public static string pathToNcTagData = @"C:\NCdata\Merkedata\";
+        public static int releasedFish = 200;
+        public static string pathToNcHeatMaps = @"D:\NCdata\VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapFolder = @"D:\NCdata\VarmeModell\";
+        public static string pathToNcTagData = @"D:\NCdata\Merkedata\";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
-        public static string pathToSaveFishData = @"C:\NCdata\fishData";
+        public static string pathToSaveFishData = @"D:\NCdata\fishData";
         //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
-        public static string pathToPythonApp = @"C:\Users\Torbastian\Documents\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
+        public static string pathToPythonApp = @"D:\MasterWorkSpace\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
         //Husk å endre på forskjellige pcer, sier hvilken hvor python.exe er på pcen
         //Ikke alle python.exe har netCDF4 installert, så prøv andre python.exe hvis den først ikke fungerer
-        public static string pathToPythonExe = @"C:\Users\Torbastian\AppData\Local\Programs\Python\Python37\python.exe";
+        public static string pathToPythonExe = @"C:\Python27\python.exe";
         //ALL THE DELTAS:
-        public static double TempDelta = 2;
+        public static double TempDelta = 1;
         public static double DepthDelta = 10;
 
         //Ocean_time max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)
