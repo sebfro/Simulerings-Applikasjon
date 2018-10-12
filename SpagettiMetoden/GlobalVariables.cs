@@ -12,10 +12,11 @@ namespace SpagettiMetoden
         public static int xi_rho_size = 2602;
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
-        public static int releasedFish = 200;
+        public static int releasedFish = 100000;
         public static string pathToNcHeatMaps = @"D:\NCdata\VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapFolder = @"D:\NCdata\VarmeModell\";
         public static string pathToNcTagData = @"D:\NCdata\Merkedata\";
+        public static string pathToOceanTimeNetCDF = @"C:\NCdata\VarmeModell\ocean_time";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
         public static string pathToSaveFishData = @"D:\NCdata\fishData";
         //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
@@ -55,7 +56,9 @@ namespace SpagettiMetoden
         //Sannsynlighet for å velge en path som er nærmere "capture point"
         public static double probability = 0.85;
 
+
     }
+
 
     public static class ThreadSafeRandom
     {

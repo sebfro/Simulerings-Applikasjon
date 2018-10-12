@@ -117,7 +117,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta + i, xi, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -129,7 +128,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta, xi + i, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -141,7 +139,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta - i, xi, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -153,7 +150,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta, xi - i, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -165,7 +161,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta + i, xi + i, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -177,7 +172,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta - i, xi - i, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -189,7 +183,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta - i, xi + i, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
@@ -201,7 +194,6 @@ namespace SpagettiMetoden
                         if (ExtractDataFromEtaAndXi.isOnLand(eta + i, xi - i, mask_rhoArray))
                         {
                             valid = false;
-                            Console.WriteLine("Path invalid");
                             return;
                         }
                     }
