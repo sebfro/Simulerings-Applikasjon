@@ -1,105 +1,83 @@
-using Microsoft.Research.Science.Data;
+ï»¿using Microsoft.Research.Science.Data;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using System.Threading;
-using MathNet.Numerics.Statistics;
+using System.Threading.Tasks;
 
 namespace SpagettiMetoden
 {
-    class Program
+    class Controller
     {
-        static void Main(string[] args)
+        public ReadFromFile file { get; set; }
+        Dictionary<string, Fish> FishList { get; set; }
+        List<string> KeyList { get; set; }
+        Array Z_Array { get; set; }
+
+        HeatMap heatMap { get; set; }
+        EtaXi[] etaXis { get; set; }
+        public CallPython callPython { get; set; }
+
+        public int tagStep { get; set; }
+        public int dayIncrement { get; set; }
+        public int releasedFish { get; set; }
+        public double tempDelta { get; set; }
+
+        public void setDayIncrement(int dayInc)
         {
-
-            bool run = true;
-            int dayInc = 4;
-            int releasedFish = 10000;
-            string answer = "";
-            double tempDelta = 0;
-            while (run)
+            dayIncrement = dayInc;
+            if(dayInc == 4)
             {
-                Console.Write("Enter day increment per iterasion: ");
-                dayInc = int.Parse(Console.ReadLine());
-                Console.WriteLine("The day increment per iterasjon will be {0}.", dayInc);
-
-
-                Console.Write("Enter how many fish to release:");
-                releasedFish = int.Parse(Console.ReadLine());
-                Console.WriteLine("{0} fish will be released per iterasjon.", releasedFish);
-
-
-                Console.Write("Enter the tempdelta:");
-                tempDelta = double.Parse(Console.ReadLine());
-                Console.WriteLine("The tempDelta will be {0}.", tempDelta);
-
-
-                Console.WriteLine("Loading files...");
-                Controller controller = new Controller(dayInc, releasedFish, tempDelta);
-                bool runCurrentConfig = true;
-                controller.runAlgorithm();
-                while (runCurrentConfig)
-                {
-                    Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
-                    answer = Console.ReadLine();
-                    runCurrentConfig = (answer != "N");
-                    
-                    if (runCurrentConfig)
-                    {
-                        Console.Write("Enter how many fish to release:");
-                        releasedFish = int.Parse(Console.ReadLine());
-                        Console.WriteLine("{0} fish will be released per iterasjon.", releasedFish);
-
-                        Console.Write("Enter the tempdelta:");
-                        tempDelta = double.Parse(Console.ReadLine());
-                        Console.WriteLine("The tempDelta will be {0}.", tempDelta);
-
-                        controller.tempDelta = tempDelta;
-                        controller.releasedFish = releasedFish;
-                        controller.runAlgorithm();
-                    }
-                }
-
-                Console.WriteLine("Do you want to change the configuration and rerun the Algorithm? (Y/N)");
-                answer = Console.ReadLine();
-                run = (answer != "N");
-
-                Console.ReadKey();
+                tagStep = 580;
+            } else if( dayInc == 3)
+            {
+                tagStep = 435;
+            } else if( dayInc == 2)
+            {
+                tagStep = 290;
+            } else
+            {
+                tagStep = 145;
             }
+        }
 
-            /*
-            int deadFishCounter = 0;
-            
-            ReadFromFile file = new ReadFromFile();
+        public Controller(int dayInc, int releasedFish, double tempDelta)
+        {
+            this.tempDelta = tempDelta;
+            this.releasedFish = releasedFish;
+            setDayIncrement(dayInc);
 
-            Dictionary<string, Fish> FishList = new Dictionary<string, Fish>();
-            List<string> KeyList = new List<string>();
-            DataSet dsOfZ = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc");
-            Array Z_Array = dsOfZ["Z"].GetData();
+            file = new ReadFromFile();
+
+            FishList = new Dictionary<string, Fish>();
+            KeyList = new List<string>();
+            Z_Array = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc")["Z"].GetData();
 
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
-           
-            int counter = 1;
 
-            HeatMap heatMap = new HeatMap();
-            EtaXi[] etaXis = new EtaXi[0];
+
+
+            heatMap = new HeatMap();
+            etaXis = new EtaXi[0];
+            callPython = new CallPython(dayInc);
+        }
+
+        public void runAlgorithm()
+        {
             int day = GlobalVariables.day;
-            CallPython callPython = new CallPython();
-
-            
-            /*
+            int counter = 1;
+            int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
 
 
-            //Har prøvd å endre i fra 500 til GlobalVariables.tagStep
-            for (int i = 0; i < FishList["742"].tagDataList.Count; i+=GlobalVariables.tagStep)
+            for (int i = 0; i < FishList["742"].tagDataList.Count; i += tagStep)
             {
-                Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep);
+                Console.WriteLine("I iterasjon: " + i / tagStep);
                 bool chosenPosition;
 
                 if (i == 0)
@@ -109,13 +87,13 @@ namespace SpagettiMetoden
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
-                        CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, heatMap.mask_rhoArray), 
-                        heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array, day, callPython);
+                        CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, heatMap.mask_rhoArray),
+                        heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array, day, callPython, tempDelta);
 
                     float releaseLat = (float)FishList["742"].releaseLat;
                     float releaseLon = (float)FishList["742"].releaseLon;
 
-                    Parallel.For(0, GlobalVariables.releasedFish, j =>
+                    Parallel.For(0, releasedFish, j =>
                     {
                         chosenPosition = false;
 
@@ -146,7 +124,7 @@ namespace SpagettiMetoden
                     callPython.updateTempArray(day);
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].tagDataList[i];
-                    if(deadFishCounter < GlobalVariables.releasedFish)
+                    if (deadFishCounter < releasedFish)
                     {
                         Parallel.ForEach(fishRoutes, (fishRoute) =>
                         {
@@ -159,7 +137,7 @@ namespace SpagettiMetoden
 
                                 BlockingCollection<PositionData> validPositionsDataList =
                                     CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho,
-                                    pData.xi_rho, heatMap.mask_rhoArray), heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array, day, callPython);
+                                    pData.xi_rho, heatMap.mask_rhoArray), heatMap.latArray, heatMap.lonArray, tagData, heatMap.depthArray, Z_Array, day, callPython, tempDelta);
 
                                 if (validPositionsDataList.Count > 0)
                                 {
@@ -184,19 +162,20 @@ namespace SpagettiMetoden
                                     Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
                                     Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
                                     Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
-                                    
+                                    */
                                 }
                             }
                         });
-                    } else
+                    }
+                    else
                     {
                         i = FishList["742"].tagDataList.Count;
                     }
-                    
+
                     counter++;
                 }
-                day += GlobalVariables.dayIncrement;
-                
+                day += dayIncrement;
+
 
             }
 
@@ -213,29 +192,25 @@ namespace SpagettiMetoden
                 //Console.WriteLine("Is fish alive?: " + fishRoute.alive);
                 if (fishRoute.alive)
                 {
-                    var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count-1);
-                    if(CalcDistance_BetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) <  GlobalVariables.increment2*4)
+                    var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);
+                    if (CalcDistance_BetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) < GlobalVariables.increment2 * 4)
                     {
                         folderName = "Akseptabel";
                     }
                     string[] fishData = fishRoute.fromListToString();
 
-                    File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.id +"_" + count + ".txt", fishData);
+                    File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.id + "_" + count + ".txt", fishData);
                     count++;
                 }
             }
-            Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs/60000);
+            Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs / 60000);
             Console.WriteLine("Dead fish counter: {0}", deadFishCounter);
-            Console.WriteLine("Alive fish counter: {0}", GlobalVariables.releasedFish - deadFishCounter);
-            if (deadFishCounter == GlobalVariables.releasedFish)
+            Console.WriteLine("Alive fish counter: {0}", releasedFish - deadFishCounter);
+            if (deadFishCounter == releasedFish)
             {
                 Console.WriteLine("All fish are dead");
             }
             Console.WriteLine("Day is: {0}", day);
-            */
-            Console.ReadLine();
         }
     }
-}  
-   
-   
+}

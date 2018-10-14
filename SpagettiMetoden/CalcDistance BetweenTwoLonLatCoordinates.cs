@@ -60,7 +60,7 @@ namespace SpagettiMetoden
 
         }
 
-        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array, int day, CallPython callPython)
+        public static BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, Array depthArray, Array Z_Array, int day, CallPython callPython, double tempDelta)
         {
             CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             BlockingCollection<PositionData> positionDataList = new BlockingCollection<PositionData>();
@@ -81,7 +81,7 @@ namespace SpagettiMetoden
                         //callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
 
 
-                    if (Math.Abs(temp - tagData.temp) < GlobalVariables.TempDelta)
+                    if (Math.Abs(temp - tagData.temp) < tempDelta)
                     {
                
                         lat = extractDataFromEtaAndXi.getLatOrLon(etaXis[i].eta_rho, etaXis[i].xi_rho, latDataArray);

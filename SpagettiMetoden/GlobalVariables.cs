@@ -12,11 +12,11 @@ namespace SpagettiMetoden
         public static int xi_rho_size = 2602;
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
-        public static int releasedFish = 1000000;
+        public static int releasedFish = 10000;
         public static string pathToNcHeatMaps = @"D:\NCdata\VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapFolder = @"D:\NCdata\VarmeModell\";
         public static string pathToNcTagData = @"D:\NCdata\Merkedata\";
-        public static string pathToOceanTimeNetCDF = @"C:\NCdata\VarmeModell\ocean_time";
+        public static string pathToOceanTimeNetCDF = @"C:\NCData\VarmeModell\TestFiles\ocean_time";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
         public static string pathToSaveFishData = @"D:\NCdata\fishData";
         //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
@@ -25,7 +25,7 @@ namespace SpagettiMetoden
         //Ikke alle python.exe har netCDF4 installert, så prøv andre python.exe hvis den først ikke fungerer
         public static string pathToPythonExe = @"C:\Python27\python.exe";
         //ALL THE DELTAS:
-        public static double TempDelta = 0.85;
+        public static double TempDelta = 1;
         public static double DepthDelta = 10;
 
         //Ocean_time max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)

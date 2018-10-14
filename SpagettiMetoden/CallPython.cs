@@ -16,15 +16,15 @@ namespace SpagettiMetoden
         public int day;
 
         public Array tempArray;
-        public CallPython()
+        public CallPython(int dayIncrement)
         {
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
             //tempArray = DataSet.Open(@"C:\NCData\VarmeModell\TestFiles\ocean_time" + GlobalVariables.day + ".nc")["temp"].GetData();
             day = GlobalVariables.day;
-            for(int i = 29; i <= 225; i += 4)
+            for(int i = 29; i <= 225; i += dayIncrement)
             {
                 //Console.WriteLine("Index: {0}", i);
-                tempDictionary.Add(i, DataSet.Open(@"C:\NCData\VarmeModell\ocean_time" + i + ".nc")["temp"].GetData());
+                tempDictionary.Add(i, DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + i + ".nc")["temp"].GetData());
             }
 
             Console.WriteLine("Success: Alle heat maps have been loaded");
@@ -35,9 +35,11 @@ namespace SpagettiMetoden
         {
             this.day = day;
         }
-
+        //Setter tempArray til den korrekte dagen for neste iterasjon, samme som før.
+        //Men den hentes ut av en dictionary i rammen istedenfor fra hdd/ssd
         public void updateTempArray(int day)
         {
+            //out tempArray setter variablen tempArray til det vi får ut av TryGetValue
             tempDictionary.TryGetValue(day, out tempArray);
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + day + ".nc")["temp"].GetData();
         }
