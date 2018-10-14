@@ -15,6 +15,7 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
+
             int deadFishCounter = 0;
             
             ReadFromFile file = new ReadFromFile();
@@ -27,61 +28,62 @@ namespace SpagettiMetoden
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
            
-            int counter = 0;
+            int counter = 1;
 
             HeatMap heatMap = new HeatMap();
             EtaXi[] etaXis = new EtaXi[0];
             int day = GlobalVariables.day;
             CallPython callPython = new CallPython();
+
+            
+
             var watch = Stopwatch.StartNew();
+
+
             //Har prøvd å endre i fra 500 til GlobalVariables.tagStep
             for (int i = 0; i < FishList["742"].tagDataList.Count; i+=GlobalVariables.tagStep)
             {
-                
-                
                 Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep);
                 bool chosenPosition;
 
                 if (i == 0)
                 {
+                    var watch2 = Stopwatch.StartNew();
+
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(heatMap.latArray, heatMap.lonArray, FishList["742"].releaseLat, FishList["742"].releaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, heatMap.mask_rhoArray), 
                         heatMap.latArray, heatMap.lonArray, FishList["742"].tagDataList[i], heatMap.depthArray, Z_Array, day, callPython);
 
-                    for (int j = 0; j < GlobalVariables.releasedFish; j++)
+                    float releaseLat = (float)FishList["742"].releaseLat;
+                    float releaseLon = (float)FishList["742"].releaseLon;
+
+                    Parallel.For(0, GlobalVariables.releasedFish, j =>
                     {
                         chosenPosition = false;
 
                         if (validPositionsDataList.Count > 0)
                         {
-                            FishList["742"].FishRouteList.Add(new FishRoute("742"));
-                            FishList["742"].FishRouteList.ElementAt(j).PositionDataList.Add((new PositionData(FishList["742"].releaseLat,
-                                FishList["742"].releaseLon)));
+                            FishRoute fishRoute = new FishRoute("742");
+                            fishRoute.PositionDataList.Add((new PositionData(releaseLat,
+                                releaseLon)));
 
-                                RouteChooser routeChooser = new RouteChooser(FishList["742"].releaseLat, FishList["742"].releaseLon, FishList["742"]);
+                            RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList["742"]);
 
-                                while (!chosenPosition)
-                                {
-                                    randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                    chosenPosition = routeChooser.chosenRoute(validPositionsDataList, randInt);
-                                }
+                            while (!chosenPosition)
+                            {
+                                randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                                chosenPosition = routeChooser.chosenRoute(validPositionsDataList, randInt);
+                            }
 
-                        FishList["742"].FishRouteList.ElementAt(j).PositionDataList.Add((new PositionData(
-                                validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon,
-                                validPositionsDataList.ElementAt(randInt).depth, validPositionsDataList.ElementAt(randInt).temp, FishList["742"].tagDataList[i].depth,
-                                FishList["742"].tagDataList[i].temp, validPositionsDataList.ElementAt(randInt).eta_rho, validPositionsDataList.ElementAt(randInt).xi_rho)));
-
-                            //Console.WriteLine("New Position. Lat: {0}, lon: {1}", validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon);
-
+                            fishRoute.PositionDataList.Add((new PositionData(
+                                    validPositionsDataList.ElementAt(randInt).lat, validPositionsDataList.ElementAt(randInt).lon,
+                                    validPositionsDataList.ElementAt(randInt).depth, validPositionsDataList.ElementAt(randInt).temp, FishList["742"].tagDataList[i].depth,
+                                    FishList["742"].tagDataList[i].temp, validPositionsDataList.ElementAt(randInt).eta_rho, validPositionsDataList.ElementAt(randInt).xi_rho)));
+                            FishList["742"].FishRouteList.Add(fishRoute);
                         }
-                        else
-                        {
-                            //Console.WriteLine("No possible positions found");
-                        }
-                    }
-                    counter = 2;
+                    });
                 }
                 else
                 {
@@ -97,7 +99,7 @@ namespace SpagettiMetoden
 
                             if (fishRoute.alive)
                             {
-                                PositionData pData = fishRoute.PositionDataList.ElementAt(counter - 1);
+                                PositionData pData = fishRoute.PositionDataList.ElementAt(counter);
 
                                 BlockingCollection<PositionData> validPositionsDataList =
                                     CalcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(CalcDistance_BetweenTwoLonLatCoordinates.calculatePossibleEtaXi(pData.eta_rho,
