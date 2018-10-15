@@ -17,7 +17,7 @@ namespace SpagettiMetoden
 
         public RouteChooser(double lat, double lon, Fish currFish)
         {
-            currDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(lat, lon, currFish.captureLat, currFish.captureLon);
+            currDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.captureLat, currFish.captureLon);
             rand = new Random();
             captureLat = currFish.captureLat;
             captureLon = currFish.captureLon;
@@ -27,7 +27,7 @@ namespace SpagettiMetoden
         {
             randDouble = ThreadSafeRandom.NextDouble();
 
-            double newDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.getDistanceFromLatLonInKm(
+            double newDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(
                                         validPositionsDataList.ElementAt(randInt).lat,
                                         validPositionsDataList.ElementAt(randInt).lon, captureLat,
                                         captureLon);

@@ -5,17 +5,33 @@ namespace SpagettiMetoden
 {
     class ExtractDataFromEtaAndXi
     {
-        //Sjekker om et eta og xi punkt er på land. Returnerer true hvis det er på land, false hvis punktet
-        //er i havet
-        public static bool isOnLand(int eta_rho, int xi_rho, Array mask_rhoArray)
+        public Array DepthArray { get; set; }
+        public Array Z_Array { get; set; }
+        //mask_rho brukes til å sjekke om et eta og xi punkt er på land eller ikke
+        //0.0 for land og 1.0 for hav
+        public Array Mask_rhoArray { get; set; }
+
+        public int DepthDelta { get; set; }
+
+        public ExtractDataFromEtaAndXi(Array DepthArray, Array Z_Array, Array Mask_rhoArray, int depthDelta)
         {
-            return (double)mask_rhoArray.GetValue(eta_rho-1, xi_rho-1) == 0.0;
+            this.DepthArray = DepthArray;
+            this.Z_Array = Z_Array;
+            this.Mask_rhoArray = Mask_rhoArray;
+            DepthDelta = depthDelta;
         }
 
-        public double getDepth(int eta_rho, int xi_rho, Array depthArray)
+        //Sjekker om et eta og xi punkt er på land. Returnerer true hvis det er på land, false hvis punktet
+        //er i havet
+        public bool IsOnLand(int eta_rho, int xi_rho)
+        {
+            return (double)Mask_rhoArray.GetValue(eta_rho-1, xi_rho-1) == 0.0;
+        }
+
+        public double GetDepth(int eta_rho, int xi_rho)
         {
 
-            return (double)depthArray.GetValue(eta_rho-1, xi_rho-1);
+            return (double)DepthArray.GetValue(eta_rho-1, xi_rho-1);
         }
 
         public double getLatOrLon(int eta_rho, int xi_rho, Array latOrLonArray)
@@ -23,7 +39,7 @@ namespace SpagettiMetoden
             return (double)latOrLonArray.GetValue(eta_rho-1, xi_rho-1);
         }
 
-        public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, Array Z_Array)
+        public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth)
         {
             // the code that you want to measure comes here
             
@@ -33,7 +49,7 @@ namespace SpagettiMetoden
             {
                 double depthFromZ_rho = (double)Z_Array.GetValue(k, eta_rho-1, xi_rho-1);
                 
-                if (Math.Abs (depthFromZ_rho - tagDataDepth) < GlobalVariables.DepthDelta)
+                if (Math.Abs (depthFromZ_rho - tagDataDepth) < DepthDelta)
                 {
                     potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
                 }
@@ -46,7 +62,7 @@ namespace SpagettiMetoden
 
             foreach (DepthData dData in potentialDepthArray)
             {
-                    double newDelta = Math.Abs(dData.depth - (-tagDataDepth));
+                    double newDelta = Math.Abs(dData.Depth - (-tagDataDepth));
 
                     if (!deltaHasBeenSet)
                     {
@@ -64,7 +80,7 @@ namespace SpagettiMetoden
             }
             if(!deltaHasBeenSet)
             {
-                depthData.valid = false;
+                depthData.Valid = false;
             }
             return depthData;
         }
@@ -73,15 +89,15 @@ namespace SpagettiMetoden
 
     class DepthData
     {
-        public double depth { get; set; }
-        public int z_rho { get; set; }
-        public bool valid { get; set; }
+        public double Depth { get; set; }
+        public int Z_rho { get; set; }
+        public bool Valid { get; set; }
 
         public DepthData(int z_rho, double depth)
         {
-            this.depth = depth;
-            this.z_rho = z_rho;
-            valid = true;
+            Depth = depth;
+            Z_rho = z_rho;
+            Valid = true;
         }
 
     }

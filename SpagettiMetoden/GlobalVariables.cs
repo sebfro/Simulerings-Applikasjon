@@ -13,12 +13,12 @@ namespace SpagettiMetoden
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
         public static int releasedFish = 10000;
-        public static string pathToNcHeatMaps = @"D:\NCdata\VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapFolder = @"D:\NCdata\VarmeModell\";
-        public static string pathToNcTagData = @"D:\NCdata\Merkedata\";
-        public static string pathToOceanTimeNetCDF = @"C:\NCData\VarmeModell\TestFiles\ocean_time";
+        public static string pathToNcHeatMaps = @"C:\NCdata\VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapFolder = @"C:\NCdata\VarmeModell\";
+        public static string pathToNcTagData = @"C:\NCdata\Merkedata\";
+        public static string pathToOceanTimeNetCDF = @"C:\NCdata\VarmeModell\ocean_time";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
-        public static string pathToSaveFishData = @"D:\NCdata\fishData";
+        public static string pathToSaveFishData = @"C:\NCdata\fishData";
         //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
         public static string pathToPythonApp = @"D:\MasterWorkSpace\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
         //Husk å endre på forskjellige pcer, sier hvilken hvor python.exe er på pcen
@@ -38,9 +38,10 @@ namespace SpagettiMetoden
         /// </summary>
         public static int tagStep = 580;
         //Hvor langt fisken beveger seg per iterasjon
-        //Standard er 85 og 40
-        public static int increment = 45;
-        public static int increment2 = 75;
+        //Standard er 85 og 40'
+        //Sekundær standard 45/75
+        public static int increment = 12;
+        public static int increment2 = 20;
 
         //Hvor mange dager per iterasjon
         public static int dayIncrement = 4;

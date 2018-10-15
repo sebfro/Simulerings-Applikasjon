@@ -15,12 +15,15 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
-
             bool run = true;
             int dayInc = 4;
             int releasedFish = 10000;
+            int Increment = 0;
+            int Increment2 = 0;
+            int DepthDelta = 10;
             string answer = "";
             double tempDelta = 0;
+            Controller controller;
             while (run)
             {
                 Console.Write("Enter day increment per iterasion: ");
@@ -33,15 +36,34 @@ namespace SpagettiMetoden
                 Console.WriteLine("{0} fish will be released per iterasjon.", releasedFish);
 
 
-                Console.Write("Enter the tempdelta:");
-                tempDelta = double.Parse(Console.ReadLine());
-                Console.WriteLine("The tempDelta will be {0}.", tempDelta);
+                try
+                {
+                    Console.Write("Enter the tempdelta:");
+                    tempDelta = double.Parse(Console.ReadLine());
+                    Console.WriteLine("The tempDelta will be {0}.", tempDelta);
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine("Use a comma, not a dot! This expcetion was thrown: {0}", ex);
+                }
+
+                Console.Write("Enter Increment:");
+                Increment = int.Parse(Console.ReadLine());
+                Console.WriteLine("Increment will be {0}.", Increment);
+
+                Console.Write("Enter the Increment2:");
+                Increment2 = int.Parse(Console.ReadLine());
+                Console.WriteLine("Increment2 will be {0}.", Increment2);
+
+                Console.Write("Enter the depth delta:");
+                DepthDelta = int.Parse(Console.ReadLine());
+                Console.WriteLine("Depth delta will be {0}.", DepthDelta);
 
 
                 Console.WriteLine("Loading files...");
-                Controller controller = new Controller(dayInc, releasedFish, tempDelta);
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
                 bool runCurrentConfig = true;
-                controller.runAlgorithm();
+                controller.RunAlgorithm();
                 while (runCurrentConfig)
                 {
                     Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
@@ -54,13 +76,34 @@ namespace SpagettiMetoden
                         releasedFish = int.Parse(Console.ReadLine());
                         Console.WriteLine("{0} fish will be released per iterasjon.", releasedFish);
 
-                        Console.Write("Enter the tempdelta:");
-                        tempDelta = double.Parse(Console.ReadLine());
-                        Console.WriteLine("The tempDelta will be {0}.", tempDelta);
+                        try
+                        {
+                            Console.Write("Enter the tempdelta:");
+                            tempDelta = double.Parse(Console.ReadLine());
+                            Console.WriteLine("The tempDelta will be {0}.", tempDelta);
+                        } catch(FormatException ex)
+                        {
+                            Console.WriteLine("Use a comma, not a dot! Thi expcetion was thrown: {0}", ex);
+                        }
 
-                        controller.tempDelta = tempDelta;
-                        controller.releasedFish = releasedFish;
-                        controller.runAlgorithm();
+                        Console.Write("Enter Increment:");
+                        Increment = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Increment will be {0}.", Increment);
+
+                        Console.Write("Enter the Increment2:");
+                        Increment2 = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Increment2 will be {0}.", Increment2);
+
+                        Console.Write("Enter the depth delta:");
+                        DepthDelta = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Depth delta will be {0}.", DepthDelta);
+
+                        controller.TempDelta = tempDelta;
+                        controller.ReleasedFish = releasedFish;
+                        controller.SetIncrements(Increment, Increment2);
+                        controller.SetDepthDelta(DepthDelta);
+
+                        controller.RunAlgorithm();
                     }
                 }
 
@@ -68,7 +111,6 @@ namespace SpagettiMetoden
                 answer = Console.ReadLine();
                 run = (answer != "N");
 
-                Console.ReadKey();
             }
 
             /*
