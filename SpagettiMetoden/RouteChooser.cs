@@ -17,10 +17,10 @@ namespace SpagettiMetoden
 
         public RouteChooser(double lat, double lon, Fish currFish)
         {
-            currDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.captureLat, currFish.captureLon);
+            currDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.CaptureLat, currFish.CaptureLon);
             rand = new Random();
-            captureLat = currFish.captureLat;
-            captureLon = currFish.captureLon;
+            captureLat = currFish.CaptureLat;
+            captureLon = currFish.CaptureLon;
         }
         //TODO Vi må google eller snakke med veileder og finne ut om denne metoden er trådsikker
         public bool chosenRoute(BlockingCollection<PositionData> validPositionsDataList, int randInt)

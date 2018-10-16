@@ -6,27 +6,27 @@ namespace SpagettiMetoden
 {
     class Fish
     {
-        public string id { get; set; }
-        public string releaseDate { get; set; }
-        public string captureDate { get; set; }
-        public double releaseLat { get; set; }
-        public double releaseLon { get; set; }
-        public double captureLat { get; set; }
-        public double captureLon { get; set; }
-        public List<TagData> tagDataList { get; set; }
+        public string Id { get; set; }
+        public string ReleaseDate { get; set; }
+        public string CaptureDate { get; set; }
+        public double ReleaseLat { get; set; }
+        public double ReleaseLon { get; set; }
+        public double CaptureLat { get; set; }
+        public double CaptureLon { get; set; }
+        public List<TagData> TagDataList { get; set; }
         public BlockingCollection<FishRoute> FishRouteList { get; set; }
 
 
         public Fish(string id, string releaseDate, string captureDate, string releaseLatLon, string captureLatLon)
         {
-            this.id = id;
-            this.captureDate = captureDate;
-            this.releaseDate = releaseDate;
-            releaseLat = stringToDoubleLat(releaseLatLon);
-            releaseLon = stringToDoubleLon(releaseLatLon);
-            captureLat = stringToDoubleLat(captureLatLon);
-            captureLon = stringToDoubleLon(captureLatLon);
-            tagDataList = new List<TagData>();
+            Id = id;
+            CaptureDate = captureDate;
+            ReleaseDate = releaseDate;
+            ReleaseLat = stringToDoubleLat(releaseLatLon);
+            ReleaseLon = stringToDoubleLon(releaseLatLon);
+            CaptureLat = stringToDoubleLat(captureLatLon);
+            CaptureLon = stringToDoubleLon(captureLatLon);
+            TagDataList = new List<TagData>();
             FishRouteList = new BlockingCollection<FishRoute>();
         }
 

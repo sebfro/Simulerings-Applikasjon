@@ -14,7 +14,9 @@ namespace SpagettiMetoden
 
         public int Increment { get; set; }
         public int Increment2 { get; set; }
-        
+
+        public object syncObject = new object();
+
         public CalcDistance_BetweenTwoLonLatCoordinates(int inc, int inc2, int depthDelta)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
@@ -83,7 +85,7 @@ namespace SpagettiMetoden
 
         }
 
-        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, int day, CallPython callPython, double tempDelta)
+        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, CallPython callPython, double tempDelta)
         {
             //CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             PositionDataList = new BlockingCollection<PositionData>();
@@ -93,22 +95,34 @@ namespace SpagettiMetoden
             double temp = 0.0;
             double lat = 0.0;
             double lon = 0.0;
-            
+            DepthData depthData;
+
+
             for (int i = 0; i < etaXis.Length; i++)
             {
-                depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho);
-                DepthData depthData = ExtractDataFromEtaAndXi.getS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.depth);
+                lock (syncObject)
+                {
+                    depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho);
+                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.depth);
+                }
+                
                 if(depthData.Valid && (depth - (-tagData.depth)) > 0)
                 {
-                    temp = callPython.getTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho);
+                    lock (syncObject)
+                    {
+                        temp = callPython.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho);
                         //callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                    }
 
 
                     if (Math.Abs(temp - tagData.temp) < tempDelta)
                     {
-               
-                        lat = ExtractDataFromEtaAndXi.getLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latDataArray);
-                        lon = ExtractDataFromEtaAndXi.getLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonDataArray);
+
+                        lock (syncObject)
+                        {
+                            lat = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latDataArray);
+                            lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonDataArray);
+                        }
                         
                         PositionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].Eta_rho, etaXis[i].Xi_rho));
                     }
@@ -125,83 +139,86 @@ namespace SpagettiMetoden
             {
                 int etaDiff = org_eta - eta;
                 int xiDiff = org_xi - xi;
-                if (etaDiff > 0 && xiDiff == 0)
+                lock (syncObject)
                 {
-                    for (int i = 1; i < etaDiff; i++)
+                    if (etaDiff > 0 && xiDiff == 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta + i, xi))
+                        for (int i = 1; i < etaDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta + i, xi))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff == 0 && xiDiff > 0)
-                {
-                    for (int i = 1; i < xiDiff; i++)
+                    else if (etaDiff == 0 && xiDiff > 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta, xi + i))
+                        for (int i = 1; i < xiDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta, xi + i))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff < 0 && xiDiff == 0)
-                {
-                    for (int i = 1; i < etaDiff; i++)
+                    else if (etaDiff < 0 && xiDiff == 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta - i, xi))
+                        for (int i = 1; i < etaDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta - i, xi))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff == 0 && xiDiff < 0)
-                {
-                    for (int i = 1; i < xiDiff; i++)
+                    else if (etaDiff == 0 && xiDiff < 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta, xi - i))
+                        for (int i = 1; i < xiDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta, xi - i))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff > 0 && xiDiff > 0)
-                {
-                    for (int i = 1; i < etaDiff; i++)
+                    else if (etaDiff > 0 && xiDiff > 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta + i, xi + i))
+                        for (int i = 1; i < etaDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta + i, xi + i))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff < 0 && xiDiff < 0)
-                {
-                    for (int i = 1; i < etaDiff; i++)
+                    else if (etaDiff < 0 && xiDiff < 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta - i, xi - i))
+                        for (int i = 1; i < etaDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta - i, xi - i))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff < 0 && xiDiff > 0)
-                {
-                    for (int i = 1; i < etaDiff; i++)
+                    else if (etaDiff < 0 && xiDiff > 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta - i, xi + i))
+                        for (int i = 1; i < etaDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta - i, xi + i))
+                            {
+                                valid = false;
+                            }
                         }
                     }
-                }
-                else if (etaDiff > 0 && xiDiff < 0)
-                {
-                    for (int i = 1; i < etaDiff; i++)
+                    else if (etaDiff > 0 && xiDiff < 0)
                     {
-                        if (ExtractDataFromEtaAndXi.IsOnLand(eta + i, xi - i))
+                        for (int i = 1; i < etaDiff; i++)
                         {
-                            valid = false;
+                            if (ExtractDataFromEtaAndXi.IsOnLand(eta + i, xi - i))
+                            {
+                                valid = false;
+                            }
                         }
                     }
                 }

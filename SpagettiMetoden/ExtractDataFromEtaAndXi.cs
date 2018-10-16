@@ -34,12 +34,12 @@ namespace SpagettiMetoden
             return (double)DepthArray.GetValue(eta_rho-1, xi_rho-1);
         }
 
-        public double getLatOrLon(int eta_rho, int xi_rho, Array latOrLonArray)
+        public double GetLatOrLon(int eta_rho, int xi_rho, Array latOrLonArray)
         {
             return (double)latOrLonArray.GetValue(eta_rho-1, xi_rho-1);
         }
 
-        public DepthData getS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth)
+        public DepthData GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth)
         {
             // the code that you want to measure comes here
             

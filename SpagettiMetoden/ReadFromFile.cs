@@ -42,7 +42,7 @@ namespace SpagettiMetoden
                         string[] strArray = line.Split(new char[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
                         TagData tagData = new TagData(line);
                         tagDataArray.Add(tagData);
-                        FishList[id].tagDataList = tagDataArray;
+                        FishList[id].TagDataList = tagDataArray;
                     }
                     file.Close();
                 }

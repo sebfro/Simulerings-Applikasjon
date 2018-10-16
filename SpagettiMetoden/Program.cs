@@ -15,15 +15,30 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
-            bool run = true;
-            int dayInc = 4;
-            int releasedFish = 10000;
-            int Increment = 0;
-            int Increment2 = 0;
-            int DepthDelta = 10;
-            string answer = "";
-            double tempDelta = 0;
+            //bool run = true;
+
+            int tagId = int.Parse(args[0]);
+            int dayInc = int.Parse(args[1]);
+            int releasedFish = int.Parse(args[2]);
+            double tempDelta = double.Parse(args[3].Replace(".", ","));
+            int DepthDelta = int.Parse(args[4]);
+            int Increment = int.Parse(args[5]);
+            int Increment2 = int.Parse(args[6]);
+            
+            //string answer = "";
+            
             Controller controller;
+
+            
+
+            //Skriv til setup fil
+            string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t" 
+                                                                                                                           + args[3] + "\t" + args[4] + "\t" + args[5] + "\t" + args[6] + "\t" };
+
+            File.WriteAllLines(@"C:\NCdata\fishData\setup.txt", setup);
+
+
+            /*
             while (run)
             {
                 Console.Write("Enter day increment per iterasion: ");
@@ -60,58 +75,60 @@ namespace SpagettiMetoden
                 Console.WriteLine("Depth delta will be {0}.", DepthDelta);
 
 
-                Console.WriteLine("Loading files...");
+                Console.WriteLine("Loading files..."); */
+            Console.WriteLine("Running algorithm...");
                 controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
-                bool runCurrentConfig = true;
+                //bool runCurrentConfig = true;
                 controller.RunAlgorithm();
-                while (runCurrentConfig)
-                {
-                    Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
-                    answer = Console.ReadLine();
-                    runCurrentConfig = (answer != "N");
-                    
-                    if (runCurrentConfig)
-                    {
-                        Console.Write("Enter how many fish to release:");
-                        releasedFish = int.Parse(Console.ReadLine());
-                        Console.WriteLine("{0} fish will be released per iterasjon.", releasedFish);
-
-                        try
-                        {
-                            Console.Write("Enter the tempdelta:");
-                            tempDelta = double.Parse(Console.ReadLine());
-                            Console.WriteLine("The tempDelta will be {0}.", tempDelta);
-                        } catch(FormatException ex)
-                        {
-                            Console.WriteLine("Use a comma, not a dot! Thi expcetion was thrown: {0}", ex);
-                        }
-
-                        Console.Write("Enter Increment:");
-                        Increment = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Increment will be {0}.", Increment);
-
-                        Console.Write("Enter the Increment2:");
-                        Increment2 = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Increment2 will be {0}.", Increment2);
-
-                        Console.Write("Enter the depth delta:");
-                        DepthDelta = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Depth delta will be {0}.", DepthDelta);
-
-                        controller.TempDelta = tempDelta;
-                        controller.ReleasedFish = releasedFish;
-                        controller.SetIncrements(Increment, Increment2);
-                        controller.SetDepthDelta(DepthDelta);
-
-                        controller.RunAlgorithm();
-                    }
-                }
-
-                Console.WriteLine("Do you want to change the configuration and rerun the Algorithm? (Y/N)");
+            /*while (runCurrentConfig)
+            {
+                Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
                 answer = Console.ReadLine();
-                run = (answer != "N");
+                runCurrentConfig = (answer != "N");
 
+                if (runCurrentConfig)
+                {
+                    Console.Write("Enter how many fish to release:");
+                    releasedFish = int.Parse(Console.ReadLine());
+                    Console.WriteLine("{0} fish will be released per iterasjon.", releasedFish);
+
+                    try
+                    {
+                        Console.Write("Enter the tempdelta:");
+                        tempDelta = double.Parse(Console.ReadLine());
+                        Console.WriteLine("The tempDelta will be {0}.", tempDelta);
+                    } catch(FormatException ex)
+                    {
+                        Console.WriteLine("Use a comma, not a dot! Thi expcetion was thrown: {0}", ex);
+                    }
+
+                    Console.Write("Enter Increment:");
+                    Increment = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Increment will be {0}.", Increment);
+
+                    Console.Write("Enter the Increment2:");
+                    Increment2 = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Increment2 will be {0}.", Increment2);
+
+                    Console.Write("Enter the depth delta:");
+                    DepthDelta = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Depth delta will be {0}.", DepthDelta);
+
+                    controller.TempDelta = tempDelta;
+                    controller.ReleasedFish = releasedFish;
+                    controller.SetIncrements(Increment, Increment2);
+                    controller.SetDepthDelta(DepthDelta);
+
+                    controller.RunAlgorithm();
+                }
             }
+
+            Console.WriteLine("Do you want to change the configuration and rerun the Algorithm? (Y/N)");
+            answer = Console.ReadLine();
+            run = (answer != "N");
+
+        }
+        */
 
             /*
             int deadFishCounter = 0;
