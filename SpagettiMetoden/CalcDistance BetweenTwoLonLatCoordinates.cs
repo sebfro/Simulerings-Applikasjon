@@ -17,6 +17,11 @@ namespace SpagettiMetoden
 
         public object syncObject = new object();
 
+        public double getLatOrLon(int eta, int xi, Array LatOrLonArray)
+        {
+            return ExtractDataFromEtaAndXi.GetLatOrLon(eta, xi, LatOrLonArray);
+        }
+
         public CalcDistance_BetweenTwoLonLatCoordinates(int inc, int inc2, int depthDelta)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);

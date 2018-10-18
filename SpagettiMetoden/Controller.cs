@@ -87,7 +87,7 @@ namespace SpagettiMetoden
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
-
+            Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
 
             for (int i = 0; i < FishList["742"].TagDataList.Count; i += TagStep)
@@ -111,6 +111,7 @@ namespace SpagettiMetoden
 
                     Parallel.For(0, ReleasedFish, (j) =>
                     {
+                        
                         chosenPosition = false;
                         bool addedToPosDataList = false;
                         bool addedToFishRoutList = false;
@@ -141,6 +142,9 @@ namespace SpagettiMetoden
                             {
                                 addedToFishRoutList = FishList["742"].FishRouteList.TryAdd(fishRoute);
                             }
+                        } else
+                        {
+                            Interlocked.Increment(ref deadFishCounter);
                         }
                     });
                 }

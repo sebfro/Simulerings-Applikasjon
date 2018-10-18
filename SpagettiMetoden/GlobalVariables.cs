@@ -19,11 +19,6 @@ namespace SpagettiMetoden
         public static string pathToOceanTimeNetCDF = @"C:\NCdata\VarmeModell\ocean_time";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
         public static string pathToSaveFishData = @"C:\NCdata\fishData";
-        //Husk å endre på forskjellige pcer, sier hvilken pyton app/script som skal kalles
-        public static string pathToPythonApp = @"D:\MasterWorkSpace\GitHub\SDSLiteVS2017\SpagettiMetoden\getTempFromOcean_Avg.py";
-        //Husk å endre på forskjellige pcer, sier hvilken hvor python.exe er på pcen
-        //Ikke alle python.exe har netCDF4 installert, så prøv andre python.exe hvis den først ikke fungerer
-        public static string pathToPythonExe = @"C:\Python27\python.exe";
         //ALL THE DELTAS:
         public static double TempDelta = 1;
         public static double DepthDelta = 10;
