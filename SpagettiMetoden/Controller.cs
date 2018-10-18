@@ -32,19 +32,9 @@ namespace SpagettiMetoden
         public void SetDayIncrement(int dayInc)
         {
             DayIncrement = dayInc;
-            if(dayInc == 4)
-            {
-                TagStep = 580;
-            } else if( dayInc == 3)
-            {
-                TagStep = 435;
-            } else if( dayInc == 2)
-            {
-                TagStep = 290;
-            } else
-            {
-                TagStep = 145;
-            }
+            //144 er incrementet for å hoppe 24 timer/1 dag i merkedage
+            //Ganger det med antall dager som skal inkrementeres.
+            TagStep = 144 * dayInc;
         }
 
         public Controller(int dayInc, int releasedFish, double tempDelta, int depthDelta, int Increment, int Increment2)
