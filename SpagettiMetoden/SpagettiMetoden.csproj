@@ -76,6 +76,7 @@
     <Compile Include="ExtractDataFromEtaAndXi.cs" />
     <Compile Include="Fish.cs" />
     <Compile Include="FishRoute.cs" />
+    <Compile Include="GeneratePossiblePositions.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="HeatMap.cs" />
     <Compile Include="PositionData.cs" />

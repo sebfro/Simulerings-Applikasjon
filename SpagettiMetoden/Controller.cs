@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace SpagettiMetoden
         public int DayIncrement { get; set; }
         public int ReleasedFish { get; set; }
         public double TempDelta { get; set; }
+        
 
         static object syncObject = new object();
 
@@ -57,6 +59,7 @@ namespace SpagettiMetoden
             EtaXis = new EtaXi[0];
             callPython = new CallPython(dayInc);
             calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, Increment2, depthDelta);
+            
         }
 
         public void SetIncrements(int Increment, int Increment2)
@@ -93,8 +96,10 @@ namespace SpagettiMetoden
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.LatArray, HeatMap.LonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
-                        calcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(calcDistance_BetweenTwoLonLatCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho),
-                        HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], callPython, TempDelta);
+                        calcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(
+                            calcDistance_BetweenTwoLonLatCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho),
+                        HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], callPython, TempDelta
+                            );
 
                     float releaseLat = (float)FishList["742"].ReleaseLat;
                     float releaseLon = (float)FishList["742"].ReleaseLon;
@@ -150,14 +155,22 @@ namespace SpagettiMetoden
                         {
                             int randInt = 0;
                             chosenPosition = false;
-
+                            EtaXi[] possiblePositionsArray;
+                            BlockingCollection<PositionData> validPositionsDataList;
                             if (fishRoute.alive)
                             {
                                 PositionData pData = fishRoute.PositionDataList.ElementAt(counter);
 
-                                BlockingCollection<PositionData> validPositionsDataList =
-                                    calcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(calcDistance_BetweenTwoLonLatCoordinates.CalculatePossibleEtaXi(pData.eta_rho,
-                                    pData.xi_rho), HeatMap.LatArray, HeatMap.LonArray, tagData, callPython, TempDelta);
+                                lock (syncObject)
+                                {
+                                    possiblePositionsArray = calcDistance_BetweenTwoLonLatCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
+                                    validPositionsDataList =
+                                        calcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(
+                                            possiblePositionsArray,
+                                            HeatMap.LatArray, HeatMap.LonArray, tagData, callPython, TempDelta);
+                                }
+
+                                
 
                                 if (validPositionsDataList.Count > 0)
                                 {
