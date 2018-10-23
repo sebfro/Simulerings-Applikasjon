@@ -22,8 +22,8 @@ namespace SpagettiMetoden
             int releasedFish = int.Parse(args[2]);
             double tempDelta = double.Parse(args[3].Replace(".", ","));
             int DepthDelta = int.Parse(args[4]);
-            int Increment = int.Parse(args[5]);
-            int Increment2 = int.Parse(args[6]);
+            double Increment = double.Parse(args[5].Replace(".", ","));
+            double Increment2 = double.Parse(args[6].Replace(".", ","));
             
             //string answer = "";
             

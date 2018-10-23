@@ -39,7 +39,7 @@ namespace SpagettiMetoden
             TagStep = 144 * dayInc;
         }
 
-        public Controller(int dayInc, int releasedFish, double tempDelta, int depthDelta, int Increment, int Increment2)
+        public Controller(int dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Increment2)
         {
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
@@ -58,11 +58,11 @@ namespace SpagettiMetoden
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
             callPython = new CallPython(dayInc);
-            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, Increment2, depthDelta);
+            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, Increment2, depthDelta, dayInc);
             
         }
 
-        public void SetIncrements(int Increment, int Increment2)
+        public void SetIncrements(double Increment, double Increment2)
         {
             calcDistance_BetweenTwoLonLatCoordinates.Increment = Increment;
             calcDistance_BetweenTwoLonLatCoordinates.Increment2 = Increment2;

@@ -12,8 +12,8 @@ namespace SpagettiMetoden
         public BlockingCollection<PositionData> PositionDataList { get; set;}
         public ExtractDataFromEtaAndXi ExtractDataFromEtaAndXi { get; set; }
 
-        public int Increment { get; set; }
-        public int Increment2 { get; set; }
+        public double Increment { get; set; }
+        public double Increment2 { get; set; }
 
         public object syncObject = new object();
 
@@ -22,7 +22,7 @@ namespace SpagettiMetoden
             return ExtractDataFromEtaAndXi.GetLatOrLon(eta, xi, LatOrLonArray);
         }
 
-        public CalcDistance_BetweenTwoLonLatCoordinates(int inc, int inc2, int depthDelta)
+        public CalcDistance_BetweenTwoLonLatCoordinates(double inc, double inc2, int depthDelta, int dayInc)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
             ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(
@@ -31,8 +31,9 @@ namespace SpagettiMetoden
                 ds["mask_rho"].GetData(),
                 depthDelta
                 );
-            Increment = inc;
-            Increment2 = inc2;
+            Increment = (int) (inc * dayInc * 24);
+            Increment2 = (int) (inc2 * dayInc * 24);
+            Console.WriteLine("Increment: {0}, Increment: {1}", Increment, Increment2);
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -64,27 +65,27 @@ namespace SpagettiMetoden
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi)
         {
-            //int increment = GlobalVariables.increment;
-            //int increment2 = GlobalVariables.increment2;
+            int increment = (int)Increment;
+            int increment2 = (int)Increment2;
 
             EtaXi[] etaXis = new EtaXi[17] {
-                GenerateEtaXi(eta+Increment, xi-Increment, eta, xi),
-                GenerateEtaXi(eta+Increment, xi, eta, xi),
-                GenerateEtaXi(eta+Increment, xi+Increment, eta, xi),
-                GenerateEtaXi(eta, xi-Increment, eta, xi),
-                GenerateEtaXi(eta-Increment, xi-Increment, eta, xi),
-                GenerateEtaXi(eta-Increment, xi, eta, xi),
-                GenerateEtaXi(eta-Increment, xi+Increment, eta, xi),
-                GenerateEtaXi(eta, xi+Increment, eta, xi),
+                GenerateEtaXi(eta+increment, xi-increment, eta, xi),
+                GenerateEtaXi(eta+increment, xi, eta, xi),
+                GenerateEtaXi(eta+increment, xi+increment, eta, xi),
+                GenerateEtaXi(eta, xi-increment, eta, xi),
+                GenerateEtaXi(eta-increment, xi-increment, eta, xi),
+                GenerateEtaXi(eta-increment, xi, eta, xi),
+                GenerateEtaXi(eta-increment, xi+increment, eta, xi),
+                GenerateEtaXi(eta, xi+increment, eta, xi),
                 GenerateEtaXi(eta, xi, eta, xi),
-                GenerateEtaXi(eta+Increment2, xi-Increment2, eta, xi),
-                GenerateEtaXi(eta+Increment2, xi, eta, xi),
-                GenerateEtaXi(eta+Increment2, xi+Increment2, eta, xi),
-                GenerateEtaXi(eta, xi-Increment2, eta, xi),
-                GenerateEtaXi(eta-Increment2, xi-Increment2, eta, xi),
-                GenerateEtaXi(eta-Increment2, xi, eta, xi),
-                GenerateEtaXi(eta-Increment2, xi+Increment2, eta, xi),
-                GenerateEtaXi(eta, xi+Increment2, eta, xi)};
+                GenerateEtaXi(eta+increment2, xi-increment2, eta, xi),
+                GenerateEtaXi(eta+increment2, xi, eta, xi),
+                GenerateEtaXi(eta+increment2, xi+increment2, eta, xi),
+                GenerateEtaXi(eta, xi-increment2, eta, xi),
+                GenerateEtaXi(eta-increment2, xi-increment2, eta, xi),
+                GenerateEtaXi(eta-increment2, xi, eta, xi),
+                GenerateEtaXi(eta-increment2, xi+increment2, eta, xi),
+                GenerateEtaXi(eta, xi+increment2, eta, xi)};
 
             return etaXis.Where(etaXi => etaXi.Valid).ToArray();;
 
