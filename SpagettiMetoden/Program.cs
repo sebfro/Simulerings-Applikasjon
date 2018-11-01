@@ -23,7 +23,7 @@ namespace SpagettiMetoden
             double tempDelta = double.Parse(args[3].Replace(".", ","));
             int DepthDelta = int.Parse(args[4]);
             double Increment = double.Parse(args[5].Replace(".", ","));
-            double Increment2 = double.Parse(args[6].Replace(".", ","));
+            double propability = double.Parse(args[6].Replace(".", ","));
             
             //string answer = "";
             
@@ -77,7 +77,7 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files..."); */
             Console.WriteLine("Running algorithm...");
-                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, propability);
                 //bool runCurrentConfig = true;
                 controller.RunAlgorithm();
             /*while (runCurrentConfig)
