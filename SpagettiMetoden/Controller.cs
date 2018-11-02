@@ -39,7 +39,7 @@ namespace SpagettiMetoden
             TagStep = 144 * dayInc;
         }
 
-        public Controller(int dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Increment2)
+        public Controller(int dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double propability)
         {
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
@@ -53,12 +53,12 @@ namespace SpagettiMetoden
             file.readReleaseAndCapture(FishList, KeyList);
             file.readTagData(FishList, KeyList);
 
-
+            GlobalVariables.Propability = propability;
 
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
             callPython = new CallPython(dayInc);
-            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, Increment2, depthDelta, dayInc);
+            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, depthDelta, dayInc);
             
         }
 
@@ -119,10 +119,10 @@ namespace SpagettiMetoden
 
                             RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList["742"]);
 
-                            while (!chosenPosition)
+                            while (!chosenPosition )
                             {
                                 randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                chosenPosition = routeChooser.chosenRoute(validPositionsDataList, randInt);
+                                chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
                             }
 
                             while (!addedToPosDataList)
@@ -180,7 +180,7 @@ namespace SpagettiMetoden
                                         while (!chosenPosition)
                                         {
                                             randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                            chosenPosition = routeChooser.chosenRoute(validPositionsDataList, randInt);
+                                            chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
                                         }
 
                                         fishRoute.PositionDataList.Add((new PositionData(
@@ -261,7 +261,8 @@ namespace SpagettiMetoden
                 if (fishRoute.alive)
                 {
                     var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);
-                    if (CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) < calcDistance_BetweenTwoLonLatCoordinates.Increment)
+                    if (CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) <
+                        (calcDistance_BetweenTwoLonLatCoordinates.Increment * 3.6) * (calcDistance_BetweenTwoLonLatCoordinates.DayInc * 24))
                     {
                         folderName = "Akseptabel";
                     } else
