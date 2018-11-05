@@ -17,25 +17,40 @@ namespace SpagettiMetoden
         {
             //bool run = true;
 
-            int tagId = int.Parse(args[0]);
-            int dayInc = int.Parse(args[1]);
-            int releasedFish = int.Parse(args[2]);
-            double tempDelta = double.Parse(args[3].Replace(".", ","));
-            int DepthDelta = int.Parse(args[4]);
-            double Increment = double.Parse(args[5].Replace(".", ","));
-            double Increment2 = double.Parse(args[6].Replace(".", ","));
-            
-            //string answer = "";
-            
-            Controller controller;
+            try
+            {
+                int tagId = int.Parse(args[0]);
+                int dayInc = int.Parse(args[1]);
+                int releasedFish = int.Parse(args[2]);
+                double tempDelta = double.Parse(args[3].Replace(".", ","));
+                int DepthDelta = int.Parse(args[4]);
+                double Increment = double.Parse(args[5].Replace(".", ","));
+                double propability = double.Parse(args[6].Replace(".", ","));
 
-            
+                //string answer = "";
 
-            //Skriv til setup fil
-            string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t" 
+                Controller controller;
+
+
+
+                //Skriv til setup fil
+                string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t"
                                                                                                                            + args[3] + "\t" + args[4] + "\t" + args[5] + "\t" + args[6] + "\t" };
 
-            File.WriteAllLines(@"C:\NCdata\fishData\setup.txt", setup);
+                File.WriteAllLines(@"C:\NCdata\fishData\setup.txt", setup);
+
+                Console.WriteLine("Running algorithm...");
+                var watch = Stopwatch.StartNew();
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, propability);
+                watch.Stop();
+                double elapsedMs = watch.ElapsedMilliseconds;
+                Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
+                controller.RunAlgorithm();
+            } catch(Exception ex)
+            {
+                ConsoleUI consoleUi = new ConsoleUI();
+                consoleUi.runUI();
+            }
 
 
             /*
@@ -76,14 +91,17 @@ namespace SpagettiMetoden
 
 
                 Console.WriteLine("Loading files..."); */
+            /*
             Console.WriteLine("Running algorithm...");
             var watch = Stopwatch.StartNew();
             controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
             watch.Stop();
             double elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
-            //bool runCurrentConfig = true;
             controller.RunAlgorithm();
+            */
+
+            //bool runCurrentConfig = true;
             /*while (runCurrentConfig)
             {
                 Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");

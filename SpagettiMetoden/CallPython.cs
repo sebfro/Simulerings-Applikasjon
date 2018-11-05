@@ -30,7 +30,7 @@ namespace SpagettiMetoden
             }
             */
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
-            Console.WriteLine("Success: Alle heat maps have been loaded");
+            //Console.WriteLine("Success: Alle heat maps have been loaded");
             UpdateTempArray(GlobalVariables.day);
         }
 

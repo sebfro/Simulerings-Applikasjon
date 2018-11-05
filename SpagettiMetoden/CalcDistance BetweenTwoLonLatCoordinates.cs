@@ -47,7 +47,7 @@ namespace SpagettiMetoden
 
             Increment = inc;
 
-            Console.WriteLine("Increment: {0}, Increment: {1}", Increment, Increment2);
+            Console.WriteLine("Increment: {0}", Increment);
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -93,7 +93,7 @@ namespace SpagettiMetoden
                 GenerateEtaXi(eta-increment, xi, eta, xi),
                 GenerateEtaXi(eta-increment, xi+increment, eta, xi),
                 GenerateEtaXi(eta, xi+increment, eta, xi),
-                GenerateEtaXi(eta, xi, eta, xi),
+                new EtaXi(eta, xi, true),
                 GenerateEtaXi(eta+increment2, xi-increment2, eta, xi),
                 GenerateEtaXi(eta+increment2, xi, eta, xi),
                 GenerateEtaXi(eta+increment2, xi+increment2, eta, xi),
@@ -157,6 +157,40 @@ namespace SpagettiMetoden
         public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi)
         {
             bool valid = eta <= GlobalVariables.eta_rho_size && eta >= 0 && xi <= GlobalVariables.xi_rho_size && xi >= 0;
+            
+            if (valid)
+            {
+                int etaInc = 0;
+                int xiInc = 0;
+                if(eta > org_eta)
+                {
+                    etaInc = 1;
+                }
+                else if(eta < org_eta)
+                {
+                    etaInc = -1;
+                }
+                if (xi > org_xi)
+                {
+                    xiInc = 1;
+                }
+                else if(xi < org_xi)
+                {
+                    xiInc = -1;
+                }
+                int etaDiff = Math.Abs(eta - org_eta);
+                int iterasions = etaDiff > 0 ? etaDiff : Math.Abs(xi - org_xi);
+                for(int i = 0; i < iterasions && valid; i++)
+                {
+                    if(ExtractDataFromEtaAndXi.IsOnLand(org_eta + (etaInc*i), org_xi + (xiInc * i)))
+                    {
+                        valid = false;
+                    }
+                }
+            }
+            return new EtaXi(eta, xi, valid);
+            /*
+            
             if (valid)
             {
                 int etaDiff = org_eta - eta;
@@ -246,6 +280,7 @@ namespace SpagettiMetoden
                 }
             }
             return new EtaXi(eta, xi, valid);
+            */
         }
         
     }
