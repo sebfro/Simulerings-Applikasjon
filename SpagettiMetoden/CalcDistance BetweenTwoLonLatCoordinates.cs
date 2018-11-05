@@ -15,8 +15,6 @@ namespace SpagettiMetoden
         public double Increment { get; set; }
         public double Increment2 { get; set; }
 
-        public int DayInc { get; set; }
-
         public object syncObject = new object();
 
         public double getLatOrLon(int eta, int xi, Array LatOrLonArray)
@@ -24,7 +22,6 @@ namespace SpagettiMetoden
             return ExtractDataFromEtaAndXi.GetLatOrLon(eta, xi, LatOrLonArray);
         }
 
-        public CalcDistance_BetweenTwoLonLatCoordinates(double inc, int depthDelta, int dayInc)
         public CalcDistance_BetweenTwoLonLatCoordinates(double inc, double inc2, int depthDelta, int dayInc)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
@@ -82,14 +79,10 @@ namespace SpagettiMetoden
         {
             return deg * (Math.PI / 180);
         }
-
         
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi)
         {
-            
-            int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
-            int increment2 = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
             int increment = (int)Increment;
             int increment2 = (int)Increment2;
 

@@ -23,7 +23,6 @@ namespace SpagettiMetoden
             captureLon = currFish.CaptureLon;
         }
         //TODO Vi må google eller snakke med veileder og finne ut om denne metoden er trådsikker
-        public bool ChosenRoute(BlockingCollection<PositionData> validPositionsDataList, int randInt)
         public bool chosenRoute(BlockingCollection<PositionData> validPositionsDataList, int randInt)
         {
             randDouble = ThreadSafeRandom.NextDouble();
@@ -32,7 +31,6 @@ namespace SpagettiMetoden
                                         validPositionsDataList.ElementAt(randInt).lat,
                                         validPositionsDataList.ElementAt(randInt).lon, captureLat,
                                         captureLon);
-            double weight = GlobalVariables.Propability;
             double weight = GlobalVariables.probability;
             return (newDistanceFromCapture < currDistanceFromCapture && randDouble < weight || newDistanceFromCapture >= currDistanceFromCapture && randDouble >= weight);
         }
