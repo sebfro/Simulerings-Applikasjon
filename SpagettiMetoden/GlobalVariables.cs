@@ -52,6 +52,7 @@ namespace SpagettiMetoden
         //Sannsynlighet for å velge en path som er nærmere "capture point"
         public static double Propability { get; set; }
     };
+        public static double probability = 0.85;
 
 
     }
@@ -76,3 +77,4 @@ namespace SpagettiMetoden
         }
     }
 
+}

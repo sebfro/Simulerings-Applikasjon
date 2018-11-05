@@ -25,6 +25,7 @@ namespace SpagettiMetoden
         }
 
         public CalcDistance_BetweenTwoLonLatCoordinates(double inc, int depthDelta, int dayInc)
+        public CalcDistance_BetweenTwoLonLatCoordinates(double inc, double inc2, int depthDelta, int dayInc)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
             ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(
@@ -33,6 +34,7 @@ namespace SpagettiMetoden
                 ds["mask_rho"].GetData(),
                 depthDelta
                 );
+<<<<<<< HEAD
             //Increment = (int) (inc * dayInc * 24);
             //Increment2 = (int) (inc2 * dayInc * 24);
 
@@ -48,6 +50,11 @@ namespace SpagettiMetoden
             Increment = inc;
 
             Console.WriteLine("Increment: {0}", Increment);
+=======
+            Increment = (int) (inc * dayInc * 24);
+            Increment2 = (int) (inc2 * dayInc * 24);
+            Console.WriteLine("Increment: {0}, Increment: {1}", Increment, Increment2);
+>>>>>>> parent of 69167b1... Rnadom speed
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -83,6 +90,8 @@ namespace SpagettiMetoden
             
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
             int increment2 = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
+            int increment = (int)Increment;
+            int increment2 = (int)Increment2;
 
             EtaXi[] etaXis = new EtaXi[17] {
                 GenerateEtaXi(eta+increment, xi-increment, eta, xi),

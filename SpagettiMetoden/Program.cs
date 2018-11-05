@@ -17,6 +17,7 @@ namespace SpagettiMetoden
         {
             //bool run = true;
 
+<<<<<<< HEAD
             try
             {
                 int tagId = int.Parse(args[0]);
@@ -26,6 +27,19 @@ namespace SpagettiMetoden
                 int DepthDelta = int.Parse(args[4]);
                 double Increment = double.Parse(args[5].Replace(".", ","));
                 double propability = double.Parse(args[6].Replace(".", ","));
+=======
+            int tagId = int.Parse(args[0]);
+            int dayInc = int.Parse(args[1]);
+            int releasedFish = int.Parse(args[2]);
+            double tempDelta = double.Parse(args[3].Replace(".", ","));
+            int DepthDelta = int.Parse(args[4]);
+            double Increment = double.Parse(args[5].Replace(".", ","));
+            double Increment2 = double.Parse(args[6].Replace(".", ","));
+            
+            //string answer = "";
+            
+            Controller controller;
+>>>>>>> parent of 69167b1... Rnadom speed
 
                 //string answer = "";
 
@@ -93,6 +107,7 @@ namespace SpagettiMetoden
                 Console.WriteLine("Loading files..."); */
             /*
             Console.WriteLine("Running algorithm...");
+<<<<<<< HEAD
             var watch = Stopwatch.StartNew();
             controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
             watch.Stop();
@@ -102,6 +117,11 @@ namespace SpagettiMetoden
             */
 
             //bool runCurrentConfig = true;
+=======
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
+                //bool runCurrentConfig = true;
+                controller.RunAlgorithm();
+>>>>>>> parent of 69167b1... Rnadom speed
             /*while (runCurrentConfig)
             {
                 Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
