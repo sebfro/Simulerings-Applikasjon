@@ -15,6 +15,8 @@ namespace SpagettiMetoden
         public double Increment { get; set; }
         public double Increment2 { get; set; }
 
+        public int DayInc { get; set; }
+
         public object syncObject = new object();
 
         public double getLatOrLon(int eta, int xi, Array LatOrLonArray)
@@ -23,6 +25,7 @@ namespace SpagettiMetoden
         }
 
         public CalcDistance_BetweenTwoLonLatCoordinates(double inc, double inc2, int depthDelta, int dayInc)
+        public CalcDistance_BetweenTwoLonLatCoordinates(double inc, int depthDelta, int dayInc)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
             ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(
@@ -33,6 +36,20 @@ namespace SpagettiMetoden
                 );
             Increment = (int) (inc * dayInc * 24);
             Increment2 = (int) (inc2 * dayInc * 24);
+            //Increment = (int) (inc * dayInc * 24);
+            //Increment2 = (int) (inc2 * dayInc * 24);
+
+            /*
+            Increment = (int) ((inc * 0.4 * 3.6)*(dayInc * 24));
+            Random rand = new Random();
+            double randDouble = rand.NextDouble() * (1 - 0.4) + 0.4;
+            Increment2 = (int) ((inc2 * randDouble * 3.6)*(dayInc * 24));
+             */
+
+            DayInc = dayInc;
+
+            Increment = inc;
+
             Console.WriteLine("Increment: {0}, Increment: {1}", Increment, Increment2);
         }
 
@@ -61,12 +78,16 @@ namespace SpagettiMetoden
         {
             return deg * (Math.PI / 180);
         }
+
         
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi)
         {
             int increment = (int)Increment;
             int increment2 = (int)Increment2;
+            
+            int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
+            int increment2 = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
 
             EtaXi[] etaXis = new EtaXi[17] {
                 GenerateEtaXi(eta+increment, xi-increment, eta, xi),
