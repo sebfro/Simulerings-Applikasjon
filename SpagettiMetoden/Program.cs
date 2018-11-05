@@ -77,9 +77,13 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files..."); */
             Console.WriteLine("Running algorithm...");
-                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
-                //bool runCurrentConfig = true;
-                controller.RunAlgorithm();
+            var watch = Stopwatch.StartNew();
+            controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
+            watch.Stop();
+            double elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
+            //bool runCurrentConfig = true;
+            controller.RunAlgorithm();
             /*while (runCurrentConfig)
             {
                 Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
