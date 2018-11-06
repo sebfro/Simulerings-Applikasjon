@@ -24,22 +24,22 @@ namespace SpagettiMetoden
         public CalcDistance_BetweenTwoLonLatCoordinates calcDistance_BetweenTwoLonLatCoordinates { get; set; }
 
         public int TagStep { get; set; }
-        public int DayIncrement { get; set; }
+        public double DayIncrement { get; set; }
         public int ReleasedFish { get; set; }
         public double TempDelta { get; set; }
         
 
         static object syncObject = new object();
 
-        public void SetDayIncrement(int dayInc)
+        public void SetDayIncrement(double dayInc)
         {
             DayIncrement = dayInc;
             //144 er incrementet for å hoppe 24 timer/1 dag i merkedage
             //Ganger det med antall dager som skal inkrementeres.
-            TagStep = 144 * dayInc;
+            TagStep = (int) (144 * dayInc);
         }
 
-        public Controller(int dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double propability)
+        public Controller(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double propability, int iterations)
         {
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
@@ -57,15 +57,9 @@ namespace SpagettiMetoden
 
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
-            callPython = new CallPython(dayInc);
-            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, depthDelta, dayInc);
+            callPython = new CallPython();
+            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, depthDelta, dayInc, iterations);
             
-        }
-
-        public void SetIncrements(double Increment, double Increment2)
-        {
-            calcDistance_BetweenTwoLonLatCoordinates.Increment = Increment;
-            calcDistance_BetweenTwoLonLatCoordinates.Increment2 = Increment2;
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -75,6 +69,7 @@ namespace SpagettiMetoden
 
         public void RunAlgorithm()
         {
+            int dayCounter = 0;
             int day = GlobalVariables.day;
             int counter = 1;
             int deadFishCounter = 0;
@@ -142,6 +137,7 @@ namespace SpagettiMetoden
                             Interlocked.Increment(ref deadFishCounter);
                         }
                     });
+                    dayCounter++;
                 }
                 else
                 {
@@ -212,10 +208,19 @@ namespace SpagettiMetoden
                         i = FishList["742"].TagDataList.Count;
                     }
 
+                    dayCounter++;
                     counter++;
                 }
-                
-                day += DayIncrement;
+
+                if (dayCounter == 2 && DayIncrement < 1)
+                {
+                    dayCounter = 0;
+                    day++;
+                }
+                else if(DayIncrement >= 1)
+                {
+                    day += (int)DayIncrement;
+                }
             }
 
             watch.Stop();

@@ -17,14 +17,17 @@ namespace SpagettiMetoden
         {
             //bool run = true;
 
-            int tagId = int.Parse(args[0]);
-            int dayInc = int.Parse(args[1]);
+             int tagId = int.Parse(args[0]);
+            double dayInc = double.Parse(args[1].Replace(".", ","));
             int releasedFish = int.Parse(args[2]);
             double tempDelta = double.Parse(args[3].Replace(".", ","));
             int DepthDelta = int.Parse(args[4]);
             double Increment = double.Parse(args[5].Replace(".", ","));
             double propability = double.Parse(args[6].Replace(".", ","));
+            int iterations = int.Parse(args[7]);
+
             
+            Console.WriteLine("Increment: {0}, propability: {1}, possible pos: {2}", Increment, propability, iterations);
             //string answer = "";
             
             Controller controller;
@@ -33,7 +36,7 @@ namespace SpagettiMetoden
 
             //Skriv til setup fil
             string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t" 
-                                                                                                                           + args[3] + "\t" + args[4] + "\t" + args[5] + "\t" + args[6] + "\t" };
+                                                                                                                           + args[3] + "\t" + args[4] + "\t" + args[5] + "\t" + args[6] + "\t" + args[7]};
 
             File.WriteAllLines(@"C:\NCdata\fishData\setup.txt", setup);
 
@@ -77,7 +80,7 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files..."); */
             Console.WriteLine("Running algorithm...");
-                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, propability);
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, propability, iterations);
                 //bool runCurrentConfig = true;
                 controller.RunAlgorithm();
             /*while (runCurrentConfig)

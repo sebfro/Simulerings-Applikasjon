@@ -18,7 +18,7 @@ namespace SpagettiMetoden
         public object syncObject = new object();
 
         public Array tempArray;
-        public CallPython(int dayIncrement)
+        public CallPython()
         {
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
             //tempArray = DataSet.Open(@"C:\NCData\VarmeModell\TestFiles\ocean_time" + GlobalVariables.day + ".nc")["temp"].GetData();
