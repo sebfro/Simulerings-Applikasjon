@@ -70,7 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalcDistance BetweenTwoLonLatCoordinates.cs" />
+    <Compile Include="CalculateCoordinates.cs" />
     <Compile Include="CalculateXiAndEta.cs" />
     <Compile Include="ConsoleUI.cs" />
     <Compile Include="Controller.cs" />
@@ -86,7 +86,7 @@
     <Compile Include="ReadFromFile.cs" />
     <Compile Include="SimpleGPUAcceleration.cs" />
     <Compile Include="TagData.cs" />
-    <Compile Include="CallPython.cs" />
+    <Compile Include="TempContainer.cs" />
     <Compile Include="RouteChooser.cs" />
   </ItemGroup>
   <ItemGroup>

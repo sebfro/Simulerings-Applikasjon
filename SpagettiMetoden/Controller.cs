@@ -53,7 +53,7 @@ namespace SpagettiMetoden
             File.readReleaseAndCapture(FishList, KeyList);
             File.readTagData(FishList, KeyList);
 
-
+            GlobalVariables.Probability = Probability;
 
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
@@ -170,16 +170,14 @@ namespace SpagettiMetoden
 
                                 if (validPositionsDataList.Count > 0)
                                 {
-
-                                        RouteChooser routeChooser =
+                                    RouteChooser routeChooser =
                                             new RouteChooser(pData.lat, pData.lon, FishList["742"]);
                                         while (!chosenPosition)
                                         {
-                                            randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                                        randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
                                             chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
                                         }
-
-                                        fishRoute.PositionDataList.Add((new PositionData(
+                                    fishRoute.PositionDataList.Add((new PositionData(
                                             validPositionsDataList.ElementAt(randInt).lat,
                                             validPositionsDataList.ElementAt(randInt).lon,
                                             validPositionsDataList.ElementAt(randInt).depth,

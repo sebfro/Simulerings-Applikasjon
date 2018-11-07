@@ -9,7 +9,7 @@ namespace SpagettiMetoden
     class ConsoleUI
     {
 
-       public void runUI()
+       public void RunUI()
         {
             bool run = true;
 
@@ -67,7 +67,7 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files...");
             Console.WriteLine("Running algorithm...");
-                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Increment2);
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, 0.85, 30);
                 bool runCurrentConfig = true;
                 controller.RunAlgorithm();
                 while (runCurrentConfig)
@@ -111,7 +111,6 @@ namespace SpagettiMetoden
 
                         controller.TempDelta = tempDelta;
                         controller.ReleasedFish = releasedFish;
-                        controller.SetIncrements(Increment, Increment2);
                         controller.SetDepthDelta(DepthDelta);
 
                         controller.RunAlgorithm();
