@@ -5,20 +5,20 @@ namespace SpagettiMetoden
 {
     class FishRoute
     {
-        public string id { get; set; }
-        public bool alive { get; set; }
+        public string Id { get; set; }
+        public bool Alive { get; set; }
         public BlockingCollection<PositionData> PositionDataList { get; set; }
 
         public FishRoute(string id)
         {
-            this.id = id;
-            alive = true;
+            Id = id;
+            Alive = true;
             PositionDataList = new BlockingCollection<PositionData>();
         }
         //Mord fisken, lurte du virkelig?
-        public void commitNotAlive()
+        public void CommitNotAlive()
         {
-            alive = false;
+            Alive = false;
         }
         /*
         public string[] fromListToString()
@@ -38,7 +38,7 @@ namespace SpagettiMetoden
         }
         */
         
-         public string[] fromListToString()
+         public string[] FromListToString()
         {
             int counter = 1;
             string[] strArray = new string[PositionDataList.Count+1];
