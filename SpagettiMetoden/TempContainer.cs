@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SpagettiMetoden
 {
-    class CallPython
+    class TempContainer
     {
         public static int add_offset = 10;
         public static double scale_factor = 0.001;
@@ -18,19 +18,19 @@ namespace SpagettiMetoden
         public object syncObject = new object();
 
         public Array tempArray;
-        public CallPython()
+        public TempContainer()
         {
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
             //tempArray = DataSet.Open(@"C:\NCData\VarmeModell\TestFiles\ocean_time" + GlobalVariables.day + ".nc")["temp"].GetData();
             /*
             day = GlobalVariables.day;
-            for(int i = 29; i <= 225; i += dayIncrement)
+            for(int i = day; i <= 225; i += dayIncrement)
             {
                 tempDictionary.Add(i, DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + i + ".nc")["temp"].GetData());
             }
             */
-            tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
-            Console.WriteLine("Success: Alle heat maps have been loaded");
+            //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
+            //Console.WriteLine("Success: Alle heat maps have been loaded");
             UpdateTempArray(GlobalVariables.day);
         }
 
@@ -42,11 +42,10 @@ namespace SpagettiMetoden
         //Men den hentes ut av en dictionary i rammen istedenfor fra hdd/ssd
         public void UpdateTempArray(int day)
         {
-            tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + day + ".nc")["temp"].GetData();
-
             //out tempArray setter variablen tempArray til det vi får ut av TryGetValue
             //tempDictionary.TryGetValue(day, out tempArray);
-            //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + day + ".nc")["temp"].GetData();
+
+            tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + day + ".nc")["temp"].GetData();
         }
 
         /// <summary>

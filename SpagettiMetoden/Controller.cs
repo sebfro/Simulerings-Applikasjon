@@ -14,14 +14,14 @@ namespace SpagettiMetoden
 {
     class Controller
     {
-        public ReadFromFile file { get; set; }
+        public ReadFromFile File { get; set; }
         Dictionary<string, Fish> FishList { get; set; }
         List<string> KeyList { get; set; }
 
         HeatMap HeatMap { get; set; }
         EtaXi[] EtaXis { get; set; }
-        public CallPython callPython { get; set; }
-        public CalcDistance_BetweenTwoLonLatCoordinates calcDistance_BetweenTwoLonLatCoordinates { get; set; }
+        public TempContainer TempContainer { get; set; }
+        public CalculateCoordinates CalculateCoordinates { get; set; }
 
         public int TagStep { get; set; }
         public double DayIncrement { get; set; }
@@ -29,7 +29,7 @@ namespace SpagettiMetoden
         public double TempDelta { get; set; }
         
 
-        static object syncObject = new object();
+        static readonly object syncObject = new object();
 
         public void SetDayIncrement(double dayInc)
         {
@@ -39,32 +39,32 @@ namespace SpagettiMetoden
             TagStep = (int) (144 * dayInc);
         }
 
-        public Controller(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double propability, int iterations)
+        public Controller(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Probability, int iterations)
         {
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
             SetDayIncrement(dayInc);
 
-            file = new ReadFromFile();
+            File = new ReadFromFile();
 
             FishList = new Dictionary<string, Fish>();
             KeyList = new List<string>();
 
-            file.readReleaseAndCapture(FishList, KeyList);
-            file.readTagData(FishList, KeyList);
+            File.readReleaseAndCapture(FishList, KeyList);
+            File.readTagData(FishList, KeyList);
 
-            GlobalVariables.Propability = propability;
+
 
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
-            callPython = new CallPython();
-            calcDistance_BetweenTwoLonLatCoordinates = new CalcDistance_BetweenTwoLonLatCoordinates(Increment, depthDelta, dayInc, iterations);
+            TempContainer = new TempContainer();
+            CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
             
         }
 
         public void SetDepthDelta(int DepthDelta)
         {
-            calcDistance_BetweenTwoLonLatCoordinates.SetDepthDelta(DepthDelta);
+            CalculateCoordinates.SetDepthDelta(DepthDelta);
         }
 
         public void RunAlgorithm()
@@ -91,9 +91,9 @@ namespace SpagettiMetoden
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.LatArray, HeatMap.LonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
-                        calcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(
-                            calcDistance_BetweenTwoLonLatCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho),
-                        HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], callPython, TempDelta
+                        CalculateCoordinates.FindValidPositions(
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho),
+                        HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
                     float releaseLat = (float)FishList["742"].ReleaseLat;
@@ -114,7 +114,7 @@ namespace SpagettiMetoden
 
                             RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList["742"]);
 
-                            while (!chosenPosition )
+                            while (!chosenPosition)
                             {
                                 randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
                                 chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
@@ -141,7 +141,7 @@ namespace SpagettiMetoden
                 }
                 else
                 {
-                    callPython.UpdateTempArray(day);
+                    TempContainer.UpdateTempArray(day);
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
@@ -159,11 +159,11 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = calcDistance_BetweenTwoLonLatCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
                                     validPositionsDataList =
-                                        calcDistance_BetweenTwoLonLatCoordinates.FindValidPositions(
+                                        CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
-                                            HeatMap.LatArray, HeatMap.LonArray, tagData, callPython, TempDelta);
+                                            HeatMap.LatArray, HeatMap.LonArray, tagData, TempContainer, TempDelta);
                                 }
 
                                 
@@ -266,8 +266,7 @@ namespace SpagettiMetoden
                 if (fishRoute.alive)
                 {
                     var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);
-                    if (CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) <
-                        (calcDistance_BetweenTwoLonLatCoordinates.Increment * 3.6) * (calcDistance_BetweenTwoLonLatCoordinates.DayInc * 24))
+                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) < CalculateCoordinates.Increment)
                     {
                         folderName = "Akseptabel";
                     } else
@@ -276,7 +275,7 @@ namespace SpagettiMetoden
                     }
                     string[] fishData = fishRoute.fromListToString();
 
-                    File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.id + "_" + count + ".txt", fishData);
+                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.id + "_" + count + ".txt", fishData);
                     count++;
                 }
             }

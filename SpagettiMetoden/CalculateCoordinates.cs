@@ -9,18 +9,16 @@ using Mono.CSharp;
 
 namespace SpagettiMetoden
 {
-    class CalcDistance_BetweenTwoLonLatCoordinates
+    class CalculateCoordinates
     {
         public BlockingCollection<PositionData> PositionDataList { get; set;}
         public ExtractDataFromEtaAndXi ExtractDataFromEtaAndXi { get; set; }
 
         public double Increment { get; set; }
-        public double Increment2 { get; set; }
-
         public int Iterations { get; set; }
 
         public double DayInc { get; set; }
-
+        
         public object syncObject = new object();
 
         public static readonly int[,] EtaXiCases = new int[,]
@@ -28,12 +26,12 @@ namespace SpagettiMetoden
             {1,-1},{1, 0},{1,1},{0, -1}, {-1, -1}, {-1, 0}, {-1, 1},{0, 1}
         };
 
-        public double getLatOrLon(int eta, int xi, Array LatOrLonArray)
+        public double GetLatOrLon(int eta, int xi, Array LatOrLonArray)
         {
             return ExtractDataFromEtaAndXi.GetLatOrLon(eta, xi, LatOrLonArray);
         }
 
-        public CalcDistance_BetweenTwoLonLatCoordinates(double inc, int depthDelta, double dayInc, int iterations)
+        public CalculateCoordinates(double inc, int depthDelta, double dayInc, int iterations)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
             ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(
@@ -42,15 +40,6 @@ namespace SpagettiMetoden
                 ds["mask_rho"].GetData(),
                 depthDelta
                 );
-            //Increment = (int) (inc * dayInc * 24);
-            //Increment2 = (int) (inc2 * dayInc * 24);
-
-            /*
-            Increment = (int) ((inc * 0.4 * 3.6)*(dayInc * 24));
-            Random rand = new Random();
-            double randDouble = rand.NextDouble() * (1 - 0.4) + 0.4;
-            Increment2 = (int) ((inc2 * randDouble * 3.6)*(dayInc * 24));
-             */
 
             Iterations = iterations;
             DayInc = dayInc;
@@ -85,55 +74,10 @@ namespace SpagettiMetoden
         {
             return deg * (Math.PI / 180);
         }
-
-        /*
-        public void GeneratePositionArray(int increment, int eta, int xi)
-        {
-            int tempIncrement = increment;
-            for (int i = 0; i < 8; i++)
-            {
-                GenerateEtaXi(eta + tempIncrement, xi + tempIncrement, eta, xi);
-                if (tempIncrement == 0)
-                {
-                    tempIncrement = increment;
-                }
-                else if (tempIncrement > 0)
-                {
-                    tempIncrement = (-1) * increment;
-                }
-                else
-                {
-                    tempIncrement = 0;
-                }
-            }
-        }
-         */
          
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi)
         {
-            //int increment2 = (int) (Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24);
-            //int increment2 = (int)((Increment * ThreadSafeRandom.RandomSpeed() * 3.6) * (DayInc * 24));
-            
-            /*
-            EtaXi[] etaXis = new EtaXi[9] {
-                GenerateEtaXi(eta+increment, xi-increment, eta, xi),
-                GenerateEtaXi(eta+increment, xi, eta, xi),
-                GenerateEtaXi(eta+increment, xi+increment, eta, xi),
-                GenerateEtaXi(eta, xi-increment, eta, xi),
-                GenerateEtaXi(eta-increment, xi-increment, eta, xi),
-                GenerateEtaXi(eta-increment, xi, eta, xi),
-                GenerateEtaXi(eta-increment, xi+increment, eta, xi),
-                GenerateEtaXi(eta, xi+increment, eta, xi),
-                GenerateEtaXi(eta, xi, eta, xi)
-                /*GenerateEtaXi(eta+increment2, xi-increment2, eta, xi),
-                GenerateEtaXi(eta+increment2, xi, eta, xi),
-                GenerateEtaXi(eta+increment2, xi+increment2, eta, xi),
-                GenerateEtaXi(eta, xi-increment2, eta, xi),
-                GenerateEtaXi(eta-increment2, xi-increment2, eta, xi),
-                GenerateEtaXi(eta-increment2, xi, eta, xi),
-                GenerateEtaXi(eta-increment2, xi+increment2, eta, xi),
-                GenerateEtaXi(eta, xi+increment2, eta, xi)};*/
 
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
             int counter = 0;
@@ -162,7 +106,7 @@ namespace SpagettiMetoden
 
         }
 
-        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, CallPython callPython, double tempDelta)
+        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, TempContainer callPython, double tempDelta)
         {
             //CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             PositionDataList = new BlockingCollection<PositionData>();
@@ -209,7 +153,7 @@ namespace SpagettiMetoden
             return PositionDataList;
         }
 
-        public int setIncrement(int newCoord, int oldCoord)
+        public int SetIncrement(int newCoord, int oldCoord)
         {
             if (newCoord > oldCoord)
             {
@@ -227,11 +171,10 @@ namespace SpagettiMetoden
         public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi)
         {
             bool valid = eta <= GlobalVariables.eta_rho_size && eta >= 0 && xi <= GlobalVariables.xi_rho_size && xi >= 0;
-
             if (valid)
             {
-                int etaInc = setIncrement(eta, org_eta);
-                int xiInc = setIncrement(xi, org_xi);
+                int etaInc = SetIncrement(eta, org_eta);
+                int xiInc = SetIncrement(xi, org_xi);
                 int iterasion = Math.Abs(eta - org_eta);
                 iterasion = iterasion == 0 ? Math.Abs(xi - org_xi) : iterasion;
                 for (int i = 0; i < iterasion && valid; i++)
@@ -242,8 +185,6 @@ namespace SpagettiMetoden
                     }
                 }
             }
-
-            
             return new EtaXi(eta, xi, valid);
         }
         

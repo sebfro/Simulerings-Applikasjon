@@ -50,8 +50,7 @@ namespace SpagettiMetoden
         public static int day = 29;
 
         //Sannsynlighet for å velge en path som er nærmere "capture point"
-        public static double Propability { get; set; }
-    };
+        public static double Probability { get; set; }
 
 
     }
@@ -69,10 +68,9 @@ namespace SpagettiMetoden
         {
             lock (_inst) return _inst.NextDouble();
         }
-
         public static double RandomSpeed(float max)
         {
             lock (_inst) return _inst.NextDouble() * (max - 0.4) + 0.4;
         }
     }
-
+}

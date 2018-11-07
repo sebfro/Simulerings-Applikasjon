@@ -10,15 +10,13 @@ namespace SpagettiMetoden
     class RouteChooser
     {
         public double currDistanceFromCapture;
-        public Random rand;
         public double randDouble;
         public double captureLat;
         public double captureLon;
 
         public RouteChooser(double lat, double lon, Fish currFish)
         {
-            currDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.CaptureLat, currFish.CaptureLon);
-            rand = new Random();
+            currDistanceFromCapture = CalculateCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.CaptureLat, currFish.CaptureLon);
             captureLat = currFish.CaptureLat;
             captureLon = currFish.CaptureLon;
         }
@@ -27,11 +25,11 @@ namespace SpagettiMetoden
         {
             randDouble = ThreadSafeRandom.NextDouble();
 
-            double newDistanceFromCapture = CalcDistance_BetweenTwoLonLatCoordinates.GetDistanceFromLatLonInKm(
+            double newDistanceFromCapture = CalculateCoordinates.GetDistanceFromLatLonInKm(
                                         validPositionsDataList.ElementAt(randInt).lat,
                                         validPositionsDataList.ElementAt(randInt).lon, captureLat,
                                         captureLon);
-            double weight = GlobalVariables.Propability;
+            double weight = GlobalVariables.Probability;
             return (newDistanceFromCapture < currDistanceFromCapture && randDouble < weight || newDistanceFromCapture >= currDistanceFromCapture && randDouble >= weight);
         }
     }
