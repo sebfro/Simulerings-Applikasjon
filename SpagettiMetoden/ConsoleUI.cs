@@ -23,7 +23,7 @@ namespace SpagettiMetoden
 
             string answer = "";
 
-            ControllerReleaseSteadily controller;
+            Controller controller;
 
             while (run)
             {
@@ -67,7 +67,7 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files...");
             Console.WriteLine("Running algorithm...");
-                controller = new ControllerReleaseSteadily(dayInc, releasedFish, 1.2, DepthDelta, Increment, 0.85, 30);
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, 0.85, 30);
                 bool runCurrentConfig = true;
                 controller.RunAlgorithm();
                 while (runCurrentConfig)
@@ -96,11 +96,11 @@ namespace SpagettiMetoden
                         */
 
                         Console.Write("Enter Increment:");
-                        Increment = double.Parse(Console.ReadLine());
+                        Increment = int.Parse(Console.ReadLine());
                         Console.WriteLine("Increment will be {0}.", Increment);
 
                         Console.Write("Enter the Increment2:");
-                        Increment2 = double.Parse(Console.ReadLine());
+                        Increment2 = int.Parse(Console.ReadLine());
                         Console.WriteLine("Increment2 will be {0}.", Increment2);
 
                         /*
@@ -110,7 +110,7 @@ namespace SpagettiMetoden
                         */
 
                         controller.TempDelta = tempDelta;
-                        //controller.ReleasedFish = releasedFish;
+                        controller.ReleasedFish = releasedFish;
                         controller.SetDepthDelta(DepthDelta);
 
                         controller.RunAlgorithm();

@@ -153,7 +153,7 @@ namespace SpagettiMetoden
                             chosenPosition = false;
                             EtaXi[] possiblePositionsArray;
                             BlockingCollection<PositionData> validPositionsDataList;
-                            if (fishRoute.Alive)
+                            if (fishRoute.alive)
                             {
                                 PositionData pData = fishRoute.PositionDataList.ElementAt(counter);
 
@@ -191,7 +191,7 @@ namespace SpagettiMetoden
                                 else
                                 {
                                     Interlocked.Increment(ref deadFishCounter);
-                                    fishRoute.CommitNotAlive();
+                                    fishRoute.commitNotAlive();
                                     /*Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep + " ELIMINERT");
                                     Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
                                     Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
@@ -261,9 +261,8 @@ namespace SpagettiMetoden
             foreach (var fishRoute in FishList["742"].FishRouteList)
             {
                 //Console.WriteLine("Is fish alive?: " + fishRoute.alive);
-                if (fishRoute.Alive)
+                if (fishRoute.alive)
                 {
-                    Console.WriteLine("ITS ALIVE!!!!!");
                     var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);
                     if (CalculateCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) < CalculateCoordinates.Increment)
                     {
@@ -272,9 +271,9 @@ namespace SpagettiMetoden
                     {
                         folderName = "Uakseptabel";
                     }
-                    string[] fishData = fishRoute.FromListToString();
+                    string[] fishData = fishRoute.fromListToString();
 
-                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.Id + "_" + count + ".txt", fishData);
+                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.id + "_" + count + ".txt", fishData);
                     count++;
                 }
             }

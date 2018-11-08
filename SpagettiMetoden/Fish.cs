@@ -22,15 +22,15 @@ namespace SpagettiMetoden
             Id = id;
             CaptureDate = captureDate;
             ReleaseDate = releaseDate;
-            ReleaseLat = StringToDoubleLat(releaseLatLon);
-            ReleaseLon = StringToDoubleLon(releaseLatLon);
-            CaptureLat = StringToDoubleLat(captureLatLon);
-            CaptureLon = StringToDoubleLon(captureLatLon);
+            ReleaseLat = stringToDoubleLat(releaseLatLon);
+            ReleaseLon = stringToDoubleLon(releaseLatLon);
+            CaptureLat = stringToDoubleLat(captureLatLon);
+            CaptureLon = stringToDoubleLon(captureLatLon);
             TagDataList = new List<TagData>();
             FishRouteList = new BlockingCollection<FishRoute>();
         }
 
-        public double StringToDoubleLat(string latAndLon)
+        public double stringToDoubleLat(string latAndLon)
         {
             string[] strArray;
             //new[] {',',' '}
@@ -38,7 +38,7 @@ namespace SpagettiMetoden
             return double.Parse(strArray[0], CultureInfo.InvariantCulture);
         }
 
-        public double StringToDoubleLon(string latAndLon)
+        public double stringToDoubleLon(string latAndLon)
         {
             string[] strArray;
             //new[] {',',' '}
