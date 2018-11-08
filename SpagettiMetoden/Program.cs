@@ -15,8 +15,6 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
-            try
-            {
                 int tagId = int.Parse(args[0]);
                 int dayInc = int.Parse(args[1]);
                 int releasedFish = int.Parse(args[2]);
@@ -30,7 +28,7 @@ namespace SpagettiMetoden
             Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
             //string answer = "";
             
-            ControllerReleaseSteadily controller;
+            Controller controller;
 
 
 
@@ -42,16 +40,12 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Running algorithm...");
                 var watch = Stopwatch.StartNew();
-                controller = new ControllerReleaseSteadily(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
                 watch.Stop();
                 double elapsedMs = watch.ElapsedMilliseconds;
                 Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
                 controller.RunAlgorithm();
-            } catch(Exception ex)
-            {
-                ConsoleUI consoleUi = new ConsoleUI();
-                consoleUi.RunUI();
-            }
+            
             Console.ReadLine();
         }
     }
