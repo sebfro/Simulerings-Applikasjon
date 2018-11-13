@@ -79,7 +79,7 @@ namespace SpagettiMetoden
 
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
             int counter = 0;
-            float max = lowerSpeed ? 0.5f : 1f;
+            float max = lowerSpeed ? 0.4f : 1f;
             float min = lowerSpeed ? 0.01f : 0.4f;
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
             for (int i = 0; i < Iterations; i++)
@@ -90,10 +90,10 @@ namespace SpagettiMetoden
                     eta, xi));
                 if (counter == 7)
                 {
-                    if (max > 0.4)
+                    /*if (max > 0.4)
                     {
                         max -= 0.1f;
-                    } 
+                    } */
                     increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
                 }
                 counter = counter == 7 ? counter = 0 : counter+1;
