@@ -68,9 +68,9 @@ namespace SpagettiMetoden
         {
             lock (_inst) return _inst.NextDouble();
         }
-        public static double RandomSpeed(float max)
+        public static double RandomSpeed(float min, float max)
         {
-            lock (_inst) return _inst.NextDouble() * (max - 0.4) + 0.4;
+            lock (_inst) return _inst.NextDouble() * (max - min) + 0.4;
         }
     }
 }

@@ -74,13 +74,14 @@ namespace SpagettiMetoden
         }
          
 
-        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi)
+        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed)
         {
 
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
             int counter = 0;
-            float max = 1;
-            int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(max) * 3.6) * (DayInc * 24));
+            float max = lowerSpeed ? 0.5f : 1f;
+            float min = lowerSpeed ? 0.01f : 0.4f;
+            int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
             for (int i = 0; i < Iterations; i++)
             {
                 
@@ -93,7 +94,7 @@ namespace SpagettiMetoden
                     {
                         max -= 0.1f;
                     } 
-                    increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(max) * 3.6) * (DayInc * 24));
+                    increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
                 }
                 counter = counter == 7 ? counter = 0 : counter+1;
             }
