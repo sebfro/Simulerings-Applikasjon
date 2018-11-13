@@ -74,6 +74,7 @@
     <Compile Include="CalculateXiAndEta.cs" />
     <Compile Include="ConsoleUI.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="ControllerReleaseFwAndBw.cs" />
     <Compile Include="ControllerReleaseSteadily.cs" />
     <Compile Include="ExtractDataFromEtaAndXi.cs" />
     <Compile Include="Fish.cs" />
