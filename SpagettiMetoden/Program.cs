@@ -16,7 +16,7 @@ namespace SpagettiMetoden
         static void Main(string[] args)
         {
                 int tagId = int.Parse(args[0]);
-                int dayInc = int.Parse(args[1]);
+                double dayInc = double.Parse(args[1].Replace(".", ","));
                 int releasedFish = int.Parse(args[2]);
                 double tempDelta = double.Parse(args[3].Replace(".", ","));
                 int DepthDelta = int.Parse(args[4]);

@@ -13,14 +13,12 @@ namespace SpagettiMetoden
         public double randDouble;
         public double captureOrReleaseLat;
         public double captureOrReleaseLon;
-        public double captureLat;
-        public double captureLon;
 
         public RouteChooser(double lat, double lon, Fish currFish)
         {
             currDistanceFromCaptureOrRelease = CalculateCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.CaptureLat, currFish.CaptureLon);
-            captureLat = currFish.CaptureLat;
-            captureLon = currFish.CaptureLon;
+            captureOrReleaseLat = currFish.CaptureLat;
+            captureOrReleaseLon = currFish.CaptureLon;
 
         }
 

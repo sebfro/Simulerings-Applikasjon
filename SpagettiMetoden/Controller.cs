@@ -264,7 +264,8 @@ namespace SpagettiMetoden
                 if (fishRoute.Alive)
                 {
                     var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);
-                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) < CalculateCoordinates.Increment)
+                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) <
+                        ((CalculateCoordinates.Increment * 3.6) * (DayIncrement * 24)))
                     {
                         folderName = "Akseptabel";
                     } else
