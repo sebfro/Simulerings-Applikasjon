@@ -15,6 +15,8 @@ namespace SpagettiMetoden
     {
         static void Main(string[] args)
         {
+            try
+            {
                 int tagId = int.Parse(args[0]);
                 int dayInc = int.Parse(args[1]);
                 int releasedFish = int.Parse(args[2]);
@@ -23,17 +25,17 @@ namespace SpagettiMetoden
                 double Increment = double.Parse(args[5].Replace(".", ","));
                 double Probability = double.Parse(args[6].Replace(".", ","));
                 int iterations = int.Parse(args[7]);
-                
-            
-            Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
-            //string answer = "";
-            
-            Controller controller;
+
+
+                Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
+                //string answer = "";
+
+                Controller controller;
 
 
 
-            //Skriv til setup fil
-            string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t" 
+                //Skriv til setup fil
+                string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t"
                                                                                                                            + args[3] + "\t" + args[4] + "\t" + args[5] + "\t" + args[6] + "\t" + args[7]};
 
                 File.WriteAllLines(@"C:\NCdata\fishData\setup.txt", setup);
@@ -45,8 +47,14 @@ namespace SpagettiMetoden
                 double elapsedMs = watch.ElapsedMilliseconds;
                 Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
                 controller.RunAlgorithm();
-            
-            Console.ReadLine();
+
+                Console.ReadLine();
+            } catch {
+                ConsoleUI consoleUI = new ConsoleUI();
+
+                consoleUI.RunUI();
+            }
+                
         }
     }
 }  

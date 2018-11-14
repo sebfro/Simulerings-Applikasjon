@@ -23,7 +23,7 @@ namespace SpagettiMetoden
 
             string answer = "";
 
-            ControllerReleaseSteadily controller;
+            ControllerReleaseFwAndBw controller;
 
             while (run)
             {
@@ -67,9 +67,14 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files...");
             Console.WriteLine("Running algorithm...");
-                controller = new ControllerReleaseSteadily(dayInc, releasedFish, 1.2, DepthDelta, Increment, 0.85, 30);
+                controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, 1.2, DepthDelta, Increment, 0.85, 30);
                 bool runCurrentConfig = true;
-                controller.RunAlgorithm();
+                controller.RunAlgorithmFW();
+                controller.RunAlgorithmBW();
+                Merge merge = new Merge();
+                merge.MergeFwAndBwFiles(Increment, dayInc);
+                Console.ReadLine();
+
                 while (runCurrentConfig)
                 {
                     Console.WriteLine("Do you want to rerun the Algorithm with current configuration? (Y/N)");
@@ -113,7 +118,7 @@ namespace SpagettiMetoden
                         //controller.ReleasedFish = releasedFish;
                         controller.SetDepthDelta(DepthDelta);
 
-                        controller.RunAlgorithm();
+                        controller.RunAlgorithmBW();
                     }
                 }
 

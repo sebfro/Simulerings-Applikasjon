@@ -74,14 +74,18 @@ namespace SpagettiMetoden
             int halfTagDataCount = (FishList["742"].TagDataList.Count / 2);
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
 
+            int halfIterations = halfTagDataCount / TagStep;
+
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
 
-            for (int i = 0; i < halfTagDataCount; i += TagStep)
+
+            for (int i = 0; i < halfTagDataCount && halfIterations > 0; i += TagStep)
             {
 
                 Console.WriteLine("I iterasjon: " + i / TagStep);
                 bool chosenPosition;
+                halfIterations--;
 
                 if (i == 0)
                 {
@@ -91,7 +95,7 @@ namespace SpagettiMetoden
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.LatArray, HeatMap.LonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho),
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, false),
                         HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
@@ -159,7 +163,7 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho, Math.Abs(pData.depth - tagData.depth) < 30);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
@@ -227,8 +231,6 @@ namespace SpagettiMetoden
             var count = 1;
             string folderName = "Uakseptabel";
             var FishData = FishList["742"];
-            double captureLat = FishData.CaptureLat;
-            double captureLon = FishData.CaptureLon;
 
 
             Console.WriteLine("Hvor lang tid tok programmet: {0} minutter.", elapsedMs / 60000);
@@ -275,28 +277,30 @@ namespace SpagettiMetoden
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
             int halfTagDataCount = (FishList["742"].TagDataList.Count / 2);
-            int tagDataCount = FishList["742"].TagDataList.Count;
+            int tagDataCount = FishList["742"].TagDataList.Count -1;
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
+
+            int halfIterations = halfTagDataCount / TagStep;
 
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
 
-            for (int i = tagDataCount-1; i > halfTagDataCount; i -= TagStep)
+            for (int i = tagDataCount; i > halfTagDataCount && halfIterations > 0; i -= TagStep)
             {
 
+                halfIterations--;
                 Console.WriteLine("I iterasjon: " + i / TagStep);
                 bool chosenPosition;
 
-                if (i == tagDataCount-1)
+                if (i == tagDataCount)
                 {
-                    Console.WriteLine("Første if");
                     var watch2 = Stopwatch.StartNew();
 
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.LatArray, HeatMap.LonArray, FishList["742"].CaptureLat, FishList["742"].CaptureLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho),
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, false),
                         HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
@@ -309,8 +313,6 @@ namespace SpagettiMetoden
                         chosenPosition = false;
                         bool addedToPosDataList = false;
                         bool addedToFishRouteList = false;
-
-                        Console.WriteLine(validPositionsDataList.Count);
 
                         if (validPositionsDataList.Count > 0)
                         {
@@ -366,7 +368,7 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho, Math.Abs(pData.depth - tagData.depth) < 30);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
@@ -432,9 +434,7 @@ namespace SpagettiMetoden
             double elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs);
             var count = 1;
-            string folderName = "Uakseptabel";
             var FishData = FishList["742"];
-
 
             Console.WriteLine("Hvor lang tid tok programmet: {0} minutter.", elapsedMs / 60000);
             Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
@@ -448,7 +448,6 @@ namespace SpagettiMetoden
             }
             else
             {
-                //SLETTER ALLE FILER I FOLDER AKSEPTABEL OG UAKSEPTABEL !!!!!!!!!!!!!!!!!! Lag backup folder om tester hjemme eller HI
                 DirectoryInfo di = new DirectoryInfo(GlobalVariables.pathToSaveFishData + @"\BW\");
 
                 foreach (FileInfo file in di.GetFiles())
@@ -460,7 +459,6 @@ namespace SpagettiMetoden
 
             foreach (var fishRoute in FishList["742"].FishRouteList)
             {
-                Console.WriteLine("Is fish alive?: " + fishRoute.Alive);
                 if (fishRoute.Alive)
                 {
                     string[] fishData = fishRoute.FromListToString();
@@ -469,8 +467,6 @@ namespace SpagettiMetoden
                     count++;
                 }
             }
-
         }
-
     }
 }

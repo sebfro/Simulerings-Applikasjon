@@ -82,6 +82,7 @@
     <Compile Include="GeneratePossiblePositions.cs" />
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="HeatMap.cs" />
+    <Compile Include="Merge.cs" />
     <Compile Include="PositionData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
