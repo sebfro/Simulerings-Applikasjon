@@ -30,8 +30,8 @@ namespace SpagettiMetoden
                 Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
                 //string answer = "";
 
-                Controller controller;
-
+                ControllerReleaseFwAndBw controller;
+                
 
 
                 //Skriv til setup fil
@@ -42,11 +42,38 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Running algorithm...");
                 var watch = Stopwatch.StartNew();
-                controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                bool failed = false;
+                //controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                //controller.RunAlgorithm();
+                
+                if (controller.RunAlgorithmFW())
+                {
+                    if (controller.RunAlgorithmBW())
+                    {
+                        //Merge merge = new Merge();
+                        Merge.MergeFwAndBwFiles(Increment, dayInc);
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                }
+                else
+                {
+                    failed = true;
+                }
+
+                if (failed)
+                {
+                    Console.WriteLine("It's a failure like torkel");
+                }
+                 
+
                 watch.Stop();
                 double elapsedMs = watch.ElapsedMilliseconds;
                 Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
-                controller.RunAlgorithm();
+                //controller.RunAlgorithm();
 
                 Console.ReadLine();
             } catch {

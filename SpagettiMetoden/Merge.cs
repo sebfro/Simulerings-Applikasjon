@@ -10,23 +10,23 @@ namespace SpagettiMetoden
 {
     class Merge
     {
-        public string id { get; set; }
-        public double lat { get; set; }
-        public double lon { get; set; }
+        public string Id { get; set; }
+        public double Lat { get; set; }
+        public double Lon { get; set; }
         
         public Merge()
         {
 
         }
 
-        public Merge(string id, double lat, double lon)
+        public Merge(string id, string lat, string lon)
         {
-            this.id = id;
-            this.lat = lat;
-            this.lon = lon;
+            Id = id;
+            Lat = double.Parse(lat);
+            Lon = double.Parse(lon);
         }
 
-        public List<Merge> ReadDirectory(string filePath)
+        public static List<Merge> ReadDirectory(string filePath)
         {
             int intLocation;
             string lastLine;
@@ -39,12 +39,12 @@ namespace SpagettiMetoden
 
                 intLocation = file.IndexOf("742");
 
-                List.Add(new Merge(file.Substring(intLocation), double.Parse(strArray[0], CultureInfo.InvariantCulture), double.Parse(strArray[1], CultureInfo.InvariantCulture)));
+                List.Add(new Merge(file.Substring(intLocation), strArray[0], strArray[1]));
             }
             return List;
         }
 
-        public void MergeFwAndBwFiles(double increment, double dayInc)
+        public static void MergeFwAndBwFiles(double increment, double dayInc)
         {
             List<Merge> ForwardList = ReadDirectory(GlobalVariables.pathToFwDirectory);
             List<Merge> BackwardList = ReadDirectory(GlobalVariables.pathToBwDirectory);
@@ -56,11 +56,11 @@ namespace SpagettiMetoden
                 found = false;
                 for (int i = 0; i < BackwardList.Count && !found; i++)
                 {
-                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(fwPos.lat, fwPos.lon, BackwardList[i].lat, BackwardList[i].lon) < (increment * 1 * 3.6 * (dayInc * 24)))
+                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(fwPos.Lat, fwPos.Lon, BackwardList[i].Lat, BackwardList[i].Lon) < (increment * 0.6 * 3.6 * (dayInc * 24)))
                     {
-                        if (MergeFiles(fwPos.id, BackwardList[i].id, counter))
+                        if (MergeFiles(fwPos.Id, BackwardList[i].Id, counter))
                         {
-                            BackwardList.Remove(BackwardList[i]);
+                            BackwardList.RemoveAt(i);
                             counter++;
                             found = true;
                         }
@@ -70,7 +70,7 @@ namespace SpagettiMetoden
             Console.WriteLine("Finished merging files");
         }
 
-        public bool MergeFiles(string fwId, string bwId, int counter)
+        public static bool MergeFiles(string fwId, string bwId, int counter)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace SpagettiMetoden
                 
                 TextWriter tw = new StreamWriter(GlobalVariables.pathToMergedDirectory + counter + ".txt");
 
-                foreach (String s in forwardList)
+                foreach (string s in forwardList)
                     tw.WriteLine(s);
 
                 tw.Close();

@@ -64,7 +64,7 @@ namespace SpagettiMetoden
             CalculateCoordinates.SetDepthDelta(DepthDelta);
         }
 
-        public void RunAlgorithmFW()
+        public bool RunAlgorithmFW()
         {
             int dayCounter = 0;
             int day = GlobalVariables.day;
@@ -267,9 +267,10 @@ namespace SpagettiMetoden
                 }
             }
 
+            return !(deadFishCounter == ReleasedFish);
         }
 
-        public void RunAlgorithmBW()
+        public bool RunAlgorithmBW()
         {
             int dayCounter = 0;
             int day = GlobalVariables.lastDay;
@@ -401,11 +402,6 @@ namespace SpagettiMetoden
                                 {
                                     Interlocked.Increment(ref deadFishCounter);
                                     fishRoute.CommitNotAlive();
-                                    /*Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep + " ELIMINERT");
-                                    Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
-                                    Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
-                                    Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
-                                    */
                                 }
                             }
                         });
@@ -467,6 +463,8 @@ namespace SpagettiMetoden
                     count++;
                 }
             }
+
+            return !(deadFishCounter == ReleasedFish);
         }
     }
 }

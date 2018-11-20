@@ -14,7 +14,7 @@ namespace SpagettiMetoden
             bool run = true;
 
             int tagId = 742;
-            int dayInc = 4;
+            double dayInc = 4;
             int releasedFish = 10000;
             double tempDelta = 1;
             int DepthDelta = 30;
@@ -28,7 +28,7 @@ namespace SpagettiMetoden
             while (run)
             {
                 Console.Write("Enter day increment per iterasion: ");
-                dayInc = int.Parse(Console.ReadLine());
+                dayInc = double.Parse(Console.ReadLine());
                 Console.WriteLine("The day increment per iterasjon will be {0}.", dayInc);
 
 
@@ -69,10 +69,18 @@ namespace SpagettiMetoden
             Console.WriteLine("Running algorithm...");
                 controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, 1.2, DepthDelta, Increment, 0.85, 30);
                 bool runCurrentConfig = true;
-                controller.RunAlgorithmFW();
-                controller.RunAlgorithmBW();
-                Merge merge = new Merge();
-                merge.MergeFwAndBwFiles(Increment, dayInc);
+                /*
+                if(controller.RunAlgorithmFW())
+                {
+                    if (controller.RunAlgorithmBW())
+                    {
+                        //Merge merge = new Merge();
+                        Merge.MergeFwAndBwFiles(Increment, dayInc);
+                    }
+                }
+                 */
+                Merge.MergeFwAndBwFiles(Increment, dayInc);
+
                 Console.ReadLine();
 
                 while (runCurrentConfig)

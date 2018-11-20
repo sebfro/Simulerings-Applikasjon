@@ -13,15 +13,16 @@ namespace SpagettiMetoden
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
         public static int releasedFish = 10000;
-        public static string pathToNcHeatMaps = @"E:\NCdata\VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapFolder = @"E:\NCdata\VarmeModell\";
-        public static string pathToNcTagData = @"E:\NCdata\Merkedata\";
-        public static string pathToOceanTimeNetCDF = @"E:\NCdata\VarmeModell\ocean_time";
-        public static string pathToBwDirectory = @"E:\NCdata\fishData\BW\";
-        public static string pathToFwDirectory = @"E:\NCdata\fishData\FW\";
-        public static string pathToMergedDirectory = @"E:\NCdata\fishData\Merged\";
+        public static string basePath = @"C:\NCdata\";
+        public static string pathToNcHeatMaps = basePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
+        public static string pathToNcTagData = basePath + @"Merkedata\";
+        public static string pathToOceanTimeNetCDF = basePath + @"VarmeModell\ocean_time";
+        public static string pathToBwDirectory = basePath + @"fishData\BW\";
+        public static string pathToFwDirectory = basePath + @"fishData\FW\";
+        public static string pathToMergedDirectory = basePath + @"fishData\Akseptabel\";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
-        public static string pathToSaveFishData = @"E:\NCdata\fishData";
+        public static string pathToSaveFishData = basePath + @"fishData";
         //ALL THE DELTAS:
         public static double TempDelta = 1;
         public static double DepthDelta = 10;
