@@ -18,6 +18,11 @@ namespace SpagettiMetoden
         public object syncObject = new object();
 
         public Array tempArray;
+
+        public Array seaCurrentArrayU;
+        public Array seaCurrentArrayV;
+        public Array anglesArray;
+
         public TempContainer()
         {
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
@@ -31,6 +36,7 @@ namespace SpagettiMetoden
             */
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
             //Console.WriteLine("Success: Alle heat maps have been loaded");
+            anglesArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["angle"].GetData();
             UpdateTempArray(GlobalVariables.day);
         }
 
@@ -40,12 +46,14 @@ namespace SpagettiMetoden
         }
         //Setter tempArray til den korrekte dagen for neste iterasjon, samme som før.
         //Men den hentes ut av en dictionary i rammen istedenfor fra hdd/ssd
-        public void UpdateTempArray(int day)
+        public void UpdateTempArray(double day)
         {
             //out tempArray setter variablen tempArray til det vi får ut av TryGetValue
             //tempDictionary.TryGetValue(day, out tempArray);
-
-            tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + day + ".nc")["temp"].GetData();
+            DataSet ds = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + (int)day + ".nc");
+            tempArray = ds["temp"].GetData();
+            seaCurrentArrayU = ds["u"].GetData();
+            seaCurrentArrayV = ds["v"].GetData();
         }
 
         /// <summary>
@@ -63,6 +71,41 @@ namespace SpagettiMetoden
 
                 double tempValue = (short)tempArray.GetValue(z_rho, eta_rho, xi_rho);
                 return (tempValue * scale_factor) + add_offset;
+        }
+
+        public void GetCurrent(int z_rho, int eta, int xi)
+        {
+            eta -= 1;
+            xi -= 1;
+            double uValue1 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi);
+            double uValue2 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi + 1);
+            double vValue1 = GetCurrentValue(seaCurrentArrayV, z_rho, eta, xi);
+            double vValue2 = GetCurrentValue(seaCurrentArrayV, z_rho, eta + 1, xi);
+
+            double U_rho = ConvertToRho(uValue1, uValue2);
+            double V_rho = ConvertToRho(vValue1, vValue2);
+
+            double angle = (short)anglesArray.GetValue(eta, xi);
+            double cosAngle = Math.Cos(angle);
+            double sinAngle = Math.Sin(angle);
+
+            double U_rot = (U_rho * cosAngle) - (V_rho * sinAngle);
+            double V_rot = (V_rho * cosAngle) + (U_rho * sinAngle);
+
+            if(U_rot > 0)
+            {
+
+            }
+        }
+
+        public double ConvertToRho(double var1, double var2)
+        {
+            return (var1 + var2) / 2;
+        }
+
+        public double GetCurrentValue(Array current, int z_rho, int eta, int xi)
+        {
+            return scale_factor * (short)current.GetValue(z_rho, eta, xi);
         }
         
 

@@ -66,8 +66,7 @@ namespace SpagettiMetoden
 
         public bool RunAlgorithmFW()
         {
-            int dayCounter = 0;
-            int day = GlobalVariables.day;
+            double day = GlobalVariables.day;
             int counter = 1;
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
@@ -141,11 +140,12 @@ namespace SpagettiMetoden
                             Interlocked.Increment(ref deadFishCounter);
                         }
                     });
-                    dayCounter++;
+                    //dayCounter++;
+                    day += DayIncrement;
                 }
                 else
                 {
-                    TempContainer.UpdateTempArray(day);
+                    
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
@@ -210,18 +210,13 @@ namespace SpagettiMetoden
                         i = FishList["742"].TagDataList.Count;
                     }
 
-                    dayCounter++;
                     counter++;
                 }
 
-                if (dayCounter == 2 && DayIncrement < 1)
+                day += DayIncrement;
+                if(Math.Abs(day % 1) <= (double.Epsilon * 100))
                 {
-                    dayCounter = 0;
-                    day++;
-                }
-                else if (DayIncrement >= 1)
-                {
-                    day += (int)DayIncrement;
+                    TempContainer.UpdateTempArray(day);
                 }
             }
 
@@ -229,7 +224,6 @@ namespace SpagettiMetoden
             double elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs);
             var count = 1;
-            string folderName = "Uakseptabel";
             var FishData = FishList["742"];
 
 
@@ -272,8 +266,7 @@ namespace SpagettiMetoden
 
         public bool RunAlgorithmBW()
         {
-            int dayCounter = 0;
-            int day = GlobalVariables.lastDay;
+            double day = GlobalVariables.lastDay;
             int counter = 1;
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
@@ -347,11 +340,11 @@ namespace SpagettiMetoden
                             Interlocked.Increment(ref deadFishCounter);
                         }
                     });
-                    dayCounter++;
+                    day += DayIncrement;
                 }
                 else
                 {
-                    TempContainer.UpdateTempArray(day);
+                    
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
@@ -411,18 +404,13 @@ namespace SpagettiMetoden
                         i = halfTagDataCount;
                     }
 
-                    dayCounter++;
                     counter++;
                 }
 
-                if (dayCounter == 2 && DayIncrement < 1)
+                day -= DayIncrement;
+                if(Math.Abs(day % 1) <= (double.Epsilon * 100))
                 {
-                    dayCounter = 0;
-                    day--;
-                }
-                else if (DayIncrement >= 1)
-                {
-                    day -= (int)DayIncrement;
+                    TempContainer.UpdateTempArray(day);
                 }
             }
 

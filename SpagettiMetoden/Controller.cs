@@ -69,8 +69,7 @@ namespace SpagettiMetoden
 
         public void RunAlgorithm()
         {
-            int dayCounter = 0;
-            int day = GlobalVariables.day;
+            double day = GlobalVariables.day;
             int counter = 1;
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
@@ -137,7 +136,7 @@ namespace SpagettiMetoden
                             Interlocked.Increment(ref deadFishCounter);
                         }
                     });
-                    dayCounter++;
+                    day += DayIncrement;
                 }
                 else
                 {
@@ -206,18 +205,13 @@ namespace SpagettiMetoden
                         i = FishList["742"].TagDataList.Count;
                     }
 
-                    dayCounter++;
                     counter++;
                 }
 
-                if (dayCounter == 2 && DayIncrement < 1)
+                day += DayIncrement;
+                if (Math.Abs(day % 1) <= (double.Epsilon * 100))
                 {
-                    dayCounter = 0;
-                    day++;
-                }
-                else if(DayIncrement >= 1)
-                {
-                    day += (int)DayIncrement;
+                    TempContainer.UpdateTempArray(day);
                 }
             }
 

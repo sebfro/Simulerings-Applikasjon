@@ -25,12 +25,13 @@ namespace SpagettiMetoden
                 double Increment = double.Parse(args[5].Replace(".", ","));
                 double Probability = double.Parse(args[6].Replace(".", ","));
                 int iterations = int.Parse(args[7]);
+                int algorithm = int.Parse(args[8]);
 
 
                 Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
                 //string answer = "";
 
-                ControllerReleaseFwAndBw controller;
+                
                 
 
 
@@ -44,29 +45,34 @@ namespace SpagettiMetoden
                 var watch = Stopwatch.StartNew();
                 bool failed = false;
                 //controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
-                controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
-                //controller.RunAlgorithm();
-                
-                if (controller.RunAlgorithmFW())
+                if(algorithm == 0)
                 {
-                    if (controller.RunAlgorithmBW())
+                    Controller controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                    controller.RunAlgorithm();
+                } else if (algorithm == 1)
+                {
+                    ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+
+                    if (controller.RunAlgorithmFW())
                     {
-                        //Merge merge = new Merge();
-                        Merge.MergeFwAndBwFiles(Increment, dayInc);
+                        if (controller.RunAlgorithmBW())
+                        {
+                            Merge.MergeFwAndBwFiles(Increment, dayInc);
+                        }
+                        else
+                        {
+                            failed = true;
+                        }
                     }
                     else
                     {
                         failed = true;
                     }
-                }
-                else
-                {
-                    failed = true;
-                }
 
-                if (failed)
-                {
-                    Console.WriteLine("It's a failure like torkel");
+                    if (failed)
+                    {
+                        Console.WriteLine("It's a failure like torkel");
+                    }
                 }
                  
 
