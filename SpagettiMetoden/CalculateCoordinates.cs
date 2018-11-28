@@ -74,29 +74,29 @@ namespace SpagettiMetoden
         }
          
 
-        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed)
+        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth, TempContainer tempContainer)
         {
 
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
-            int counter = 0;
-            float max = lowerSpeed ? 0.3f : 0.8f;
-            float min = lowerSpeed ? 0.01f : 0.3f;
+            float max = lowerSpeed ? 0.4f : 1f;
+            float min = lowerSpeed ? 0.01f : 0.4f;
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
+            DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
+            int[,] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
+            int pet = EtaXiCases.Length;
             for (int i = 0; i < Iterations; i++)
             {
-                
-                EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[counter, 0] * increment),
-                    xi + (EtaXiCases[counter, 1] * increment),
-                    eta, xi));
-                if (counter == 7)
+                for (int j = 0; j < 3; j++)
                 {
-                    if (max > 0.4)
+                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[j, 0] * increment),
+                        xi + (EtaXiCases[j, 1] * increment),
+                        eta, xi));
+                }
+                    if (max > 0.5)
                     {
                         max -= 0.1f;
                     }
                     increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
-                }
-                counter = counter == 7 ? counter = 0 : counter+1;
             }
 
             EtaXis[Iterations] = new EtaXi(eta, xi, true);
@@ -194,6 +194,7 @@ namespace SpagettiMetoden
         public int Eta_rho { get; set; }
         public int Xi_rho { get; set; }
         public bool Valid { get; set; }
+        public bool Weight { get; set; }
 
         public EtaXi(int eta, int xi, bool valid)
         {
