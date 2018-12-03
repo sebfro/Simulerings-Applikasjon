@@ -27,6 +27,8 @@ namespace SpagettiMetoden
                 int iterations = int.Parse(args[7]);
                 int algorithm = int.Parse(args[8]);
 
+                Console.WriteLine("dayInc: {0}, releasedFish: {1}, tempDelta: {2}, depthDelta: {3}, Increment: {4}, Propability: {5}, iterations: {6}, algorithms: {7}",
+                    dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm);
 
                 Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
                 //string answer = "";
@@ -73,6 +75,11 @@ namespace SpagettiMetoden
                     {
                         Console.WriteLine("It's a failure like torkel");
                     }
+                } else
+                {
+                    Console.WriteLine("Kjører nr 3");
+                    ControllerReleaseSteadily controller = new ControllerReleaseSteadily(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                    controller.RunAlgorithm();
                 }
                  
 

@@ -14,17 +14,22 @@ namespace SpagettiMetoden
             bool run = true;
 
             int tagId = 742;
-            double dayInc = 4;
+            double dayInc = 1;
             int releasedFish = 10000;
-            double tempDelta = 1;
+            double tempDelta = 10;
             int DepthDelta = 30;
             double Increment = 65;
             double Increment2 = 45;
+            double probability = 0.5;
+            int possiblePaths = 30;
 
             string answer = "";
 
             Controller controller;
 
+            controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, probability, possiblePaths);
+            controller.RunAlgorithm();
+            Console.ReadKey();
             while (run)
             {
                 Console.Write("Enter day increment per iterasion: ");

@@ -186,13 +186,16 @@ namespace SpagettiMetoden
                                         tagData.depth, tagData.temp,
                                         validPositionsDataList.ElementAt(randInt).eta_rho,
                                         validPositionsDataList.ElementAt(randInt).xi_rho)));
-                                    int releasedFish = validPositionsDataList.Count;
                                     
                                         if (fishToBeReleased > 0 && validPositionsDataList.Count > 1)
                                         {
-                                            for (int j = 0; j < releasedFish; j++)
+                                        int newRandInt = 0;
+                                        bool newChosenPosition = false;
+                                        for (int j = 0; j < validPositionsDataList.Count; j++)
                                             {
-                                                if (j != randInt)
+                                            newRandInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                                            newChosenPosition = routeChooser.ChosenRoute(validPositionsDataList, newRandInt);
+                                                if (j != randInt && newChosenPosition)
                                                 {
                                                     FishRoute tempFishRoute = new FishRoute("742")
                                                     {
@@ -210,11 +213,11 @@ namespace SpagettiMetoden
                                                                 validPositionsDataList.ElementAt(j).xi_rho)));
                                                         FishList["742"].FishRouteList.Add(tempFishRoute);
                                                     }
-                                                    
+                                                Interlocked.Decrement(ref fishToBeReleased);
                                                 }
                                             }
                                             
-                                            Interlocked.Add(ref fishToBeReleased, (Interlocked.Decrement(ref releasedFish)) * (-1));
+                                            //Interlocked.Add(ref fishToBeReleased, (Interlocked.Decrement(ref releasedFish)) * (-1));
                                         }
 
 

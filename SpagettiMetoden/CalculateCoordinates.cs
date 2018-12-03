@@ -82,7 +82,7 @@ namespace SpagettiMetoden
             float min = lowerSpeed ? 0.01f : 0.4f;
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
-            int[,] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
+            //int[,] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
             int pet = EtaXiCases.Length;
             for (int i = 0; i < Iterations; i++)
             {
