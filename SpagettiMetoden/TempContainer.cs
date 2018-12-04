@@ -73,16 +73,50 @@ namespace SpagettiMetoden
                 return (tempValue * scale_factor) + add_offset;
         }
 
-        public int[,] GetPositionsToCheck(int z_rho, int eta, int xi)
+        public class EtaXiCase
         {
-            int[,] EtaXiCases = new int[3,2];
+            public int eta = 0;
+            public int xi = 0;
+            public bool seaCurrentDrag = false;
+
+            public EtaXiCase(int eta, int xi, bool seaCurrentDrag)
+            {
+                this.seaCurrentDrag = seaCurrentDrag;
+                this.eta = eta;
+                this.xi = xi;
+            }
+            public EtaXiCase(int eta, int xi)
+            {
+                this.eta = eta;
+                this.xi = xi;
+            }
+        }
+        
+
+        public readonly EtaXiCase[] EtaXiCases = new EtaXiCase[]
+        {
+            new EtaXiCase(1, -1),   //0
+            new EtaXiCase(1, 0),    //1
+            new EtaXiCase(1, 1),    //2
+            new EtaXiCase(0, -1),   //3
+            new EtaXiCase(-1, -1),  //4
+            new EtaXiCase(-1, 0),   //5
+            new EtaXiCase(-1, 1),   //6
+            new EtaXiCase(0, 1)     //7
+        };
+
+        //private EtaXiCase[,] EtaXiCases { get => etaXiCases; set => etaXiCases = value; }
+
+        public EtaXiCase[] GetPositionsToCheck(int z_rho, int eta, int xi)
+        {
+            EtaXiCase[] etaXiCases = EtaXiCases;
 
             eta = eta - 1;
             xi = xi - 1;
             double uValue1 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi);
-            double uValue2 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi + 1);
+            double uValue2 = GetCurrentValue(seaCurrentArrayU, z_rho, eta - 1, xi);
             double vValue1 = GetCurrentValue(seaCurrentArrayV, z_rho, eta, xi);
-            double vValue2 = GetCurrentValue(seaCurrentArrayV, z_rho, eta + 1, xi);
+            double vValue2 = GetCurrentValue(seaCurrentArrayV, z_rho, eta, xi - 1);
 
             double U_rho = ConvertToRho(uValue1, uValue2);
             double V_rho = ConvertToRho(vValue1, vValue2);
@@ -96,48 +130,55 @@ namespace SpagettiMetoden
 
             if (U_rot > 0 && V_rot > 0)
             {
-                EtaXiCases[0, 0] = 1;
-                EtaXiCases[0, 1] = 1;
 
-                EtaXiCases[1, 0] = 0;
-                EtaXiCases[1, 1] = 1;
+                //EtaXiCase[0, 0] = 1;
+                //EtaXiCase[0, 1] = 1;
+                etaXiCases[2].seaCurrentDrag = true;
 
-                EtaXiCases[2, 0] = 1;
-                EtaXiCases[2, 1] = 0;
+                //EtaXiCase[1, 0] = 0;
+                //EtaXiCase[1, 1] = 1;
+                etaXiCases[7].seaCurrentDrag = true;
+                //EtaXiCase[2, 0] = 1;
+                //EtaXiCase[2, 1] = 0;
+                etaXiCases[1].seaCurrentDrag = true;
+
             } else if (U_rot < 0 && V_rot < 0)
             {
-                EtaXiCases[0, 0] = -1;
-                EtaXiCases[0, 1] = -1;
-
-                EtaXiCases[1, 0] = 0;
-                EtaXiCases[1, 1] = -1;
-
-                EtaXiCases[2, 0] = -1;
-                EtaXiCases[2, 1] = 0;
+                //EtaXiCase[0, 0] = -1;
+                //EtaXiCase[0, 1] = -1;
+                etaXiCases[4].seaCurrentDrag = true;
+                //EtaXiCase[1, 0] = 0;
+                //EtaXiCase[1, 1] = -1;
+                etaXiCases[3].seaCurrentDrag = true;
+                //EtaXiCase[2, 0] = -1;
+                //EtaXiCases[2, 1] = 0;
+                etaXiCases[5].seaCurrentDrag = true;
             }
             else if (U_rot > 0 && V_rot < 0)
             {
-                EtaXiCases[0, 0] = 1;
-                EtaXiCases[0, 1] = -1;
-
-                EtaXiCases[1, 0] = 0;
-                EtaXiCases[1, 1] = -1;
-
-                EtaXiCases[2, 0] = 1;
-                EtaXiCases[2, 1] = 0;
+                //EtaXiCases[0, 0] = 1;
+                //EtaXiCases[0, 1] = -1;
+                etaXiCases[0].seaCurrentDrag = true;
+                //EtaXiCases[1, 0] = 0;
+                //EtaXiCases[1, 1] = -1;
+                etaXiCases[3].seaCurrentDrag = true;
+                //EtaXiCases[2, 0] = 1;
+                //EtaXiCases[2, 1] = 0;
+                etaXiCases[1].seaCurrentDrag = true;
             }
             else if (U_rot < 0 && V_rot > 0)
             {
-                EtaXiCases[0, 0] = -1;
-                EtaXiCases[0, 1] = 1;
-
-                EtaXiCases[1, 0] = 0;
-                EtaXiCases[1, 1] = 1;
-
-                EtaXiCases[2, 0] = -1;
-                EtaXiCases[2, 1] = 0;
+                //EtaXiCases[0, 0] = -1;
+                //EtaXiCases[0, 1] = 1;
+                etaXiCases[6].seaCurrentDrag = true;
+                //EtaXiCases[1, 0] = 0;
+                //EtaXiCases[1, 1] = 1;
+                etaXiCases[7].seaCurrentDrag = true;
+                //EtaXiCases[2, 0] = -1;
+                //EtaXiCases[2, 1] = 0;
+                etaXiCases[5].seaCurrentDrag = true;
             }
-            return EtaXiCases;
+            return etaXiCases;
         }
 
         public double ConvertToRho(double var1, double var2)

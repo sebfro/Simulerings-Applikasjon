@@ -93,7 +93,7 @@ namespace SpagettiMetoden
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.LatArray, HeatMap.LonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.eta_rho, positionData.xi_rho, false, FishList["742"].TagDataList[i].depth, TempContainer),
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].depth, TempContainer),
                         HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
@@ -122,9 +122,9 @@ namespace SpagettiMetoden
                             while (!addedToPosDataList)
                             {
                                 addedToPosDataList = fishRoute.PositionDataList.TryAdd((new PositionData(
-                                    validPositionsDataList.ElementAt(j).lat, validPositionsDataList.ElementAt(j).lon,
-                                    validPositionsDataList.ElementAt(j).depth, validPositionsDataList.ElementAt(j).temp, FishList["742"].TagDataList[i].depth,
-                                    FishList["742"].TagDataList[i].temp, validPositionsDataList.ElementAt(j).eta_rho, validPositionsDataList.ElementAt(j).xi_rho)));
+                                    validPositionsDataList.ElementAt(j).Lat, validPositionsDataList.ElementAt(j).Lon,
+                                    validPositionsDataList.ElementAt(j).Depth, validPositionsDataList.ElementAt(j).Temp, FishList["742"].TagDataList[i].depth,
+                                    FishList["742"].TagDataList[i].temp, validPositionsDataList.ElementAt(j).Eta_rho, validPositionsDataList.ElementAt(j).Xi_rho)));
                             }
 
                             while (!addedToFishRoutList)
@@ -160,7 +160,7 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.eta_rho, pData.xi_rho, false, FishList["742"].TagDataList[i].depth, TempContainer);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, false, FishList["742"].TagDataList[i].depth, TempContainer);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
@@ -172,20 +172,20 @@ namespace SpagettiMetoden
                                 if (validPositionsDataList.Count > 0)
                                 {
                                     RouteChooser routeChooser =
-                                            new RouteChooser(pData.lat, pData.lon, FishList["742"]);
+                                            new RouteChooser(pData.Lat, pData.Lon, FishList["742"]);
                                     while (!chosenPosition)
                                     {
                                         randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
                                         chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
                                     }
                                     fishRoute.PositionDataList.Add((new PositionData(
-                                        validPositionsDataList.ElementAt(randInt).lat,
-                                        validPositionsDataList.ElementAt(randInt).lon,
-                                        validPositionsDataList.ElementAt(randInt).depth,
-                                        validPositionsDataList.ElementAt(randInt).temp,
+                                        validPositionsDataList.ElementAt(randInt).Lat,
+                                        validPositionsDataList.ElementAt(randInt).Lon,
+                                        validPositionsDataList.ElementAt(randInt).Depth,
+                                        validPositionsDataList.ElementAt(randInt).Temp,
                                         tagData.depth, tagData.temp,
-                                        validPositionsDataList.ElementAt(randInt).eta_rho,
-                                        validPositionsDataList.ElementAt(randInt).xi_rho)));
+                                        validPositionsDataList.ElementAt(randInt).Eta_rho,
+                                        validPositionsDataList.ElementAt(randInt).Xi_rho)));
                                     
                                         if (fishToBeReleased > 0 && validPositionsDataList.Count > 1)
                                         {
@@ -204,13 +204,13 @@ namespace SpagettiMetoden
                                                     lock (FishList["742"])
                                                     {
                                                             tempFishRoute.PositionDataList.Add((new PositionData(
-                                                                validPositionsDataList.ElementAt(j).lat,
-                                                                validPositionsDataList.ElementAt(j).lon,
-                                                                validPositionsDataList.ElementAt(j).depth,
-                                                                validPositionsDataList.ElementAt(j).temp,
+                                                                validPositionsDataList.ElementAt(j).Lat,
+                                                                validPositionsDataList.ElementAt(j).Lon,
+                                                                validPositionsDataList.ElementAt(j).Depth,
+                                                                validPositionsDataList.ElementAt(j).Temp,
                                                                 tagData.depth, tagData.temp,
-                                                                validPositionsDataList.ElementAt(j).eta_rho,
-                                                                validPositionsDataList.ElementAt(j).xi_rho)));
+                                                                validPositionsDataList.ElementAt(j).Eta_rho,
+                                                                validPositionsDataList.ElementAt(j).Xi_rho)));
                                                         FishList["742"].FishRouteList.Add(tempFishRoute);
                                                     }
                                                 Interlocked.Decrement(ref fishToBeReleased);
@@ -300,7 +300,7 @@ namespace SpagettiMetoden
                 if (fishRoute.Alive)
                 {
                     var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);
-                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(posData.lat, posData.lon, captureLat, captureLon) < CalculateCoordinates.Increment)
+                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(posData.Lat, posData.Lon, captureLat, captureLon) < CalculateCoordinates.Increment)
                     {
                         folderName = "Akseptabel";
                     }

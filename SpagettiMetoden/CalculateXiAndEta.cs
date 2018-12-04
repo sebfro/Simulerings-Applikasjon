@@ -37,7 +37,7 @@ namespace SpagettiMetoden
 
             foreach (PositionData pData in potentialPositionsArrayList)
             {
-                double newDelta = Math.Abs(pData.lat - lat) + Math.Abs(pData.lon - lon);
+                double newDelta = Math.Abs(pData.Lat - lat) + Math.Abs(pData.Lon - lon);
                 if (!deltaHasBeenSet)
                 {
                     minDelta = newDelta;

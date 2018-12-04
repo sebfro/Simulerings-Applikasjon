@@ -35,10 +35,10 @@ namespace SpagettiMetoden
             randDouble = ThreadSafeRandom.NextDouble();
 
             double newDistanceFromCapture = CalculateCoordinates.GetDistanceFromLatLonInKm(
-                                        validPositionsDataList.ElementAt(randInt).lat,
-                                        validPositionsDataList.ElementAt(randInt).lon, captureOrReleaseLat,
+                                        validPositionsDataList.ElementAt(randInt).Lat,
+                                        validPositionsDataList.ElementAt(randInt).Lon, captureOrReleaseLat,
                                         captureOrReleaseLon);
-            double weight = GlobalVariables.Probability;
+            double weight = validPositionsDataList.ElementAt(randInt).ExtraWeigth ? GlobalVariables.Probability + 0.1 : GlobalVariables.Probability;
             return (newDistanceFromCapture < currDistanceFromCaptureOrRelease && randDouble < weight || newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= weight);
         }
     }

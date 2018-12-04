@@ -82,15 +82,15 @@ namespace SpagettiMetoden
             float min = lowerSpeed ? 0.01f : 0.4f;
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
-            //int[,] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
+            TempContainer.EtaXiCase[] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
             int pet = EtaXiCases.Length;
             for (int i = 0; i < Iterations; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < EtaXiCases.Length; j++)
                 {
-                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[j, 0] * increment),
-                        xi + (EtaXiCases[j, 1] * increment),
-                        eta, xi));
+                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[j].eta * increment),
+                        xi + (EtaXiCases[j].xi * increment),
+                        eta, xi, EtaXiCases[j].seaCurrentDrag));
                 }
                     if (max > 0.5)
                     {
@@ -144,7 +144,7 @@ namespace SpagettiMetoden
                             lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonDataArray);
                         }
                         
-                        PositionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].Eta_rho, etaXis[i].Xi_rho));
+                        PositionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].Eta_rho, etaXis[i].Xi_rho, etaXis[i].ExtraWeight));
                     }
                 }
             }
@@ -167,7 +167,7 @@ namespace SpagettiMetoden
             }
         }
 
-        public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi)
+        public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi, bool SeaCurrentDrag)
         {
             bool valid = eta <= GlobalVariables.eta_rho_size && eta >= 0 && xi <= GlobalVariables.xi_rho_size && xi >= 0;
             if (valid)
@@ -194,14 +194,24 @@ namespace SpagettiMetoden
         public int Eta_rho { get; set; }
         public int Xi_rho { get; set; }
         public bool Valid { get; set; }
-        public bool Weight { get; set; }
+        public bool ExtraWeight { get; set; }
 
         public EtaXi(int eta, int xi, bool valid)
         {
-            
+            ExtraWeight = false;
+            Eta_rho = eta;
+            Xi_rho = xi;
+            Valid = valid;
+        }
+
+        public EtaXi(int eta, int xi, bool valid, bool extraWeight)
+        {
+            ExtraWeight = extraWeight;
             Eta_rho = eta;
             Xi_rho = xi;
             Valid = valid;
         }
     }
+
+    
 }

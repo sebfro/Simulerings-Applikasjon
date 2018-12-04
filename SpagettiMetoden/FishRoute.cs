@@ -45,7 +45,7 @@ namespace SpagettiMetoden
             strArray[0] = "Latitude:" + "\t" + "Longitude:" + "\t" + "Tagdata Depth:" + "\t" + "Sea depth:" + "\t" + "Tagdata Temp" + "\t" + "Sea temp";
             foreach (PositionData pData in PositionDataList)
             {
-               strArray[counter] = pData.lat + "\t" + pData.lon + "\t" + pData.tagDataDepth + "\t" + pData.depth +  "\t" + pData.tagDataTemp + "\t" + pData.temp;
+               strArray[counter] = pData.Lat + "\t" + pData.Lon + "\t" + pData.TagDataDepth + "\t" + pData.Depth +  "\t" + pData.TagDataTemp + "\t" + pData.Temp;
                 counter++;
             }
 

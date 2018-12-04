@@ -90,6 +90,8 @@ namespace SpagettiMetoden
 
                 Console.ReadLine();
             } catch {
+                Controller controller = new Controller(0.5, 10000, 2, 30, 0.65, 0.85, 30);
+                controller.RunAlgorithm();
                 ConsoleUI consoleUI = new ConsoleUI();
 
                 consoleUI.RunUI();
