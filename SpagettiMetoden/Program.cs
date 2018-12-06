@@ -90,11 +90,13 @@ namespace SpagettiMetoden
 
                 Console.ReadLine();
             } catch {
-                Controller controller = new Controller(0.5, 10000, 2, 30, 0.65, 0.85, 30);
+                Console.WriteLine("Starting regular");
+                Controller controller = new Controller(4, 10000, 2, 30, 0.65, 0.85, 30);
                 controller.RunAlgorithm();
-                ConsoleUI consoleUI = new ConsoleUI();
+                Console.ReadKey();
+                //ConsoleUI consoleUI = new ConsoleUI();
 
-                consoleUI.RunUI();
+                //consoleUI.RunUI();
             }
                 
         }

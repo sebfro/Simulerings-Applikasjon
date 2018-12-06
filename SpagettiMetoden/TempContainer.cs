@@ -113,10 +113,10 @@ namespace SpagettiMetoden
 
             eta = eta - 1;
             xi = xi - 1;
-            double uValue1 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi);
-            double uValue2 = GetCurrentValue(seaCurrentArrayU, z_rho, eta - 1, xi);
-            double vValue1 = GetCurrentValue(seaCurrentArrayV, z_rho, eta, xi);
-            double vValue2 = GetCurrentValue(seaCurrentArrayV, z_rho, eta, xi - 1);
+            double uValue1 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi - 1);
+            double uValue2 = GetCurrentValue(seaCurrentArrayU, z_rho, eta , xi- 1);
+            double vValue1 = GetCurrentValue(seaCurrentArrayV, z_rho, eta - 1, xi);
+            double vValue2 = GetCurrentValue(seaCurrentArrayV, z_rho, eta - 1, xi);
 
             double U_rho = ConvertToRho(uValue1, uValue2);
             double V_rho = ConvertToRho(vValue1, vValue2);

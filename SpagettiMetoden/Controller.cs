@@ -186,7 +186,6 @@ namespace SpagettiMetoden
                                             validPositionsDataList.ElementAt(randInt).Xi_rho)));
                                     
                                 }
-
                                 else
                                 {
                                     Interlocked.Increment(ref deadFishCounter);
@@ -204,7 +203,6 @@ namespace SpagettiMetoden
                     {
                         i = FishList["742"].TagDataList.Count;
                     }
-
                     counter++;
                 }
 
