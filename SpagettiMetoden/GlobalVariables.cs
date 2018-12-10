@@ -13,7 +13,7 @@ namespace SpagettiMetoden
         public static int s_rho_size = 35;
         public static int Z_rho_size = 35;
         public static int releasedFish = 10000;
-        public static string basePath = @"F:\NCdata\";
+        public static string basePath = @"C:\NCdata\";
         public static string pathToNcHeatMaps = basePath + @"VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
         public static string pathToNcTagData = basePath + @"Merkedata\";

@@ -207,9 +207,16 @@ namespace SpagettiMetoden
                 }
 
                 day += DayIncrement;
-                if (Math.Abs(day % 1) <= (double.Epsilon * 100))
+                if ((Math.Abs(day % 1) <= (double.Epsilon * 100)) && (day <= 225))
                 {
-                    TempContainer.UpdateTempArray(day);
+                    try
+                    {
+                        TempContainer.UpdateTempArray(day);
+                    }
+                    catch (KeyNotFoundException exception)
+                    {
+                        Console.WriteLine("DayOutOfRange: {0}", exception);
+                    }
                 }
             }
 

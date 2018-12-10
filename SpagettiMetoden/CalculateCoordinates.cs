@@ -82,21 +82,26 @@ namespace SpagettiMetoden
             float min = lowerSpeed ? 0.01f : 0.4f;
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
-            TempContainer.EtaXiCase[] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
-            int pet = EtaXiCases.Length;
+            //TempContainer.EtaXiCase[] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
+            int counter = 0;
             for (int i = 0; i < Iterations; i++)
             {
-                for (int j = 0; j < EtaXiCases.Length; j++)
+                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[counter, 0] * increment),
+                        xi + (EtaXiCases[counter,1] * increment),
+                        eta, xi, false));
+                if (counter == 7)
                 {
-                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[j].eta * increment),
-                        xi + (EtaXiCases[j].xi * increment),
-                        eta, xi, EtaXiCases[j].seaCurrentDrag));
-                }
+                    counter = 0;
                     if (max > 0.5)
                     {
                         max -= 0.1f;
                     }
                     increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
+                }
+                else
+                {
+                    counter++;
+                }
             }
 
             EtaXis[Iterations] = new EtaXi(eta, xi, true);

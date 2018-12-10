@@ -30,8 +30,9 @@ namespace SpagettiMetoden
 
         public double GetDepth(int eta_rho, int xi_rho)
         {
-
-            return (double)DepthArray.GetValue(eta_rho-1, xi_rho-1);
+            eta_rho = eta_rho == 0 ? eta_rho : eta_rho - 1;
+            xi_rho = xi_rho == 0 ? xi_rho : xi_rho - 1;
+            return (double)DepthArray.GetValue(eta_rho, xi_rho);
         }
 
         public double GetLatOrLon(int eta_rho, int xi_rho, Array latOrLonArray)
