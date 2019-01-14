@@ -18,10 +18,15 @@ namespace SpagettiMetoden
         public object syncObject = new object();
 
         public Array tempArray;
+        public Array tempArray2;
 
         public Array seaCurrentArrayU;
         public Array seaCurrentArrayV;
         public Array anglesArray;
+
+        public string year;
+        public string month;
+        public string currDay;
 
         public TempContainer()
         {
@@ -37,7 +42,29 @@ namespace SpagettiMetoden
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
             //Console.WriteLine("Success: Alle heat maps have been loaded");
             anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMaps)["angle"].GetData();
-            UpdateTempArray(GlobalVariables.day);
+            UpdateTempArray(GlobalVariables.startDate);
+            
+            /*DataSet ds = DataSet.Open(GlobalVariables.pathToNewHeatMaps + GlobalVariables.startDate + ".nc");
+            Console.WriteLine(GlobalVariables.pathToNewHeatMaps + GlobalVariables.startDate + ".nc");
+            tempArray2 = ds["temp"].GetData();
+            Console.WriteLine(GlobalVariables.startDate);
+            year = GlobalVariables.startDate.Substring(0, 4);
+            Console.WriteLine("Year: " + year);
+            month = GlobalVariables.startDate.Substring(4, 2);
+            Console.WriteLine("month: " + month);
+            currDay = GlobalVariables.startDate.Substring(6, 2);
+            Console.WriteLine("day: " + currDay);
+            Console.WriteLine(GlobalVariables.startDate);*/
+            
+        }
+
+        public void UpdateTempArray(string date)
+        {
+            //Console.WriteLine(date.year + date.month + date.day);
+            DataSet ds = DataSet.Open(GlobalVariables.pathToNewHeatMaps + date + ".nc");
+            tempArray = ds["temp"].GetData();
+            seaCurrentArrayU = ds["u"].GetData();
+            seaCurrentArrayV = ds["v"].GetData();
         }
 
         public void UpdateDay(int day)
@@ -46,7 +73,7 @@ namespace SpagettiMetoden
         }
         //Setter tempArray til den korrekte dagen for neste iterasjon, samme som før.
         //Men den hentes ut av en dictionary i rammen istedenfor fra hdd/ssd
-        public void UpdateTempArray(double day)
+        /*public void UpdateTempArray(double day)
         {
             //out tempArray setter variablen tempArray til det vi får ut av TryGetValue
             //tempDictionary.TryGetValue(day, out tempArray);
@@ -54,7 +81,7 @@ namespace SpagettiMetoden
             tempArray = ds["temp"].GetData();
             seaCurrentArrayU = ds["u"].GetData();
             seaCurrentArrayV = ds["v"].GetData();
-        }
+        }*/
 
         /// <summary>
         /// scale_factor og add_offset brukes her for å konvertere en int16

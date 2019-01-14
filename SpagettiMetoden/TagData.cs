@@ -5,21 +5,23 @@ namespace SpagettiMetoden
 {
     class TagData
     {
-        public string year { get; set; }
-        public string month { get; set; }
-        public string day { get; set; }
-        public double temp { get; set; }
-        public double depth { get; set; }
+        public string Year { get; set; }
+        public string Month { get; set; }
+        public string Day { get; set; }
+        public double Temp { get; set; }
+        public double Depth { get; set; }
+        public string Date { get; set; }
 
         public TagData(string line)
         {
             string[] strArray = line.Split(new char[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
-            year = strArray[0];
-            month = strArray[1];
-            day = strArray[2];
-            temp = double.Parse(strArray[4], CultureInfo.InvariantCulture);
+            Year = strArray[0];
+            Month = strArray[1];
+            Day = strArray[2];
+            Date = Year + Month + Day;
+            Temp = double.Parse(strArray[4], CultureInfo.InvariantCulture);
             //Minus foran for å gjøre den negativ
-            depth = -(double.Parse(strArray[5], CultureInfo.InvariantCulture));
+            Depth = -(double.Parse(strArray[5], CultureInfo.InvariantCulture));
         }
     }
 }

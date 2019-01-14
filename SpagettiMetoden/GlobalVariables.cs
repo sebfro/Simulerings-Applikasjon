@@ -14,6 +14,7 @@ namespace SpagettiMetoden
         public static int Z_rho_size = 35;
         public static int releasedFish = 10000;
         public static string basePath = @"F:\NCdata\";
+        public static string pathToNewHeatMaps = @"D:\NCdata\ocean_time_";
         public static string pathToNcHeatMaps = basePath + @"VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
         public static string pathToNcTagData = basePath + @"Merkedata\";
@@ -51,6 +52,7 @@ namespace SpagettiMetoden
         /// Men første posisjonen hvis skal beregne i iterasjon 0 er posisjonen etter
         /// release posisjon. derfor day + dayIncrement
         /// </summary>
+        public static string startDate = "20030830";
         public static int day = 29;
         public static int lastDay = 225;
 

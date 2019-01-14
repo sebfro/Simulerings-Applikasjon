@@ -93,7 +93,7 @@ namespace SpagettiMetoden
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.LatArray, HeatMap.LonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].depth, TempContainer),
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, TempContainer),
                         HeatMap.LatArray, HeatMap.LonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
@@ -123,8 +123,8 @@ namespace SpagettiMetoden
                             {
                                 addedToPosDataList = fishRoute.PositionDataList.TryAdd((new PositionData(
                                     validPositionsDataList.ElementAt(j).Lat, validPositionsDataList.ElementAt(j).Lon,
-                                    validPositionsDataList.ElementAt(j).Depth, validPositionsDataList.ElementAt(j).Temp, FishList["742"].TagDataList[i].depth,
-                                    FishList["742"].TagDataList[i].temp, validPositionsDataList.ElementAt(j).Eta_rho, validPositionsDataList.ElementAt(j).Xi_rho)));
+                                    validPositionsDataList.ElementAt(j).Depth, validPositionsDataList.ElementAt(j).Temp, FishList["742"].TagDataList[i].Depth,
+                                    FishList["742"].TagDataList[i].Temp, validPositionsDataList.ElementAt(j).Eta_rho, validPositionsDataList.ElementAt(j).Xi_rho)));
                             }
 
                             while (!addedToFishRoutList)
@@ -141,7 +141,7 @@ namespace SpagettiMetoden
                 }
                 else
                 {
-                    TempContainer.UpdateTempArray(day);
+                    //TempContainer.UpdateTempArray(day);
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].TagDataList[i];
 
@@ -160,7 +160,7 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, false, FishList["742"].TagDataList[i].depth, TempContainer);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, TempContainer);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
@@ -183,7 +183,7 @@ namespace SpagettiMetoden
                                         validPositionsDataList.ElementAt(randInt).Lon,
                                         validPositionsDataList.ElementAt(randInt).Depth,
                                         validPositionsDataList.ElementAt(randInt).Temp,
-                                        tagData.depth, tagData.temp,
+                                        tagData.Depth, tagData.Temp,
                                         validPositionsDataList.ElementAt(randInt).Eta_rho,
                                         validPositionsDataList.ElementAt(randInt).Xi_rho)));
                                     
@@ -208,7 +208,7 @@ namespace SpagettiMetoden
                                                                 validPositionsDataList.ElementAt(j).Lon,
                                                                 validPositionsDataList.ElementAt(j).Depth,
                                                                 validPositionsDataList.ElementAt(j).Temp,
-                                                                tagData.depth, tagData.temp,
+                                                                tagData.Depth, tagData.Temp,
                                                                 validPositionsDataList.ElementAt(j).Eta_rho,
                                                                 validPositionsDataList.ElementAt(j).Xi_rho)));
                                                         FishList["742"].FishRouteList.Add(tempFishRoute);

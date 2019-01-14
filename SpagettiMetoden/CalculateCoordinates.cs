@@ -110,7 +110,7 @@ namespace SpagettiMetoden
 
         }
 
-        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, TempContainer callPython, double tempDelta)
+        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, TempContainer tempContainer, double tempDelta)
         {
             //CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             PositionDataList = new BlockingCollection<PositionData>();
@@ -128,19 +128,19 @@ namespace SpagettiMetoden
                 lock (syncObject)
                 {
                     depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho);
-                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.depth);
+                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth);
                 }
                 
-                if(depthData.Valid && (depth - (-tagData.depth)) > 0)
+                if(depthData.Valid && (depth - (-tagData.Depth)) > 0)
                 {
                     lock (syncObject)
                     {
-                        temp = callPython.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho);
-                        //callPython.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                        temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho);
+                        //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
                     }
 
 
-                    if (Math.Abs(temp - tagData.temp) < tempDelta)
+                    if (Math.Abs(temp - tagData.Temp) < tempDelta)
                     {
 
                         lock (syncObject)
@@ -149,7 +149,7 @@ namespace SpagettiMetoden
                             lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonDataArray);
                         }
                         
-                        PositionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.depth, tagData.temp, etaXis[i].Eta_rho, etaXis[i].Xi_rho, etaXis[i].ExtraWeight));
+                        PositionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.Depth, tagData.Temp, etaXis[i].Eta_rho, etaXis[i].Xi_rho, etaXis[i].ExtraWeight));
                     }
                 }
             }
