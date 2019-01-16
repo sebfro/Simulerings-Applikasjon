@@ -28,6 +28,9 @@ namespace SpagettiMetoden
         public string month;
         public string currDay;
 
+        public string basePath;
+        public bool use_ocean_time;
+
         public TempContainer()
         {
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
@@ -41,7 +44,15 @@ namespace SpagettiMetoden
             */
             //tempArray = DataSet.Open(GlobalVariables.pathToOceanTimeNetCDF + GlobalVariables.day + ".nc")["temp"].GetData();
             //Console.WriteLine("Success: Alle heat maps have been loaded");
-            anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMaps)["angle"].GetData();
+            anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time)["angle"].GetData();
+            use_ocean_time = GlobalVariables.use_ocean_time;
+            if (use_ocean_time)
+            {
+                basePath = GlobalVariables.pathToNewHeatMaps;
+            } else
+            {
+                basePath = GlobalVariables.pathToOceanTimeNetCDF;
+            }
             UpdateTempArray(GlobalVariables.startDate);
             
             /*DataSet ds = DataSet.Open(GlobalVariables.pathToNewHeatMaps + GlobalVariables.startDate + ".nc");
@@ -58,10 +69,23 @@ namespace SpagettiMetoden
             
         }
 
+        public void SetBasePath(bool b)
+        {
+            use_ocean_time = b;
+            if (b)
+            {
+                basePath = GlobalVariables.pathToNewHeatMaps;
+            }
+            else
+            {
+                basePath = GlobalVariables.pathToOceanTimeNetCDF;
+            }
+        }
+
         public void UpdateTempArray(string date)
         {
             //Console.WriteLine(date.year + date.month + date.day);
-            DataSet ds = DataSet.Open(GlobalVariables.pathToNewHeatMaps + date + ".nc");
+            DataSet ds = DataSet.Open(basePath + date + ".nc");
             tempArray = ds["temp"].GetData();
             seaCurrentArrayU = ds["u"].GetData();
             seaCurrentArrayV = ds["v"].GetData();

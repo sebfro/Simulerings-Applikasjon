@@ -9,19 +9,31 @@ namespace SpagettiMetoden
         public const int Xi_Rho = 1202;
         public const double Delta = 0.1;
 
-        public static PositionData GeneratePositionDataArrayList(Array latDataSet, Array lonDataSet, double lat, double lon)
+        public static PositionData GeneratePositionDataArrayList(Array NorkystlatDataSet, Array NorKystlonDataSet,
+            Array BarentsSealatDataSet, Array BarentsSealatlonDataSet, double lat, double lon)
         {
             
             ArrayList potentialPositionArray = new ArrayList();
 
-            for (int i = 0; i < GlobalVariables.eta_rho_size; i++)
+            for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
             {
-                for (int j = 0; j < GlobalVariables.xi_rho_size; j++)
+                for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_time; j++)
                 {
-                        if (Math.Abs((double)latDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)lonDataSet.GetValue(i, j) - lon) < Delta)
+                        if (Math.Abs((double)NorkystlatDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)NorKystlonDataSet.GetValue(i, j) - lon) < Delta)
                         {
-                            potentialPositionArray.Add(new PositionData(i, j, (double)latDataSet.GetValue(i, j), (double)lonDataSet.GetValue(i, j)));
+                            potentialPositionArray.Add(new PositionData(i, j, (double)NorkystlatDataSet.GetValue(i, j), (double)NorKystlonDataSet.GetValue(i, j), true));
                         }
+                }
+            }
+
+            for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_avg; i++)
+            {
+                for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_avg; j++)
+                {
+                    if (Math.Abs((double)BarentsSealatDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)BarentsSealatlonDataSet.GetValue(i, j) - lon) < Delta)
+                    {
+                        potentialPositionArray.Add(new PositionData(i, j, (double)BarentsSealatDataSet.GetValue(i, j), (double)BarentsSealatlonDataSet.GetValue(i, j), false));
+                    }
                 }
             }
 
@@ -33,7 +45,7 @@ namespace SpagettiMetoden
             double minDelta = 0;
             bool deltaHasBeenSet = false;
 
-            PositionData positionData = new PositionData(0, 0, 0.0, 0.0);
+            PositionData positionData = new PositionData(0, 0, 0.0, 0.0, true);
 
             foreach (PositionData pData in potentialPositionsArrayList)
             {
@@ -49,12 +61,7 @@ namespace SpagettiMetoden
                     minDelta = newDelta;
                     positionData = pData;
                 }
-
-                //Console.WriteLine("lat: " + pData.lat + ", lon: " + pData.lon + ". eta_rho: " + pData.eta_rho + ", xi_rho: " + pData.xi_rho + ". minDelta: " + minDelta);
             }
-
-            //Console.WriteLine("minDelta: " + minDelta + ", eta_rho: " + positionData.eta_rho + ", xi_rho: " + positionData.xi_rho);
-
             return positionData;
         }
     }

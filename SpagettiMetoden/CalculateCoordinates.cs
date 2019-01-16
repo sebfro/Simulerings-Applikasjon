@@ -33,7 +33,7 @@ namespace SpagettiMetoden
 
         public CalculateCoordinates(double inc, int depthDelta, double dayInc, int iterations)
         {
-            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMaps);
+            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
             ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(
                 ds["h"].GetData(), 
                 DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc")["Z"].GetData(),
@@ -174,7 +174,7 @@ namespace SpagettiMetoden
 
         public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi, bool SeaCurrentDrag)
         {
-            bool valid = eta <= GlobalVariables.eta_rho_size && eta >= 0 && xi <= GlobalVariables.xi_rho_size && xi >= 0;
+            bool valid = eta <= GlobalVariables.eta_rho_size_ocean_time && eta >= 0 && xi <= GlobalVariables.xi_rho_size_ocean_time && xi >= 0;
             if (valid)
             {
                 int etaInc = SetIncrement(eta, org_eta);

@@ -18,8 +18,11 @@ namespace SpagettiMetoden
         public double TagDataTemp { get; set; }
         public bool Alive { get; set; }
         public bool ExtraWeigth { get; set; }
+        //Hvis true så er posisjonen langs norskekysten.
+        //Hvis false så er posisjonen langs barentshavet.
+        public bool Norkyst { get; set; }
 
-        public PositionData(int eta_rho, int xi_rho, double lat, double lon)
+        public PositionData(int eta_rho, int xi_rho, double lat, double lon, bool norkyst)
         {
             Xi_rho = xi_rho;
             Eta_rho = eta_rho;
@@ -28,6 +31,7 @@ namespace SpagettiMetoden
             Depth = 0;
             Temp = 0;
             Alive = true;
+            Norkyst = norkyst;
         }
 
         public PositionData(double lat, double lon)

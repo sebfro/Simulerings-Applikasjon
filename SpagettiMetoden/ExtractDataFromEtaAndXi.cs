@@ -46,7 +46,7 @@ namespace SpagettiMetoden
             
             ArrayList potentialDepthArray = new ArrayList();
 
-            for (int k = 0; k < GlobalVariables.Z_rho_size; k++)
+            for (int k = 0; k < GlobalVariables.Z_rho_size_ocean_time; k++)
             {
                 double depthFromZ_rho = (double)Z_Array.GetValue(k, eta_rho-1, xi_rho-1);
                 

@@ -8,17 +8,34 @@ namespace SpagettiMetoden
 {
     public class GlobalVariables
     {
-        public static int eta_rho_size = 902;
-        public static int xi_rho_size = 2602;
-        public static int s_rho_size = 35;
-        public static int Z_rho_size = 35;
+        /// <summary>
+        /// eta_rho, xi_rho, s_rho og z_rho for norkyst
+        /// varmemodellene
+        /// </summary>
+        public static int eta_rho_size_ocean_time = 902;
+        public static int xi_rho_size_ocean_time = 2602;
+        public static int s_rho_size_ocean_time = 35;
+        public static int Z_rho_size_ocean_time = 35;
+        /// <summary>
+        /// eta_rho, xi_rho, s_rho og z_rho for barentshavet
+        /// varmemodellene
+        /// </summary>
+        public static int eta_rho_size_ocean_avg = 580;
+        public static int xi_rho_size_ocean_avg = 1202;
+        public static int s_rho_size_ocean_avg = 32;
+        public static int Z_rho_size_ocean_avg = 32;
+
+        //Begynn med norkyst hvis true, barentshavet hvis false:
+        public static bool use_ocean_time = true;
+
         public static int releasedFish = 10000;
         public static string basePath = @"F:\NCdata\";
-        public static string pathToNewHeatMaps = @"D:\NCdata\ocean_time_";
-        public static string pathToNcHeatMaps = basePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNewHeatMaps = @"H:\NCdata\Nye varmemodeller\ocean_time_";
+        public static string pathToOceanTimeNetCDF = @"H:\NCdata\Nye varmemodeller\Ocean_Avg\ocean_avg_";
+        public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapOcean_Avg = @"H:\NCdata\Nye varmemodeller\Ocean_Avg\ocean_avg_20041101.nc";
         public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
         public static string pathToNcTagData = basePath + @"Merkedata\";
-        public static string pathToOceanTimeNetCDF = basePath + @"VarmeModell\ocean_time";
         public static string pathToBwDirectory = basePath + @"fishData\BW\";
         public static string pathToFwDirectory = basePath + @"fishData\FW\";
         public static string pathToMergedDirectory = basePath + @"fishData\Akseptabel\";
@@ -27,6 +44,7 @@ namespace SpagettiMetoden
         //ALL THE DELTAS:
         public static double TempDelta = 1;
         public static double DepthDelta = 10;
+
 
         //Ocean_time max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)
         public static int ocean_time_Max = 274;
