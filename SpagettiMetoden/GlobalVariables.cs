@@ -29,12 +29,14 @@ namespace SpagettiMetoden
         public static bool use_ocean_time = true;
 
         public static int releasedFish = 10000;
-        public static string basePath = @"F:\NCdata\";
-        public static string pathToNewHeatMaps = @"H:\NCdata\Nye varmemodeller\ocean_time_";
-        public static string pathToOceanTimeNetCDF = @"H:\NCdata\Nye varmemodeller\Ocean_Avg\ocean_avg_";
-        public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapOcean_Avg = @"H:\NCdata\Nye varmemodeller\Ocean_Avg\ocean_avg_20041101.nc";
-        public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
+        public static string basePath = @"D:\NCdata\";
+        //Adressen til SSDen, bruk basePath for the som ligger på en hdd
+        public static string PerformanceBasePath = @"C:\NCdata\";
+        public static string pathToNewHeatMaps = basePath + @"ocean_time_";
+        public static string pathToOceanTimeNetCDF = basePath + @"\Ocean_Avg\ocean_avg_";
+        public static string pathToNcHeatMapFolder = PerformanceBasePath + @"VarmeModell\";
+        public static string pathToNcHeatMapOcean_Time = PerformanceBasePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapOcean_Avg = basePath + @"Ocean_Avg\ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
         public static string pathToBwDirectory = basePath + @"fishData\BW\";
         public static string pathToFwDirectory = basePath + @"fishData\FW\";

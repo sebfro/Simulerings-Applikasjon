@@ -41,6 +41,7 @@ namespace SpagettiMetoden
 
         public Controller(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Probability, int iterations)
         {
+            Console.WriteLine("dayInc: {0}, releasedFish: {1}, tempdelta: {2}, depthDelta: {3}, increment: {4}, Probability: {5}, iterations: {6}", dayInc, releasedFish, tempDelta, depthDelta, Increment, Probability, iterations);
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
             SetDayIncrement(dayInc);
@@ -76,8 +77,9 @@ namespace SpagettiMetoden
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
+            bool fishStillAlive = true;
 
-            for (int i = 0; i < FishList["742"].TagDataList.Count; i += TagStep)
+            for (int i = 0; i < FishList["742"].TagDataList.Count && fishStillAlive; i += TagStep)
             {
                 
                 Console.WriteLine("I iterasjon: " + i / TagStep);
@@ -140,8 +142,6 @@ namespace SpagettiMetoden
                 }
                 else
                 {
-                    //TempContainer.UpdateTempArray(day);
-
                     BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
                     TagData tagData = FishList["742"].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
@@ -191,35 +191,17 @@ namespace SpagettiMetoden
                                 {
                                     Interlocked.Increment(ref deadFishCounter);
                                     fishRoute.CommitNotAlive();
-                                    /*Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep + " ELIMINERT");
-                                    Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
-                                    Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
-                                    Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
-                                    */
                                 }
                             }
                         });
                     }
                     else
                     {
-                        i = FishList["742"].TagDataList.Count;
+                        fishStillAlive = false;
                     }
                     counter++;
                 }
-
                 TempContainer.UpdateTempArray(FishList["742"].TagDataList[i].Date);
-                /*day += DayIncrement;
-                if ((Math.Abs(day % 1) <= (double.Epsilon * 100)) && (day <= 225))
-                {
-                    try
-                    {
-                        TempContainer.UpdateTempArray(day);
-                    }
-                    catch (KeyNotFoundException exception)
-                    {
-                        Console.WriteLine("DayOutOfRange: {0}", exception);
-                    }
-                }*/
             }
 
             watch.Stop();
