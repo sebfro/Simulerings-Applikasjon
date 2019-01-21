@@ -73,18 +73,15 @@ namespace SpagettiMetoden
             int halfTagDataCount = (FishList["742"].TagDataList.Count / 2);
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
 
-            int halfIterations = halfTagDataCount / TagStep;
-
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
 
 
-            for (int i = 0; i < halfTagDataCount && halfIterations > 0; i += TagStep)
+            for (int i = 0; i < halfTagDataCount; i += TagStep)
             {
 
                 Console.WriteLine("I iterasjon: " + i / TagStep);
                 bool chosenPosition;
-                halfIterations--;
 
                 if (i == 0)
                 {
@@ -275,15 +272,13 @@ namespace SpagettiMetoden
             int tagDataCount = FishList["742"].TagDataList.Count -1;
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
 
-            int halfIterations = halfTagDataCount / TagStep;
 
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
 
-            for (int i = tagDataCount; i > halfTagDataCount && halfIterations > 0; i -= TagStep)
+            for (int i = tagDataCount; i > halfTagDataCount; i -= TagStep)
             {
 
-                halfIterations--;
                 Console.WriteLine("I iterasjon: " + i / TagStep);
                 bool chosenPosition;
 
