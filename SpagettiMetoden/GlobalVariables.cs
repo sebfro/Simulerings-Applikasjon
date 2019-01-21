@@ -32,10 +32,10 @@ namespace SpagettiMetoden
         public static string basePath = @"D:\NCdata\";
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
-        public static string pathToNewHeatMaps = basePath + @"ocean_time_";
-        public static string pathToOceanTimeNetCDF = basePath + @"\Ocean_Avg\ocean_avg_";
+        public static string pathToOceanTimeNetCDF = PerformanceBasePath + @"ocean_time_";
+        public static string pathToOceanAvgNetCDF = basePath + @"\Ocean_Avg\ocean_avg_";
         public static string pathToNcHeatMapFolder = PerformanceBasePath + @"VarmeModell\";
-        public static string pathToNcHeatMapOcean_Time = PerformanceBasePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapOcean_Time = @"F:\NCdata\" + @"VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapOcean_Avg = basePath + @"Ocean_Avg\ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
         public static string pathToBwDirectory = basePath + @"fishData\BW\";

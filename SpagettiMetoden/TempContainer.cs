@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace SpagettiMetoden
 {
@@ -25,23 +27,37 @@ namespace SpagettiMetoden
         public Array anglesArray;
 
         public string year;
-        public string month;
+        public int month;
         public string currDay;
 
         public string basePath;
         public bool use_ocean_time;
 
-        public TempContainer()
+        public ConcurrentQueue<Array> HeatMapQueue { get; set; }
+
+        public List<TagData> tagDatas;
+        public int tagStep;
+        public int progress;
+
+        public TempContainer(List<TagData> tagDatas, int tagStep)
         {
+            progress = 0;
+            this.tagDatas = tagDatas;
+            this.tagStep = tagStep;
+            HeatMapQueue = new ConcurrentQueue<Array>();
+            Thread thread = new Thread(test);
+            
             anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time)["angle"].GetData();
             use_ocean_time = GlobalVariables.use_ocean_time;
             if (use_ocean_time)
             {
-                basePath = GlobalVariables.pathToNewHeatMaps;
+                basePath = GlobalVariables.pathToOceanTimeNetCDF;
             } else
             {
-                basePath = GlobalVariables.pathToOceanTimeNetCDF;
+                basePath = GlobalVariables.pathToOceanAvgNetCDF;
             }
+            month = int.Parse(GlobalVariables.startDate.Substring(4, 2));
+            thread.Start();
             UpdateTempArray(GlobalVariables.startDate);
             
         }
@@ -51,11 +67,40 @@ namespace SpagettiMetoden
             use_ocean_time = b;
             if (b)
             {
-                basePath = GlobalVariables.pathToNewHeatMaps;
+                basePath = GlobalVariables.pathToOceanTimeNetCDF;
             }
             else
             {
-                basePath = GlobalVariables.pathToOceanTimeNetCDF;
+                basePath = GlobalVariables.pathToOceanAvgNetCDF;
+            }
+        }
+
+        public void test()
+        {
+            DataSet ds;
+            for (int i = progress; i < tagDatas.Count && int.Parse(tagDatas[progress].Date.Substring(4, 2)) == month; i += tagStep)
+            {
+                ds = DataSet.Open(basePath + tagDatas[i].Date + ".nc");
+                HeatMapQueue.Enqueue(ds["temp"].GetData());
+                progress = i;
+            }
+            progress += tagStep;
+            
+        }
+
+        public void test2(string date)
+        {
+            if (int.Parse(date.Substring(4, 2)) != month)
+            {
+                month = int.Parse(date.Substring(4, 2));
+                Thread thread = new Thread(test);
+                thread.Start();
+                
+            }
+            while (HeatMapQueue.IsEmpty);
+            if(HeatMapQueue.TryDequeue(out Array array))
+            {
+                tempArray = array;
             }
         }
 
@@ -63,8 +108,6 @@ namespace SpagettiMetoden
         {
             DataSet ds = DataSet.Open(basePath + date + ".nc");
             tempArray = ds["temp"].GetData();
-            seaCurrentArrayU = ds["u"].GetData();
-            seaCurrentArrayV = ds["v"].GetData();
         }
 
         public void UpdateDay(int day)
@@ -120,6 +163,7 @@ namespace SpagettiMetoden
             new EtaXiCase(-1, 1),   //6
             new EtaXiCase(0, 1)     //7
         };
+
 
         //private EtaXiCase[,] EtaXiCases { get => etaXiCases; set => etaXiCases = value; }
 

@@ -74,7 +74,7 @@ namespace SpagettiMetoden
         }
          
 
-        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth, TempContainer tempContainer)
+        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth)
         {
 
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
@@ -82,13 +82,12 @@ namespace SpagettiMetoden
             float min = lowerSpeed ? 0.01f : 0.4f;
             int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
-            TempContainer.EtaXiCase[] EtaXiCases = tempContainer.GetPositionsToCheck(depthData.Z_rho, eta, xi);
             int counter = 0;
             for (int i = 0; i < Iterations; i++)
             {
-                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[counter].eta * increment),
-                        xi + (EtaXiCases[counter].xi * increment),
-                        eta, xi, EtaXiCases[counter].seaCurrentDrag));
+                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[counter,0] * increment),
+                        xi + (EtaXiCases[counter,1] * increment),
+                        eta, xi));
                 if (counter == 7)
                 {
                     counter = 0;
@@ -172,7 +171,7 @@ namespace SpagettiMetoden
             }
         }
 
-        public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi, bool SeaCurrentDrag)
+        public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi)
         {
             bool valid = eta <= GlobalVariables.eta_rho_size_ocean_time && eta >= 0 && xi <= GlobalVariables.xi_rho_size_ocean_time && xi >= 0;
             if (valid)

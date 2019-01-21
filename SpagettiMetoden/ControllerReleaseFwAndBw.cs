@@ -55,7 +55,7 @@ namespace SpagettiMetoden
 
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
-            TempContainer = new TempContainer();
+            TempContainer = new TempContainer(FishList["742"].TagDataList, TagStep);
             CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
         }
 
@@ -95,7 +95,7 @@ namespace SpagettiMetoden
                         HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, TempContainer),
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth),
                         HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
@@ -164,7 +164,7 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, FishList["742"].TagDataList[i].Depth, TempContainer);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, FishList["742"].TagDataList[i].Depth);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
@@ -296,7 +296,7 @@ namespace SpagettiMetoden
                         HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].CaptureLat, FishList["742"].CaptureLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, TempContainer),
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth),
                         HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
@@ -364,7 +364,7 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, FishList["742"].TagDataList[i].Depth, TempContainer);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, FishList["742"].TagDataList[i].Depth);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
