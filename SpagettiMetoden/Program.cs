@@ -91,9 +91,8 @@ namespace SpagettiMetoden
                 Console.ReadLine();
             } catch {
                 Console.WriteLine("Starting regular");
-                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(1, 10000, 1.2, 30, 0.65, 0.85, 30);
-                controller.RunAlgorithmFW();
-                controller.RunAlgorithmBW();
+                Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30);
+                controller.RunAlgorithm();
                 Console.ReadKey();
                 //ConsoleUI consoleUI = new ConsoleUI();
 
