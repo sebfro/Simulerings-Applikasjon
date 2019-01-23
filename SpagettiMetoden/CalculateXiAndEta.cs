@@ -14,7 +14,7 @@ namespace SpagettiMetoden
         {
             
             ArrayList potentialPositionArray = new ArrayList();
-
+            /*
             for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
             {
                 for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_time; j++)
@@ -25,8 +25,8 @@ namespace SpagettiMetoden
                         }
                 }
             }
-
-            /*
+            */
+            
             for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_avg; i++)
             {
                 for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_avg; j++)
@@ -37,7 +37,7 @@ namespace SpagettiMetoden
                     }
                 }
             }
-            */
+            
 
             return ConvertLatAndLonToEtaAndXi(potentialPositionArray, lat, lon);
         }

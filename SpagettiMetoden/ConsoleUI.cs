@@ -27,7 +27,7 @@ namespace SpagettiMetoden
 
             Controller controller;
 
-            controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, probability, possiblePaths);
+            controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, probability, possiblePaths, "742");
             controller.RunAlgorithm();
             Console.ReadKey();
             while (run)
@@ -72,7 +72,7 @@ namespace SpagettiMetoden
 
                 Console.WriteLine("Loading files...");
             Console.WriteLine("Running algorithm...");
-                controller = new Controller(dayInc, releasedFish, 1.2, DepthDelta, Increment, 0.85, 30);
+                controller = new Controller(dayInc, releasedFish, 1.2, DepthDelta, Increment, 0.85, 30, "742");
                 bool runCurrentConfig = true;
                 /*
                 if(controller.RunAlgorithmFW())

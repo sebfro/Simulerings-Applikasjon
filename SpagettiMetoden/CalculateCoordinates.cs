@@ -33,13 +33,8 @@ namespace SpagettiMetoden
 
         public CalculateCoordinates(double inc, int depthDelta, double dayInc, int iterations)
         {
-            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
-            ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(
-                ds["h"].GetData(), 
-                DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc")["Z"].GetData(),
-                ds["mask_rho"].GetData(),
-                depthDelta
-                );
+            //mndmean_avg_200810.nc
+            ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(depthDelta);
 
             Iterations = iterations;
             DayInc = dayInc;

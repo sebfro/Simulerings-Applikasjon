@@ -49,7 +49,7 @@ namespace SpagettiMetoden
                 //controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
                 if(algorithm == 0)
                 {
-                    Controller controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                    Controller controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, "742");
                     controller.RunAlgorithm();
                 } else if (algorithm == 1)
                 {
@@ -91,7 +91,7 @@ namespace SpagettiMetoden
                 Console.ReadLine();
             } catch {
                 Console.WriteLine("Starting regular");
-                Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30);
+                Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30, "1664");
                 controller.RunAlgorithm();
                 Console.ReadKey();
                 //ConsoleUI consoleUI = new ConsoleUI();
