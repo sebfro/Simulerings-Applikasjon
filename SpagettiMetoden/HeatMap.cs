@@ -26,8 +26,8 @@ namespace SpagettiMetoden
             
             DataSet ds_Ocean_Avg = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Avg);
             Console.WriteLine(GlobalVariables.pathToNcHeatMapOcean_Avg);
-            BarentsSeaLatArray = ds_Ocean_Time["lat_rho"].GetData();
-            BarentsSeaLonArray = ds_Ocean_Time["lon_rho"].GetData();
+            BarentsSeaLatArray = ds_Ocean_Avg["lat_rho"].GetData();
+            BarentsSeaLonArray = ds_Ocean_Avg["lon_rho"].GetData();
             
             Initialized = true;
         }

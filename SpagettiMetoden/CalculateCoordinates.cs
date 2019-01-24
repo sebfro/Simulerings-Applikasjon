@@ -75,7 +75,8 @@ namespace SpagettiMetoden
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
             float max = lowerSpeed ? 0.4f : 1f;
             float min = lowerSpeed ? 0.01f : 0.4f;
-            int increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
+            float divideBy = GlobalVariables.use_ocean_time ? 0.8f : 4f;
+            int increment = (int) (((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24))/divideBy);
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
             int counter = 0;
             for (int i = 0; i < Iterations; i++)
@@ -168,7 +169,19 @@ namespace SpagettiMetoden
 
         public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi)
         {
-            bool valid = eta <= GlobalVariables.eta_rho_size_ocean_time && eta >= 0 && xi <= GlobalVariables.xi_rho_size_ocean_time && xi >= 0;
+            int eta_rho_size;
+            int xi_rho_size;
+            if (GlobalVariables.use_ocean_time)
+            {
+                eta_rho_size = GlobalVariables.eta_rho_size_ocean_time;
+                xi_rho_size = GlobalVariables.xi_rho_size_ocean_time;
+            }
+            else
+            {
+                eta_rho_size = GlobalVariables.eta_rho_size_ocean_avg;
+                xi_rho_size = GlobalVariables.xi_rho_size_ocean_avg;
+            }
+            bool valid = eta < eta_rho_size && eta >= 0 && xi < xi_rho_size && xi >= 0;
             if (valid)
             {
                 int etaInc = SetIncrement(eta, org_eta);

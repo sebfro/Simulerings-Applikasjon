@@ -97,7 +97,12 @@ namespace SpagettiMetoden
                 thread.Start();
                 
             }
-            while (HeatMapQueue.IsEmpty);
+
+            while (HeatMapQueue.IsEmpty)
+            {
+
+            }
+
             if(HeatMapQueue.TryDequeue(out Array array))
             {
                 tempArray = array;
@@ -125,9 +130,6 @@ namespace SpagettiMetoden
         /// <returns>temperatur fra en en array4D av temperatur</returns>
         public double GetTemp(int z_rho, int eta_rho, int xi_rho)
         {
-                eta_rho -= 1;
-                xi_rho -= 1;
-
                 double tempValue = (short)tempArray.GetValue(z_rho, eta_rho, xi_rho);
                 return (tempValue * scale_factor) + add_offset;
         }

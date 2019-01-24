@@ -14,26 +14,30 @@ namespace SpagettiMetoden
         {
             
             ArrayList potentialPositionArray = new ArrayList();
-            /*
-            for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
+
+            if (GlobalVariables.use_ocean_time)
             {
-                for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_time; j++)
+                for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
                 {
+                    for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_time; j++)
+                    {
                         if (Math.Abs((double)NorkystlatDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)NorKystlonDataSet.GetValue(i, j) - lon) < Delta)
                         {
                             potentialPositionArray.Add(new PositionData(i, j, (double)NorkystlatDataSet.GetValue(i, j), (double)NorKystlonDataSet.GetValue(i, j), true));
                         }
+                    }
                 }
             }
-            */
-            
-            for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_avg; i++)
+            else
             {
-                for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_avg; j++)
+                for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_avg; i++)
                 {
-                    if (Math.Abs((double)BarentsSealatDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)BarentsSealatlonDataSet.GetValue(i, j) - lon) < Delta)
+                    for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_avg; j++)
                     {
-                        potentialPositionArray.Add(new PositionData(i, j, (double)BarentsSealatDataSet.GetValue(i, j), (double)BarentsSealatlonDataSet.GetValue(i, j), false));
+                        if (Math.Abs((double)BarentsSealatDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)BarentsSealatlonDataSet.GetValue(i, j) - lon) < Delta)
+                        {
+                            potentialPositionArray.Add(new PositionData(i, j, (double)BarentsSealatDataSet.GetValue(i, j), (double)BarentsSealatlonDataSet.GetValue(i, j), false));
+                        }
                     }
                 }
             }

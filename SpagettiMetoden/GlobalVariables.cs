@@ -26,23 +26,25 @@ namespace SpagettiMetoden
         public static int Z_rho_size_ocean_avg = 32;
 
         //Begynn med norkyst hvis true, barentshavet hvis false:
+        //Husk å endre startdato hvis du skal flippe denne
         public static bool use_ocean_time = false;
 
         public static int releasedFish = 10000;
         public static string basePath = @"D:\NCdata\";
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
+        public static string ExternalHDDBasePath = @"E:\";
         public static string pathToOceanTimeNetCDF = PerformanceBasePath + @"VarmeModell\ocean_time_";
-        public static string pathToOceanAvgNetCDF = @"I:\NCdata\Nye varmemodeller\Ocean_Avg\Uten havstrøm\ocean_avg_";
+        public static string pathToOceanAvgNetCDF = ExternalHDDBasePath + @"NCdata\Nye varmemodeller\Ocean_Avg\Uten havstrøm\ocean_avg_";
         public static string pathToNcHeatMapFolder = PerformanceBasePath + @"VarmeModell\";
         public static string pathToNcHeatMapOcean_Time = PerformanceBasePath + @"VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapOcean_Avg = @"I:\ocean_avg_LatAndLonRho.nc";
+        public static string pathToNcHeatMapOcean_Avg = ExternalHDDBasePath + @"ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
         public static string pathToBwDirectory = basePath + @"fishData\BW\";
         public static string pathToFwDirectory = basePath + @"fishData\FW\";
         public static string pathToMergedDirectory = basePath + @"fishData\Akseptabel\";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
-        public static string pathToSaveFishData = basePath + @"fishData";
+        public static string pathToSaveFishData = PerformanceBasePath + @"fishData";
         //ALL THE DELTAS:
         public static double TempDelta = 1;
         public static double DepthDelta = 10;
@@ -72,7 +74,7 @@ namespace SpagettiMetoden
         /// Men første posisjonen hvis skal beregne i iterasjon 0 er posisjonen etter
         /// release posisjon. derfor day + dayIncrement
         /// </summary>
-        public static string startDate = "20040402";
+        public static string startDate = "20040403";
         public static int day = 29;
         public static int lastDay = 225;
 
