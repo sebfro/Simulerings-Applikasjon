@@ -81,12 +81,13 @@ namespace SpagettiMetoden
             Console.WriteLine("Tagstep: {0}", TagStep);
             bool fishStillAlive = true;
 
-            for (int i = 0; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
+            for (int i = TagStep; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
             {
-                TempContainer.test2(FishList[FishTag].TagDataList[i].Date);
+                TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
+                //TempContainer.test2(FishList[FishTag].TagDataList[i].Date);
                 Console.WriteLine("I iterasjon: " + i / TagStep);
                 bool chosenPosition;
-                if (i == 0)
+                if (i == TagStep)
                 {
                     var watch2 = Stopwatch.StartNew();
 
@@ -96,11 +97,17 @@ namespace SpagettiMetoden
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
                             CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList[FishTag].TagDataList[i].Depth),
-                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, FishList[FishTag].TagDataList[i], TempContainer, TempDelta
+                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].TagDataList[i], TempContainer, TempDelta
                             );
 
                     float releaseLat = (float)FishList[FishTag].ReleaseLat;
                     float releaseLon = (float)FishList[FishTag].ReleaseLon;
+
+                    Console.WriteLine("Lat: {0}, Lon: {1}", releaseLat, releaseLon);
+                    foreach (PositionData pData in validPositionsDataList)
+                    {
+                        Console.WriteLine("Lat: {0}, Lon: {1}", pData.Lat, pData.Lon);
+                    }
 
                     Parallel.For(0, ReleasedFish, (j) =>
                     {
@@ -140,7 +147,7 @@ namespace SpagettiMetoden
                             Interlocked.Increment(ref deadFishCounter);
                         }
                     });
-                    day += DayIncrement;
+                    //day += DayIncrement;
                 }
                 else
                 {
@@ -165,7 +172,7 @@ namespace SpagettiMetoden
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
-                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, tagData, TempContainer, TempDelta);
+                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta);
                                 }
                                 
                                 if (validPositionsDataList.Count > 0)

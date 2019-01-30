@@ -45,7 +45,7 @@ namespace SpagettiMetoden
             this.tagDatas = tagDatas;
             this.tagStep = tagStep;
             HeatMapQueue = new ConcurrentQueue<Array>();
-            Thread thread = new Thread(test);
+            //Thread thread = new Thread(test);
             
             anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time)["angle"].GetData();
             use_ocean_time = GlobalVariables.use_ocean_time;
@@ -57,8 +57,8 @@ namespace SpagettiMetoden
                 basePath = GlobalVariables.pathToOceanAvgNetCDF;
             }
             month = int.Parse(GlobalVariables.startDate.Substring(4, 2));
-            thread.Start();
-            UpdateTempArray(GlobalVariables.startDate);
+            //thread.Start();
+            //UpdateTempArray(GlobalVariables.startDate);
             
         }
 

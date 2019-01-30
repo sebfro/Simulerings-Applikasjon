@@ -105,7 +105,7 @@ namespace SpagettiMetoden
 
         }
 
-        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latDataArray, Array lonDataArray, TagData tagData, TempContainer tempContainer, double tempDelta)
+        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latNorkystArray, Array lonNorkystArray, Array latBarentsArray, Array lonBarentsArray, TagData tagData, TempContainer tempContainer, double tempDelta)
         {
             //CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             PositionDataList = new BlockingCollection<PositionData>();
@@ -140,8 +140,15 @@ namespace SpagettiMetoden
 
                         lock (syncObject)
                         {
-                            lat = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latDataArray);
-                            lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonDataArray);
+                            if (GlobalVariables.use_ocean_time)
+                            {
+                                lat = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latNorkystArray);
+                                lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonNorkystArray);
+                            } else
+                            {
+                                lat = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latBarentsArray);
+                                lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonBarentsArray);
+                            }
                         }
                         
                         PositionDataList.Add(new PositionData(lat, lon, depth, temp, tagData.Depth, tagData.Temp, etaXis[i].Eta_rho, etaXis[i].Xi_rho, etaXis[i].ExtraWeight));

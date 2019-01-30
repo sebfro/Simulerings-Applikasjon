@@ -33,12 +33,12 @@ namespace SpagettiMetoden
         public static string basePath = @"D:\NCdata\";
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
-        public static string ExternalHDDBasePath = @"E:\";
+        public static string ExternalHDDBasePath = @"H:\";
         public static string pathToOceanTimeNetCDF = PerformanceBasePath + @"VarmeModell\ocean_time_";
-        public static string pathToOceanAvgNetCDF = ExternalHDDBasePath + @"NCdata\Nye varmemodeller\Ocean_Avg\Uten havstrøm\ocean_avg_";
+        public static string pathToOceanAvgNetCDF = PerformanceBasePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
         public static string pathToNcHeatMapFolder = PerformanceBasePath + @"VarmeModell\";
-        public static string pathToNcHeatMapOcean_Time = PerformanceBasePath + @"VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapOcean_Avg = ExternalHDDBasePath + @"ocean_avg_LatAndLonRho.nc";
+        public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapOcean_Avg = PerformanceBasePath + @"VarmeModell\" + "mndmean_avg_200810.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
         public static string pathToBwDirectory = basePath + @"fishData\BW\";
         public static string pathToFwDirectory = basePath + @"fishData\FW\";

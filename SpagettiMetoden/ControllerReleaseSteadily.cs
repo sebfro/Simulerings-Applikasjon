@@ -89,13 +89,12 @@ namespace SpagettiMetoden
                 if (i == 0)
                 {
                     var watch2 = Stopwatch.StartNew();
-                    int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
                         HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
                             CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth),
-                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
+                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
                             );
 
                     float releaseLat = (float)FishList["742"].ReleaseLat;
@@ -165,7 +164,7 @@ namespace SpagettiMetoden
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
-                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, tagData, TempContainer, TempDelta);
+                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta);
                                 }
                                 
 
