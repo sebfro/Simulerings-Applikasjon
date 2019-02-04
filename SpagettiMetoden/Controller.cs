@@ -81,7 +81,7 @@ namespace SpagettiMetoden
             Console.WriteLine("Tagstep: {0}", TagStep);
             bool fishStillAlive = true;
 
-            for (int i = TagStep; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
+            for (int i = TagStep; i < FishList[FishTag].TagDataList.Count/2 && fishStillAlive; i += TagStep)
             {
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
                 //TempContainer.test2(FishList[FishTag].TagDataList[i].Date);

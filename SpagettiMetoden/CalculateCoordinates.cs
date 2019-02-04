@@ -67,7 +67,11 @@ namespace SpagettiMetoden
         {
             return deg * (Math.PI / 180);
         }
-         
+        
+        public int GenerateIncrement(float min, float max, float divideBy)
+        {
+            return (int)(((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24)) / divideBy);
+        }
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth)
         {
@@ -76,7 +80,7 @@ namespace SpagettiMetoden
             float max = lowerSpeed ? 0.4f : 1f;
             float min = lowerSpeed ? 0.01f : 0.4f;
             float divideBy = GlobalVariables.use_ocean_time ? 0.8f : 4f;
-            int increment = (int) (((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24))/divideBy);
+            int increment = GenerateIncrement(min, max, divideBy);
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
             int counter = 0;
             for (int i = 0; i < Iterations; i++)
@@ -91,7 +95,7 @@ namespace SpagettiMetoden
                     {
                         max -= 0.1f;
                     }
-                    increment = (int)((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24));
+                    increment = GenerateIncrement(min, max, divideBy);
                 }
                 else
                 {
