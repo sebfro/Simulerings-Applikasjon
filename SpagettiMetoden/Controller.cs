@@ -80,14 +80,16 @@ namespace SpagettiMetoden
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
             bool fishStillAlive = true;
-
-            for (int i = TagStep; i < FishList[FishTag].TagDataList.Count/2 && fishStillAlive; i += TagStep)
+            Console.WriteLine(FishList[FishTag].TagDataList[TagStep].Date);
+            Console.WriteLine(FishList[FishTag].TagDataList[0].Date);
+            for (int i = 0; i < FishList[FishTag].TagDataList.Count/2 && fishStillAlive; i += TagStep)
             {
+                //TempContainer.GetHeatMap(FishList[FishTag].TagDataList[i].Date);
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
-                //TempContainer.test2(FishList[FishTag].TagDataList[i].Date);
+                Console.WriteLine("Current date: {0}", FishList[FishTag].TagDataList[i].Date);
                 Console.WriteLine("I iterasjon: " + i / TagStep);
                 bool chosenPosition;
-                if (i == TagStep)
+                if (i == 0)
                 {
                     var watch2 = Stopwatch.StartNew();
 
@@ -102,12 +104,6 @@ namespace SpagettiMetoden
 
                     float releaseLat = (float)FishList[FishTag].ReleaseLat;
                     float releaseLon = (float)FishList[FishTag].ReleaseLon;
-
-                    Console.WriteLine("Lat: {0}, Lon: {1}", releaseLat, releaseLon);
-                    foreach (PositionData pData in validPositionsDataList)
-                    {
-                        Console.WriteLine("Lat: {0}, Lon: {1}", pData.Lat, pData.Lon);
-                    }
 
                     Parallel.For(0, ReleasedFish, (j) =>
                     {
@@ -232,17 +228,26 @@ namespace SpagettiMetoden
             }
             else
             {
-                //SLETTER ALLE FILER I FOLDER AKSEPTABEL OG UAKSEPTABEL !!!!!!!!!!!!!!!!!! Lag backup folder om tester hjemme eller HI
-                DirectoryInfo di = new DirectoryInfo(@"C:\NCdata\fishData\Akseptabel\");
-                DirectoryInfo di2 = new DirectoryInfo(@"C:\NCdata\fishData\Uakseptabel\");
+                if (Directory.Exists(@"C:\NCdata\fishData\" + FishTag))
+                {
+                    //SLETTER ALLE FILER I FOLDER AKSEPTABEL OG UAKSEPTABEL !!!!!!!!!!!!!!!!!! Lag backup folder om tester hjemme eller HI
+                    DirectoryInfo di = new DirectoryInfo(@"C:\NCdata\fishData\" +FishTag+ @"\Akseptabel\");
+                    DirectoryInfo di2 = new DirectoryInfo(@"C:\NCdata\fishData\" + FishTag + @"\Uakseptabel\");
 
-                foreach (FileInfo file in di.GetFiles())
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                    foreach (FileInfo file in di2.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                } else
                 {
-                    file.Delete();
-                }
-                foreach (FileInfo file in di2.GetFiles())
-                {
-                    file.Delete();
+                    Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag);
+                    Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag + @"\Akseptabel");
+                    Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag + @"\Uakseptabel");
+
                 }
             }
             Console.WriteLine("Day is: {0}", day);
@@ -263,7 +268,7 @@ namespace SpagettiMetoden
                     }
                     string[] fishData = fishRoute.FromListToString();
 
-                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.Id + "_" + count + ".txt", fishData);
+                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + FishTag + @"\\" + folderName + "\\" + fishRoute.Id + "_" + count + ".txt", fishData);
                     count++;
                 }
             }

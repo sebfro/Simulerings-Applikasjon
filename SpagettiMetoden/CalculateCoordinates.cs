@@ -79,7 +79,7 @@ namespace SpagettiMetoden
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
             float max = lowerSpeed ? 0.4f : 1f;
             float min = lowerSpeed ? 0.01f : 0.4f;
-            float divideBy = GlobalVariables.use_ocean_time ? 0.8f : 4f;
+            float divideBy = GlobalVariables.use_norkyst ? 0.8f : 4f;
             int increment = GenerateIncrement(min, max, divideBy);
             DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
             int counter = 0;
@@ -144,7 +144,7 @@ namespace SpagettiMetoden
 
                         lock (syncObject)
                         {
-                            if (GlobalVariables.use_ocean_time)
+                            if (GlobalVariables.use_norkyst)
                             {
                                 lat = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latNorkystArray);
                                 lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonNorkystArray);
@@ -182,7 +182,7 @@ namespace SpagettiMetoden
         {
             int eta_rho_size;
             int xi_rho_size;
-            if (GlobalVariables.use_ocean_time)
+            if (GlobalVariables.use_norkyst)
             {
                 eta_rho_size = GlobalVariables.eta_rho_size_ocean_time;
                 xi_rho_size = GlobalVariables.xi_rho_size_ocean_time;

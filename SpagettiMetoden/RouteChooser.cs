@@ -41,9 +41,16 @@ namespace SpagettiMetoden
             bool extraWeigth = validPositionsDataList.ElementAt(randInt).ExtraWeigth;
             double weight = GlobalVariables.Probability;
 
-            //return ((newDistanceFromCapture < currDistanceFromCaptureOrRelease && randDouble < weight) ||
-            //        (newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= weight));
-            return true;
+            if(weight == 0)
+            {
+                return true;
+            } else
+            {
+                return ((newDistanceFromCapture < currDistanceFromCaptureOrRelease && randDouble < weight) ||
+                    (newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= weight));
+            }
+
+            //Denne versjonen var for 
             //return (newDistanceFromCapture < currDistanceFromCaptureOrRelease && randDouble < (extraWeigth ? weight + 0.4 : weight) || 
             //    newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= (extraWeigth ? weight - 0.4 : weight));
         }

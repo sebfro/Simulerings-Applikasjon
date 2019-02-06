@@ -37,7 +37,7 @@ namespace SpagettiMetoden
         {
             //eta_rho -= 1;
             //xi_rho -= 1;
-            if (GlobalVariables.use_ocean_time)
+            if (GlobalVariables.use_norkyst)
             {
                 return (double)OceanTime_Mask_rhoArray.GetValue(eta_rho, xi_rho) == 0.0;
             }
@@ -51,7 +51,7 @@ namespace SpagettiMetoden
         {
             //eta_rho = eta_rho == 0 ? eta_rho : eta_rho - 1;
             //xi_rho = xi_rho == 0 ? xi_rho : xi_rho - 1;
-            if (GlobalVariables.use_ocean_time)
+            if (GlobalVariables.use_norkyst)
             {
                 return (double)OceanTime_DepthArray.GetValue(eta_rho, xi_rho);
             }
@@ -74,7 +74,7 @@ namespace SpagettiMetoden
             int z_rho_size;
             Array z_Array;
 
-            if (GlobalVariables.use_ocean_time)
+            if (GlobalVariables.use_norkyst)
             {
                 z_rho_size = GlobalVariables.Z_rho_size_ocean_time;
                 z_Array = OceanTime_Z_Array;
