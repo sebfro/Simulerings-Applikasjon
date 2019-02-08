@@ -90,14 +90,38 @@ namespace SpagettiMetoden
 
                 Console.ReadLine();
             } catch {
-                Console.WriteLine("Starting regular");
+                /*
+                double norLon = 50.236;
+                double norLat = 88.642;
+
+                double barLon = 20.698;
+                double barLat = 40.638;
+                
+                float latDiff = (float)(norLat - barLat);
+                if (latDiff < 0)
+                {
+                    latDiff = latDiff * (-1);
+                }
+
+                float lonDiff = (float)(norLon - barLon);
+                if (lonDiff < 0)
+                {
+                    lonDiff = lonDiff * (-1);
+                }
+
+                Console.WriteLine(Math.Abs(norLat-barLat) + Math.Abs(norLon - barLon));
+                Console.WriteLine(latDiff + lonDiff);
+                */
+
+                SimpleGPUAcceleration.startUp();
+                /*
+                Console.WriteLine("Error, bruker standard");
                 //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.5, 30, "742");
                 Controller controller = new Controller(4, 10000, 0.4, 30, 0.65, 0.5, 30, "1664");
                 controller.RunAlgorithm();
+                */
                 Console.ReadKey();
-                //ConsoleUI consoleUI = new ConsoleUI();
-
-                //consoleUI.RunUI();
+                
             }
                 
         }
