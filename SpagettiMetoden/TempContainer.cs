@@ -31,7 +31,7 @@ namespace SpagettiMetoden
         public string currDay;
 
         public string basePath;
-        public bool use_ocean_time;
+        public bool use_norkyst;
 
         public ConcurrentQueue<Array> HeatMapQueue { get; set; }
 
@@ -45,29 +45,29 @@ namespace SpagettiMetoden
             this.tagDatas = tagDatas;
             this.tagStep = tagStep;
             HeatMapQueue = new ConcurrentQueue<Array>();
-            //Thread thread = new Thread(test);
             
             anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time)["angle"].GetData();
-            use_ocean_time = GlobalVariables.use_ocean_time;
-            if (use_ocean_time)
+            use_norkyst = GlobalVariables.use_norkyst;
+            if (use_norkyst)
             {
-                basePath = GlobalVariables.pathToOceanTimeNetCDF;
+                basePath = GlobalVariables.pathToNorkystNetCDF;
             } else
             {
                 basePath = GlobalVariables.pathToOceanAvgNetCDF;
             }
-            month = int.Parse(GlobalVariables.startDate.Substring(4, 2));
+            //month = int.Parse(GlobalVariables.startDate.Substring(4, 2));
+            //Thread thread = new Thread(test);
             //thread.Start();
             //UpdateTempArray(GlobalVariables.startDate);
             
         }
 
-        public void SetBasePath(bool b)
+        public void SetBasePath(bool use_norkyst)
         {
-            use_ocean_time = b;
-            if (b)
+            this.use_norkyst = use_norkyst;
+            if (use_norkyst)
             {
-                basePath = GlobalVariables.pathToOceanTimeNetCDF;
+                basePath = GlobalVariables.pathToNorkystNetCDF;
             }
             else
             {
@@ -76,6 +76,16 @@ namespace SpagettiMetoden
         }
 
         public void test()
+        {
+            DataSet ds;
+            for (int i = 0; i < tagDatas.Count; i += tagStep)
+            {
+                ds = DataSet.Open(basePath + tagDatas[i].Date + ".nc");
+                HeatMapQueue.Enqueue(ds["temp"].GetData());
+            }
+        }
+
+        public void LoadHeatMapsForNextMonth()
         {
             DataSet ds;
             for (int i = progress; i < tagDatas.Count && int.Parse(tagDatas[progress].Date.Substring(4, 2)) == month; i += tagStep)
@@ -88,20 +98,17 @@ namespace SpagettiMetoden
             
         }
 
-        public void test2(string date)
+        public void GetHeatMap(string date)
         {
-            if (int.Parse(date.Substring(4, 2)) != month)
+            /*if (int.Parse(date.Substring(4, 2)) != month)
             {
                 month = int.Parse(date.Substring(4, 2));
-                Thread thread = new Thread(test);
+                Thread thread = new Thread(LoadHeatMapsForNextMonth);
                 thread.Start();
                 
-            }
+            }*/
 
-            while (HeatMapQueue.IsEmpty)
-            {
-
-            }
+            while (HeatMapQueue.IsEmpty);
 
             if(HeatMapQueue.TryDequeue(out Array array))
             {

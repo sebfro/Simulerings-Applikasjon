@@ -27,18 +27,18 @@ namespace SpagettiMetoden
 
         //Begynn med norkyst hvis true, barentshavet hvis false:
         //Husk å endre startdato hvis du skal flippe denne
-        public static bool use_ocean_time = false;
+        public static bool use_norkyst = false;
 
         public static int releasedFish = 10000;
         public static string basePath = @"D:\NCdata\";
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
         public static string ExternalHDDBasePath = @"H:\";
-        public static string pathToOceanTimeNetCDF = PerformanceBasePath + @"VarmeModell\ocean_time_";
+        public static string pathToNorkystNetCDF = PerformanceBasePath + @"Nye varmeModeller\norkyst\Uten Havstrom\norkyst_";
         public static string pathToOceanAvgNetCDF = PerformanceBasePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
-        public static string pathToNcHeatMapFolder = PerformanceBasePath + @"VarmeModell\";
+        public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
         public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapOcean_Avg = PerformanceBasePath + @"VarmeModell\" + "mndmean_avg_200810.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
+        public static string pathToNcHeatMapOcean_Avg = basePath + @"VarmeModell\" + "ocean_avg_LatAndLonRho.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
         public static string pathToBwDirectory = basePath + @"fishData\BW\";
         public static string pathToFwDirectory = basePath + @"fishData\FW\";
@@ -74,7 +74,7 @@ namespace SpagettiMetoden
         /// Men første posisjonen hvis skal beregne i iterasjon 0 er posisjonen etter
         /// release posisjon. derfor day + dayIncrement
         /// </summary>
-        public static string startDate = "20040403";
+        public static string startDate = "20030830";
         public static int day = 29;
         public static int lastDay = 225;
 

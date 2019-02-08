@@ -15,7 +15,7 @@ namespace SpagettiMetoden
             
             ArrayList potentialPositionArray = new ArrayList();
 
-            if (GlobalVariables.use_ocean_time)
+            if (GlobalVariables.use_norkyst)
             {
                 for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
                 {
