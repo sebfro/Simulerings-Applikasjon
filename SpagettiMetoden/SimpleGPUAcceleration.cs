@@ -13,6 +13,7 @@ namespace SpagettiMetoden
 {
     class SimpleGPUAcceleration
     {
+        private int N = 1000;
         public static void startUp()
         {
             int norkyst_eta_rho = 902;
@@ -60,11 +61,13 @@ namespace SpagettiMetoden
             double[,] dev_barentsLatTable = gpu.CopyToDevice(barentsLatTable);
             double[,] dev_barentsLonTable = gpu.CopyToDevice(barentsLonTable);
 
+
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            Parallel.For(0, norkyst_eta_rho, eta => {
+            for (int eta = 0; eta < 3; eta++)
+            {
             
-            for (int xi = 0; xi < 10; xi++)
+                for (int xi = 0; xi < norkyst_xi_rho; xi++)
                 {
 
                     //Dette gjør mer eller mindre det samme som den under, men her kan jeg sette verdiene som sendes inn. Derfor bruker jeg denne metoden
@@ -75,14 +78,18 @@ namespace SpagettiMetoden
                     int[] tmpXi = { xi };
                     int[] dev_Xi = gpu.CopyToDevice(tmpXi);
 
+                    int[] dev_returnEta = gpu.Allocate(new int[1]);
+                    int[] dev_returnXi = gpu.Allocate(new int[1]);
+
                     //Allokerer minne for to variabler på GPU, så vidt jeg forstår så må de være []. Jeg vil bare ha en varaibel så det er bare et element i dem
                     //int[] dev_eta = gpu.Allocate<int>(1);
                     //int[] dev_xi = gpu.Allocate<int>(1);
-                    //Kjører metoden på gpu
-                    gpu.Launch().ReturnTest(dev_Eta, dev_Xi, dev_norkystLatTable, dev_norkystLonTable, dev_barentsLatTable, dev_barentsLonTable);
+                    //Kjører metoden på gpu, den første parameteren i launch er hvor mange parallele instanser av metoden som kjøres.
+                    //gpu.Launch(1,10).ReturnTest(dev_Eta, dev_Xi, dev_norkystLatTable, dev_norkystLonTable, dev_barentsLatTable, dev_barentsLonTable);
                     //Henter de to variablene fra gpu etter metoden har fullført
                     gpu.CopyFromDevice(dev_Eta, out int newEta);
                     gpu.CopyFromDevice(dev_Xi, out int newXi);
+                    //double[,] result = new double[10,10];
                     /*
                     Console.WriteLine("Norkyst:");
                     Console.WriteLine("Eta: {0}, Xi: {1}", eta, xi);
@@ -90,7 +97,7 @@ namespace SpagettiMetoden
                     Console.WriteLine("Eta: {0}, Xi: {1}", newEta, newXi);
                     
                 }
-            });
+            }
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;
@@ -126,7 +133,9 @@ namespace SpagettiMetoden
         [Cudafy]
         public static void ReturnTest(GThread thread, int[] eta, int[] xi, double[,] norkystLat, double[,] norkystLon, double[,] barentsLat, double[,] barentsLon)
         {
-            int tid = thread.blockIdx.x;
+            double[] cache = thread.AllocateShared<double>("cache", 10);
+
+            //int tid = thread.blockIdx.x;
             int norkyst_eta_rho = 902;
             int norkyst_xi_rho = 2602;
             int barents_eta_rho = 580;
@@ -141,8 +150,10 @@ namespace SpagettiMetoden
             double lat = norkystLat[currEta, currXi];
             double lon = norkystLon[currEta, currXi];
 
-            for (int etaInc = 0; etaInc < barents_eta_rho; etaInc++)
-            {
+            for (int etaInc = 0; etaInc < barents_eta_rho; etaInc++){
+                //int etaInc = tid;
+                //if(tid < barents_eta_rho) {
+                //thread.SyncThreads();
                 for (int xiInc = 0; xiInc < barents_xi_rho; xiInc++)
                 {
                     double latDiff = (barentsLat[etaInc, xiInc] - lat);
@@ -161,6 +172,7 @@ namespace SpagettiMetoden
                     double newDelta = latDiff + lonDiff;
                     if(newDelta < mindelta)
                     {
+                        thread.SyncThreads();
                         mindelta = newDelta;
                         tmpEta = etaInc;
                         tmpXi = xiInc;
@@ -187,61 +199,35 @@ namespace SpagettiMetoden
             double lat = norkystLat[currEta, currXi];
             double lon = norkystLon[currEta, currXi];
 
-            for (int etaInc = 0; etaInc < barents_eta_rho; etaInc++)
-            {
-                for (int xiInc = 0; xiInc < barents_xi_rho; xiInc++)
-                {
-                    double latDiff = (barentsLat[etaInc, xiInc] - lat);
-                    double lonDiff = (barentsLon[etaInc, xiInc] - lon);
+            //for (int etaInc = 0; etaInc < barents_eta_rho; etaInc++)
+            Parallel.For(0, barents_eta_rho, etaInc =>
+             {
+                 for (int xiInc = 0; xiInc < barents_xi_rho; xiInc++)
+                 {
+                     double latDiff = (barentsLat[etaInc, xiInc] - lat);
+                     double lonDiff = (barentsLon[etaInc, xiInc] - lon);
 
-                    if (latDiff < 0)
-                    {
-                        latDiff = latDiff * (-1);
-                    }
+                     if (latDiff < 0)
+                     {
+                         latDiff = latDiff * (-1);
+                     }
 
-                    if (lonDiff < 0)
-                    {
-                        lonDiff = lonDiff * (-1);
-                    }
+                     if (lonDiff < 0)
+                     {
+                         lonDiff = lonDiff * (-1);
+                     }
 
-                    double newDelta = latDiff + lonDiff;
-                    if (newDelta < mindelta)
-                    {
-                        mindelta = newDelta;
-                        tmpEta = etaInc;
-                        tmpXi = xiInc;
-                    }
-                }
-            }
+                     double newDelta = latDiff + lonDiff;
+                     if (newDelta < mindelta)
+                     {
+                         mindelta = newDelta;
+                         tmpEta = etaInc;
+                         tmpXi = xiInc;
+                     }
+                 }
+             });
             return new int[2] { tmpEta, tmpXi };
 
         }
-
-        [Cudafy]
-        public static void thekernel(double[,] norkystLonArray, double[,] norkystLatArray)
-        {
-        }
-
-        /*
-        [Cudafy]
-        public struct FindEtaXi
-        {
-            public FindEtaXi(double[,] norkystLonArray, double[,] norkystLatArray)
-            {
-                norkyst_eta_rho = 902;
-                norkyst_xi_rho = 2602;
-                barents_eta_rho = 580;
-                barents_xi_rho = 1202;
-
-                sad = new double[norkyst_eta_rho, norkyst_eta_rho];
-            }
-            int norkyst_eta_rho;
-            int norkyst_xi_rho;
-            int barents_eta_rho;
-            int barents_xi_rho;
-
-            public double[,] sad;
-        }
-        */
     }
 }
