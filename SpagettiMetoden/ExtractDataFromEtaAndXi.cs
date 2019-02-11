@@ -33,11 +33,11 @@ namespace SpagettiMetoden
 
         //Sjekker om et eta og xi punkt er på land. Returnerer true hvis det er på land, false hvis punktet
         //er i havet
-        public bool IsOnLand(int eta_rho, int xi_rho)
+        public bool IsOnLand(int eta_rho, int xi_rho, bool use_norkyst)
         {
             //eta_rho -= 1;
             //xi_rho -= 1;
-            if (GlobalVariables.use_norkyst)
+            if (use_norkyst)
             {
                 return (double)OceanTime_Mask_rhoArray.GetValue(eta_rho, xi_rho) == 0.0;
             }
@@ -47,11 +47,11 @@ namespace SpagettiMetoden
             }
         }
 
-        public double GetDepth(int eta_rho, int xi_rho)
+        public double GetDepth(int eta_rho, int xi_rho, bool use_norkyst)
         {
             //eta_rho = eta_rho == 0 ? eta_rho : eta_rho - 1;
             //xi_rho = xi_rho == 0 ? xi_rho : xi_rho - 1;
-            if (GlobalVariables.use_norkyst)
+            if (use_norkyst)
             {
                 return (double)OceanTime_DepthArray.GetValue(eta_rho, xi_rho);
             }
@@ -66,7 +66,7 @@ namespace SpagettiMetoden
             return (double)latOrLonArray.GetValue(eta_rho, xi_rho);
         }
         //TODO: Kombiner for løkkene i denne funksjonen
-        public DepthData GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth)
+        public DepthData GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, bool use_norkyst)
         {
             // the code that you want to measure comes here
             
@@ -74,7 +74,7 @@ namespace SpagettiMetoden
             int z_rho_size;
             Array z_Array;
 
-            if (GlobalVariables.use_norkyst)
+            if (use_norkyst)
             {
                 z_rho_size = GlobalVariables.Z_rho_size_ocean_time;
                 z_Array = OceanTime_Z_Array;

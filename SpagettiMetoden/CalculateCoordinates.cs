@@ -73,21 +73,19 @@ namespace SpagettiMetoden
             return (int)(((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24)) / divideBy);
         }
 
-        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth)
+        public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth, bool use_norkyst)
         {
 
             EtaXi[] EtaXis = new EtaXi[Iterations+1];
             float max = lowerSpeed ? 0.4f : 1f;
             float min = lowerSpeed ? 0.01f : 0.4f;
-            float divideBy = GlobalVariables.use_norkyst ? 0.8f : 4f;
+            float divideBy = use_norkyst ? 0.8f : 4f;
             int increment = GenerateIncrement(min, max, divideBy);
-            DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth);
+            DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth, use_norkyst);
             int counter = 0;
             for (int i = 0; i < Iterations; i++)
             {
-                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[counter,0] * increment),
-                        xi + (EtaXiCases[counter,1] * increment),
-                        eta, xi));
+                    EtaXis[i] = (GenerateEtaXi(eta + (EtaXiCases[counter,0] * increment), xi + (EtaXiCases[counter,1] * increment), eta, xi, use_norkyst));
                 if (counter == 7)
                 {
                     counter = 0;
@@ -109,7 +107,7 @@ namespace SpagettiMetoden
 
         }
 
-        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latNorkystArray, Array lonNorkystArray, Array latBarentsArray, Array lonBarentsArray, TagData tagData, TempContainer tempContainer, double tempDelta)
+        public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latNorkystArray, Array lonNorkystArray, Array latBarentsArray, Array lonBarentsArray, TagData tagData, TempContainer tempContainer, double tempDelta, bool use_norkyst)
         {
             //CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             PositionDataList = new BlockingCollection<PositionData>();
@@ -126,15 +124,15 @@ namespace SpagettiMetoden
             {
                 lock (syncObject)
                 {
-                    depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho);
-                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth);
+                    depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
+                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
                 }
                 
                 if(depthData.Valid && (depth - (-tagData.Depth)) > 0)
                 {
                     lock (syncObject)
                     {
-                        temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho);
+                        temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
                         //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
                     }
 
@@ -144,7 +142,7 @@ namespace SpagettiMetoden
 
                         lock (syncObject)
                         {
-                            if (GlobalVariables.use_norkyst)
+                            if (use_norkyst)
                             {
                                 lat = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, latNorkystArray);
                                 lon = ExtractDataFromEtaAndXi.GetLatOrLon(etaXis[i].Eta_rho, etaXis[i].Xi_rho, lonNorkystArray);
@@ -178,11 +176,11 @@ namespace SpagettiMetoden
             }
         }
 
-        public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi)
+        public EtaXi GenerateEtaXi(int eta, int xi, int org_eta, int org_xi, bool use_norkyst)
         {
             int eta_rho_size;
             int xi_rho_size;
-            if (GlobalVariables.use_norkyst)
+            if (use_norkyst)
             {
                 eta_rho_size = GlobalVariables.eta_rho_size_ocean_time;
                 xi_rho_size = GlobalVariables.xi_rho_size_ocean_time;
@@ -201,7 +199,7 @@ namespace SpagettiMetoden
                 iterasion = iterasion == 0 ? Math.Abs(xi - org_xi) : iterasion;
                 for (int i = 0; i < iterasion && valid; i++)
                 {
-                    if (ExtractDataFromEtaAndXi.IsOnLand(org_eta + (i * etaInc), org_xi + (i * xiInc)))
+                    if (ExtractDataFromEtaAndXi.IsOnLand(org_eta + (i * etaInc), org_xi + (i * xiInc), use_norkyst))
                     {
                         valid = false;
                     }

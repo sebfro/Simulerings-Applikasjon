@@ -75,6 +75,7 @@ namespace SpagettiMetoden
             int deadFishCounter = 0;
             int fishToBeReleased = RemainingFishToBeReleased;
             int totalNumberOfFish = RemainingFishToBeReleased;
+            bool use_Norkyst = true;
             var watch = Stopwatch.StartNew();
             FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: RemainingFishToBeReleased);
             Console.WriteLine("Released Fish: {0}", RemainingFishToBeReleased);
@@ -90,11 +91,11 @@ namespace SpagettiMetoden
                 {
                     var watch2 = Stopwatch.StartNew();
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
-                        HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
+                        HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon, use_Norkyst);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth),
-                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, use_Norkyst),
+                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta, use_Norkyst
                             );
 
                     float releaseLat = (float)FishList["742"].ReleaseLat;
@@ -112,7 +113,7 @@ namespace SpagettiMetoden
 
                         if (validPositionsDataList.Count > 0)
                         {
-                            FishRoute fishRoute = new FishRoute("742");
+                            FishRoute fishRoute = new FishRoute("742", true);
                             fishRoute.PositionDataList.Add((new PositionData(releaseLat,
                                 releaseLon)));
 
@@ -160,11 +161,11 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, false, FishList["742"].TagDataList[i].Depth);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, use_Norkyst);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
-                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta);
+                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, use_Norkyst);
                                 }
                                 
 
@@ -197,7 +198,7 @@ namespace SpagettiMetoden
                                             newChosenPosition = routeChooser.ChosenRoute(validPositionsDataList, newRandInt);
                                                 if (j != randInt && newChosenPosition)
                                                 {
-                                                    FishRoute tempFishRoute = new FishRoute("742")
+                                                    FishRoute tempFishRoute = new FishRoute("742", true)
                                                     {
                                                         PositionDataList = fishRoute.PositionDataList
                                                     };

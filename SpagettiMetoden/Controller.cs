@@ -76,6 +76,7 @@ namespace SpagettiMetoden
             int counter = 1;
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
+            bool use_Norkyst = true;
             FishList[FishTag].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
@@ -95,11 +96,11 @@ namespace SpagettiMetoden
 
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
-                        HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon);
+                        HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon, use_Norkyst);
                     BlockingCollection<PositionData> validPositionsDataList =
                         CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList[FishTag].TagDataList[i].Depth),
-                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].TagDataList[i], TempContainer, TempDelta
+                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList[FishTag].TagDataList[i].Depth, use_Norkyst),
+                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].TagDataList[i], TempContainer, TempDelta, use_Norkyst
                             );
 
                     float releaseLat = (float)FishList[FishTag].ReleaseLat;
@@ -114,7 +115,7 @@ namespace SpagettiMetoden
 
                         if (validPositionsDataList.Count > 0)
                         {
-                            FishRoute fishRoute = new FishRoute(FishTag);
+                            FishRoute fishRoute = new FishRoute(FishTag, use_Norkyst);
                             fishRoute.PositionDataList.Add((new PositionData(releaseLat,
                                 releaseLon)));
 
@@ -164,13 +165,25 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
-                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta);
+                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
+                                    /*
+                                    if(validPositionsDataList.Count == 0)
+                                    {
+                                        fishRoute.Use_Norkyst = !fishRoute.Use_Norkyst;
+
+                                        possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
+                                        validPositionsDataList =
+                                            CalculateCoordinates.FindValidPositions(
+                                                possiblePositionsArray,
+                                                HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
+                                    }
+                                    */
                                 }
-                                
+
                                 if (validPositionsDataList.Count > 0)
                                 {
                                     RouteChooser routeChooser =

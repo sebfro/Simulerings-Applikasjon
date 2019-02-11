@@ -7,10 +7,12 @@ namespace SpagettiMetoden
     {
         public string Id { get; set; }
         public bool Alive { get; set; }
+        public bool Use_Norkyst { get; set; }
         public BlockingCollection<PositionData> PositionDataList { get; set; }
 
-        public FishRoute(string id)
+        public FishRoute(string id, bool Use_Norkyst)
         {
+            this.Use_Norkyst = Use_Norkyst;
             Id = id;
             Alive = true;
             PositionDataList = new BlockingCollection<PositionData>();

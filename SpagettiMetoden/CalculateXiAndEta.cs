@@ -5,17 +5,15 @@ namespace SpagettiMetoden
 {
     class CalculateXiAndEta
     {
-        public const int Eta_Rho = 580;
-        public const int Xi_Rho = 1202;
         public const double Delta = 0.1;
 
         public static PositionData GeneratePositionDataArrayList(Array NorkystlatDataSet, Array NorKystlonDataSet,
-            Array BarentsSealatDataSet, Array BarentsSealatlonDataSet, double lat, double lon)
+            Array BarentsSealatDataSet, Array BarentsSealatlonDataSet, double lat, double lon, bool use_norkyst)
         {
             
             ArrayList potentialPositionArray = new ArrayList();
 
-            if (GlobalVariables.use_norkyst)
+            if (use_norkyst)
             {
                 for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
                 {
@@ -70,5 +68,7 @@ namespace SpagettiMetoden
             }
             return positionData;
         }
+
+
     }
 }

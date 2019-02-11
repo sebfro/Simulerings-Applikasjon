@@ -19,8 +19,8 @@ namespace SpagettiMetoden
         public int day;
         public object syncObject = new object();
 
-        public Array tempArray;
-        public Array tempArray2;
+        public Array norkystTempArray;
+        public Array barentsTempArray;
 
         public Array seaCurrentArrayU;
         public Array seaCurrentArrayV;
@@ -30,7 +30,8 @@ namespace SpagettiMetoden
         public int month;
         public string currDay;
 
-        public string basePath;
+        public string norkystPath;
+        public string barentsPath;
         public bool use_norkyst;
 
         public ConcurrentQueue<Array> HeatMapQueue { get; set; }
@@ -47,14 +48,10 @@ namespace SpagettiMetoden
             HeatMapQueue = new ConcurrentQueue<Array>();
             
             anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time)["angle"].GetData();
-            use_norkyst = GlobalVariables.use_norkyst;
-            if (use_norkyst)
-            {
-                basePath = GlobalVariables.pathToNorkystNetCDF;
-            } else
-            {
-                basePath = GlobalVariables.pathToOceanAvgNetCDF;
-            }
+
+            norkystPath = GlobalVariables.pathToNorkystNetCDF;
+            barentsPath = GlobalVariables.pathToOceanAvgNetCDF;
+
             //month = int.Parse(GlobalVariables.startDate.Substring(4, 2));
             //Thread thread = new Thread(test);
             //thread.Start();
@@ -62,25 +59,12 @@ namespace SpagettiMetoden
             
         }
 
-        public void SetBasePath(bool use_norkyst)
-        {
-            this.use_norkyst = use_norkyst;
-            if (use_norkyst)
-            {
-                basePath = GlobalVariables.pathToNorkystNetCDF;
-            }
-            else
-            {
-                basePath = GlobalVariables.pathToOceanAvgNetCDF;
-            }
-        }
-
         public void test()
         {
             DataSet ds;
             for (int i = 0; i < tagDatas.Count; i += tagStep)
             {
-                ds = DataSet.Open(basePath + tagDatas[i].Date + ".nc");
+                ds = DataSet.Open(norkystPath + tagDatas[i].Date + ".nc");
                 HeatMapQueue.Enqueue(ds["temp"].GetData());
             }
         }
@@ -90,7 +74,7 @@ namespace SpagettiMetoden
             DataSet ds;
             for (int i = progress; i < tagDatas.Count && int.Parse(tagDatas[progress].Date.Substring(4, 2)) == month; i += tagStep)
             {
-                ds = DataSet.Open(basePath + tagDatas[i].Date + ".nc");
+                ds = DataSet.Open(norkystPath + tagDatas[i].Date + ".nc");
                 HeatMapQueue.Enqueue(ds["temp"].GetData());
                 progress = i;
             }
@@ -112,14 +96,16 @@ namespace SpagettiMetoden
 
             if(HeatMapQueue.TryDequeue(out Array array))
             {
-                tempArray = array;
+                norkystTempArray = array;
             }
         }
 
         public void UpdateTempArray(string date)
         {
-            DataSet ds = DataSet.Open(basePath + date + ".nc");
-            tempArray = ds["temp"].GetData();
+            DataSet ds = DataSet.Open(norkystPath + date + ".nc");
+            norkystTempArray = ds["temp"].GetData();
+            ds = DataSet.Open(barentsPath + date + ".nc");
+            barentsTempArray = ds["temp"].GetData();
         }
 
         public void UpdateDay(int day)
@@ -135,9 +121,16 @@ namespace SpagettiMetoden
         /// <param name="eta_rho"></param>
         /// <param name="xi_rho"></param>
         /// <returns>temperatur fra en en array4D av temperatur</returns>
-        public double GetTemp(int z_rho, int eta_rho, int xi_rho)
+        public double GetTemp(int z_rho, int eta_rho, int xi_rho, bool use_norkyst)
         {
-                double tempValue = (short)tempArray.GetValue(z_rho, eta_rho, xi_rho);
+            double tempValue = 0;
+            if (use_norkyst)
+            {
+                tempValue = (short)norkystTempArray.GetValue(z_rho, eta_rho, xi_rho);
+            } else
+            {
+                tempValue = (short)barentsTempArray.GetValue(z_rho, eta_rho, xi_rho);
+            }
                 return (tempValue * scale_factor) + add_offset;
         }
 
