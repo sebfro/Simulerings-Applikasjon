@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Mono.CSharp;
+using SpagettiMetoden.Info_Containers;
 
 namespace SpagettiMetoden
 {
@@ -33,7 +34,6 @@ namespace SpagettiMetoden
 
         public CalculateCoordinates(double inc, int depthDelta, double dayInc, int iterations)
         {
-            //mndmean_avg_200810.nc
             ExtractDataFromEtaAndXi = new ExtractDataFromEtaAndXi(depthDelta);
 
             Iterations = iterations;
@@ -81,7 +81,6 @@ namespace SpagettiMetoden
             float min = lowerSpeed ? 0.01f : 0.4f;
             float divideBy = use_norkyst ? 0.8f : 4f;
             int increment = GenerateIncrement(min, max, divideBy);
-            DepthData depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(eta, xi, depth, use_norkyst);
             int counter = 0;
             for (int i = 0; i < Iterations; i++)
             {
@@ -109,10 +108,7 @@ namespace SpagettiMetoden
 
         public BlockingCollection<PositionData> FindValidPositions(EtaXi[] etaXis, Array latNorkystArray, Array lonNorkystArray, Array latBarentsArray, Array lonBarentsArray, TagData tagData, TempContainer tempContainer, double tempDelta, bool use_norkyst)
         {
-            //CalculateXiAndEta calculateXiAndEta = new CalculateXiAndEta();
             PositionDataList = new BlockingCollection<PositionData>();
-            //extractDataFromEtaAndXi = new ExtractDataFromEtaAndXi();
-            //PositionData positionData = new PositionData();
             double depth = 0.0;
             double temp = 0.0;
             double lat = 0.0;
@@ -210,29 +206,7 @@ namespace SpagettiMetoden
         
     }
 
-    class EtaXi
-    {
-        public int Eta_rho { get; set; }
-        public int Xi_rho { get; set; }
-        public bool Valid { get; set; }
-        public bool ExtraWeight { get; set; }
-
-        public EtaXi(int eta, int xi, bool valid)
-        {
-            ExtraWeight = false;
-            Eta_rho = eta;
-            Xi_rho = xi;
-            Valid = valid;
-        }
-
-        public EtaXi(int eta, int xi, bool valid, bool extraWeight)
-        {
-            ExtraWeight = extraWeight;
-            Eta_rho = eta;
-            Xi_rho = xi;
-            Valid = valid;
-        }
-    }
+    
 
     
 }

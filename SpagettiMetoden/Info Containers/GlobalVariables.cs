@@ -34,7 +34,7 @@ namespace SpagettiMetoden
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
         public static string ExternalHDDBasePath = @"H:\";
-        public static string pathToNorkystNetCDF = PerformanceBasePath + @"Nye varmeModeller\norkyst\Uten Havstrom\norkyst_";
+        public static string pathToNorkystNetCDF = PerformanceBasePath + @"Nye varmeModeller\Norkyst\Uten Havstrom\norkyst_";
         public static string pathToOceanAvgNetCDF = PerformanceBasePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
         public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
         public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
@@ -83,23 +83,5 @@ namespace SpagettiMetoden
 
 
     }
-
-
-    public static class ThreadSafeRandom
-    {
-        private static Random _inst = new Random();
-
-        public static int Next(int range)
-        {
-            lock (_inst) return _inst.Next(range);
-        }
-        public static double NextDouble()
-        {
-            lock (_inst) return _inst.NextDouble();
-        }
-        public static double RandomSpeed(float min, float max)
-        {
-            lock (_inst) return _inst.NextDouble() * (max - min) + 0.4;
-        }
-    }
+    
 }

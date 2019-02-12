@@ -73,24 +73,28 @@
     <Compile Include="CalculateCoordinates.cs" />
     <Compile Include="CalculateXiAndEta.cs" />
     <Compile Include="ConsoleUI.cs" />
-    <Compile Include="Controller.cs" />
-    <Compile Include="ControllerReleaseFwAndBw.cs" />
-    <Compile Include="ControllerReleaseSteadily.cs" />
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Controllers\ControllerReleaseFwAndBw.cs" />
+    <Compile Include="Controllers\ControllerReleaseSteadily.cs" />
+    <Compile Include="Info Containers\DepthData.cs" />
+    <Compile Include="Info Containers\EtaXi.cs" />
+    <Compile Include="EtaXiConverter.cs" />
     <Compile Include="ExtractDataFromEtaAndXi.cs" />
-    <Compile Include="Fish.cs" />
+    <Compile Include="Info Containers\Fish.cs" />
     <Compile Include="FishRoute.cs" />
     <Compile Include="GeneratePossiblePositions.cs" />
-    <Compile Include="GlobalVariables.cs" />
-    <Compile Include="HeatMap.cs" />
+    <Compile Include="Info Containers\GlobalVariables.cs" />
+    <Compile Include="Info Containers\HeatMap.cs" />
     <Compile Include="Merge.cs" />
-    <Compile Include="PositionData.cs" />
+    <Compile Include="Info Containers\PositionData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadFromFile.cs" />
     <Compile Include="SimpleGPUAcceleration.cs" />
-    <Compile Include="TagData.cs" />
+    <Compile Include="Info Containers\TagData.cs" />
     <Compile Include="TempContainer.cs" />
     <Compile Include="RouteChooser.cs" />
+    <Compile Include="ThreadSafeRandom.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

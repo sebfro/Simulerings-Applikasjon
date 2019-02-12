@@ -1,4 +1,5 @@
 ﻿using Microsoft.Research.Science.Data;
+using SpagettiMetoden.Info_Containers;
 using System;
 using System.Collections;
 
@@ -6,29 +7,30 @@ namespace SpagettiMetoden
 {
     class ExtractDataFromEtaAndXi
     {
-        public Array OceanTime_DepthArray { get; set; }
-        public Array OceanAvg_DepthArray { get; set; }
-        public Array OceanTime_Z_Array { get; set; }
-        public Array OceanAvg_Z_Array { get; set; }
+        private Array Norkyst_DepthArray { get; set; }
+        private Array OceanAvg_DepthArray { get; set; }
+        private Array Norkyst_Z_Array { get; set; }
+        private Array OceanAvg_Z_Array { get; set; }
         //mask_rho brukes til å sjekke om et eta og xi punkt er på land eller ikke
         //0.0 for land og 1.0 for hav
-        public Array OceanTime_Mask_rhoArray { get; set; }
-        public Array OceanAvg_Mask_rhoArray { get; set; }
+        private Array Norkyst_Mask_rhoArray { get; set; }
+        private Array OceanAvg_Mask_rhoArray { get; set; }
 
         public int DepthDelta { get; set; }
 
         public ExtractDataFromEtaAndXi(int depthDelta)
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
-            OceanTime_DepthArray = ds["h"].GetData();
-            OceanTime_Mask_rhoArray = ds["mask_rho"].GetData();
-            OceanTime_Z_Array = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc")["Z"].GetData();
+            Norkyst_DepthArray = ds["h"].GetData();
+            Norkyst_Mask_rhoArray = ds["mask_rho"].GetData();
+            Norkyst_Z_Array = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc")["Z"].GetData();
 
             ds = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "mndmean_avg_200810.nc");
             OceanAvg_DepthArray = ds["h"].GetData();
             OceanAvg_Mask_rhoArray = ds["mask_rho"].GetData();
             OceanAvg_Z_Array = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NS4MI_Z.nc")["Z"].GetData();
             DepthDelta = depthDelta;
+            
         }
 
         //Sjekker om et eta og xi punkt er på land. Returnerer true hvis det er på land, false hvis punktet
@@ -39,7 +41,7 @@ namespace SpagettiMetoden
             //xi_rho -= 1;
             if (use_norkyst)
             {
-                return (double)OceanTime_Mask_rhoArray.GetValue(eta_rho, xi_rho) == 0.0;
+                return (double)Norkyst_Mask_rhoArray.GetValue(eta_rho, xi_rho) == 0.0;
             }
             else
             {
@@ -53,7 +55,7 @@ namespace SpagettiMetoden
             //xi_rho = xi_rho == 0 ? xi_rho : xi_rho - 1;
             if (use_norkyst)
             {
-                return (double)OceanTime_DepthArray.GetValue(eta_rho, xi_rho);
+                return (double)Norkyst_DepthArray.GetValue(eta_rho, xi_rho);
             }
             else
             {
@@ -77,7 +79,7 @@ namespace SpagettiMetoden
             if (use_norkyst)
             {
                 z_rho_size = GlobalVariables.Z_rho_size_ocean_time;
-                z_Array = OceanTime_Z_Array;
+                z_Array = Norkyst_Z_Array;
             }
             else
             {
@@ -126,18 +128,7 @@ namespace SpagettiMetoden
         
     }
 
-    class DepthData
-    {
-        public double Depth { get; set; }
-        public int Z_rho { get; set; }
-        public bool Valid { get; set; }
 
-        public DepthData(int z_rho, double depth)
-        {
-            Depth = depth;
-            Z_rho = z_rho;
-            Valid = true;
-        }
 
-    }
+    
 }

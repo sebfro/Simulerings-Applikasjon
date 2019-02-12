@@ -28,7 +28,8 @@ namespace SpagettiMetoden
         public int ReleasedFish { get; set; }
         public double TempDelta { get; set; }
         public string FishTag { get; set; }
-        
+
+        private EtaXiConverter EtaXiConverter { get; set; }
 
         static readonly object syncObject = new object();
 
@@ -57,6 +58,8 @@ namespace SpagettiMetoden
             File.readTagData(FishList, KeyList);
 
             GlobalVariables.Probability = Probability;
+
+            EtaXiConverter = new EtaXiConverter();
 
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
@@ -170,10 +173,17 @@ namespace SpagettiMetoden
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
                                             HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
-                                    /*
+                                    
                                     if(validPositionsDataList.Count == 0)
                                     {
                                         fishRoute.Use_Norkyst = !fishRoute.Use_Norkyst;
+
+                                        EtaXi etaXi = EtaXiConverter.ConvertNorkystOrBarents(pData.Eta_rho, pData.Xi_rho, fishRoute.Use_Norkyst);
+
+                                        fishRoute.PositionDataList.ElementAt(counter).Eta_rho = etaXi.Eta_rho;
+                                        fishRoute.PositionDataList.ElementAt(counter).Xi_rho = etaXi.Xi_rho;
+
+                                        pData = fishRoute.PositionDataList.ElementAt(counter);
 
                                         possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
                                         validPositionsDataList =
@@ -181,7 +191,7 @@ namespace SpagettiMetoden
                                                 possiblePositionsArray,
                                                 HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
                                     }
-                                    */
+                                    
                                 }
 
                                 if (validPositionsDataList.Count > 0)
