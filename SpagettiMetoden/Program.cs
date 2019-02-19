@@ -123,10 +123,9 @@ namespace SpagettiMetoden
                 //prog.ConvertNorkystOrBarents(39, 314, true);
                 //prog.CreateNewNetCDF();
 
-                
                 Console.WriteLine("Error, bruker standard");
                 //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.5, 30, "742");
-                Controller controller = new Controller(4, 10000, 1.2, 30, 0.65, 0, 30, "1664");
+                Controller controller = new Controller(4, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
                 controller.RunAlgorithm();
                 
                 Console.ReadKey();
@@ -219,6 +218,7 @@ namespace SpagettiMetoden
             
         }
         */
+        
 
         public void CreateNewNetCDF()
         {

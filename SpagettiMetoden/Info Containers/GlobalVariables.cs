@@ -48,6 +48,7 @@ namespace SpagettiMetoden
         //ALL THE DELTAS:
         public static double TempDelta = 1;
         public static double DepthDelta = 10;
+        public static bool allow_switching = true;
 
 
         //Ocean_time max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)

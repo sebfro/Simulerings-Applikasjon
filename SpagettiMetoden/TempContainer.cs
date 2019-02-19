@@ -13,22 +13,15 @@ namespace SpagettiMetoden
 {
     class TempContainer
     {
-        public static int add_offset = 10;
-        public static double scale_factor = 0.001;
+        private static readonly int add_offset = 10;
+        private static readonly double scale_factor = 0.001;
         public Dictionary<int, Array> tempDictionary = new Dictionary<int, Array>();
         public int day;
         public object syncObject = new object();
 
         public Array norkystTempArray;
         public Array barentsTempArray;
-
-        public Array seaCurrentArrayU;
-        public Array seaCurrentArrayV;
-        public Array anglesArray;
-
-        public string year;
-        public int month;
-        public string currDay;
+        
 
         public string norkystPath;
         public string barentsPath;
@@ -40,6 +33,11 @@ namespace SpagettiMetoden
         public int tagStep;
         public int progress;
 
+        public bool norkystExists = true;
+        public bool barentsExists = true;
+
+        
+
         public TempContainer(List<TagData> tagDatas, int tagStep)
         {
             progress = 0;
@@ -47,16 +45,29 @@ namespace SpagettiMetoden
             this.tagStep = tagStep;
             HeatMapQueue = new ConcurrentQueue<Array>();
             
-            anglesArray = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time)["angle"].GetData();
 
             norkystPath = GlobalVariables.pathToNorkystNetCDF;
             barentsPath = GlobalVariables.pathToOceanAvgNetCDF;
 
-            //month = int.Parse(GlobalVariables.startDate.Substring(4, 2));
             //Thread thread = new Thread(test);
             //thread.Start();
             //UpdateTempArray(GlobalVariables.startDate);
-            
+
+
+            norkystExists = CheckIfNetCdfAreAvailable(norkystPath);
+            barentsExists = CheckIfNetCdfAreAvailable(barentsPath);
+            if(!norkystExists && !barentsExists)
+            {
+                throw new FileNotFoundException();
+            } else if(norkystExists || barentsExists)
+            {
+                GlobalVariables.allow_switching = false;
+            }
+        }
+
+        public bool CheckIfNetCdfAreAvailable(string path)
+        {
+            return File.Exists(path + tagDatas[tagDatas.Count / 2].Date + ".nc");
         }
 
         public void test()
@@ -72,11 +83,12 @@ namespace SpagettiMetoden
         public void LoadHeatMapsForNextMonth()
         {
             DataSet ds;
-            for (int i = progress; i < tagDatas.Count && int.Parse(tagDatas[progress].Date.Substring(4, 2)) == month; i += tagStep)
+            progress = progress + (30 * tagStep);
+            for (int i = progress; i < tagDatas.Count && i < progress; i += tagStep)
             {
                 ds = DataSet.Open(norkystPath + tagDatas[i].Date + ".nc");
                 HeatMapQueue.Enqueue(ds["temp"].GetData());
-                progress = i;
+                //progress = i;
             }
             progress += tagStep;
             
@@ -102,10 +114,17 @@ namespace SpagettiMetoden
 
         public void UpdateTempArray(string date)
         {
-            DataSet ds = DataSet.Open(norkystPath + date + ".nc");
-            norkystTempArray = ds["temp"].GetData();
-            ds = DataSet.Open(barentsPath + date + ".nc");
-            barentsTempArray = ds["temp"].GetData();
+            DataSet ds;
+            if (norkystExists)
+            {
+                ds = DataSet.Open(norkystPath + date + ".nc");
+                norkystTempArray = ds["temp"].GetData();
+            }
+            if (barentsExists)
+            {
+                ds = DataSet.Open(barentsPath + date + ".nc");
+                barentsTempArray = ds["temp"].GetData();
+            }
         }
 
         public void UpdateDay(int day)
@@ -167,81 +186,7 @@ namespace SpagettiMetoden
         };
 
 
-        //private EtaXiCase[,] EtaXiCases { get => etaXiCases; set => etaXiCases = value; }
-
-        public EtaXiCase[] GetPositionsToCheck(int z_rho, int eta, int xi)
-        {
-            EtaXiCase[] etaXiCases = EtaXiCases;
-
-            eta = eta - 1;
-            xi = xi - 1;
-            double uValue1 = GetCurrentValue(seaCurrentArrayU, z_rho, eta, xi - 1);
-            double uValue2 = GetCurrentValue(seaCurrentArrayU, z_rho, eta , xi- 1);
-            double vValue1 = GetCurrentValue(seaCurrentArrayV, z_rho, eta - 1, xi);
-            double vValue2 = GetCurrentValue(seaCurrentArrayV, z_rho, eta - 1, xi);
-
-            double U_rho = ConvertToRho(uValue1, uValue2);
-            double V_rho = ConvertToRho(vValue1, vValue2);
-
-            double angle = (double)anglesArray.GetValue(eta, xi);
-            double cosAngle = Math.Cos(angle);
-            double sinAngle = Math.Sin(angle);
-
-            double U_rot = (U_rho * cosAngle) - (V_rho * sinAngle);
-            double V_rot = (V_rho * cosAngle) + (U_rho * sinAngle);
-
-            if (U_rot > 0 && V_rot > 0)
-            {
-
-                //EtaXiCase[0, 0] = 1;
-                //EtaXiCase[0, 1] = 1;
-                etaXiCases[2].seaCurrentDrag = true;
-
-                //EtaXiCase[1, 0] = 0;
-                //EtaXiCase[1, 1] = 1;
-                etaXiCases[7].seaCurrentDrag = true;
-                //EtaXiCase[2, 0] = 1;
-                //EtaXiCase[2, 1] = 0;
-                etaXiCases[1].seaCurrentDrag = true;
-
-            } else if (U_rot < 0 && V_rot < 0)
-            {
-                //EtaXiCase[0, 0] = -1;
-                //EtaXiCase[0, 1] = -1;
-                etaXiCases[4].seaCurrentDrag = true;
-                //EtaXiCase[1, 0] = 0;
-                //EtaXiCase[1, 1] = -1;
-                etaXiCases[3].seaCurrentDrag = true;
-                //EtaXiCase[2, 0] = -1;
-                //EtaXiCases[2, 1] = 0;
-                etaXiCases[5].seaCurrentDrag = true;
-            }
-            else if (U_rot > 0 && V_rot < 0)
-            {
-                //EtaXiCases[0, 0] = 1;
-                //EtaXiCases[0, 1] = -1;
-                etaXiCases[0].seaCurrentDrag = true;
-                //EtaXiCases[1, 0] = 0;
-                //EtaXiCases[1, 1] = -1;
-                etaXiCases[3].seaCurrentDrag = true;
-                //EtaXiCases[2, 0] = 1;
-                //EtaXiCases[2, 1] = 0;
-                etaXiCases[1].seaCurrentDrag = true;
-            }
-            else if (U_rot < 0 && V_rot > 0)
-            {
-                //EtaXiCases[0, 0] = -1;
-                //EtaXiCases[0, 1] = 1;
-                etaXiCases[6].seaCurrentDrag = true;
-                //EtaXiCases[1, 0] = 0;
-                //EtaXiCases[1, 1] = 1;
-                etaXiCases[7].seaCurrentDrag = true;
-                //EtaXiCases[2, 0] = -1;
-                //EtaXiCases[2, 1] = 0;
-                etaXiCases[5].seaCurrentDrag = true;
-            }
-            return etaXiCases;
-        }
+        
 
         public double ConvertToRho(double var1, double var2)
         {

@@ -25,8 +25,8 @@ namespace SpagettiMetoden
         public EtaXiConverter()
         {
             DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
-            Array norkystLatArray = ds["lat_rho"].GetData();
-            Array norkystLonArray = ds["lon_rho"].GetData();
+            NorkystLatArray = ds["lat_rho"].GetData();
+            NorkystLonArray = ds["lon_rho"].GetData();
 
             ds = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "mndmean_avg_200810.nc");
             BarentsLatArray = ds["lat_rho"].GetData();

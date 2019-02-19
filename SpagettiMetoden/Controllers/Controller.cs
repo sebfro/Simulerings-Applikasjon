@@ -86,7 +86,7 @@ namespace SpagettiMetoden
             bool fishStillAlive = true;
             Console.WriteLine(FishList[FishTag].TagDataList[TagStep].Date);
             Console.WriteLine(FishList[FishTag].TagDataList[0].Date);
-            for (int i = 0; i < FishList[FishTag].TagDataList.Count/2 && fishStillAlive; i += TagStep)
+            for (int i = 0; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
             {
                 //TempContainer.GetHeatMap(FishList[FishTag].TagDataList[i].Date);
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
@@ -174,7 +174,7 @@ namespace SpagettiMetoden
                                             possiblePositionsArray,
                                             HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
                                     
-                                    if(validPositionsDataList.Count == 0)
+                                    if(validPositionsDataList.Count == 0 && GlobalVariables.allow_switching)
                                     {
                                         fishRoute.Use_Norkyst = !fishRoute.Use_Norkyst;
 
