@@ -39,7 +39,6 @@ namespace SpagettiMetoden
             Iterations = iterations;
             DayInc = dayInc;
             Increment = inc;
-            Console.WriteLine("Increment: {0}", Increment);
         }
 
         public void SetDepthDelta(int DepthDelta)

@@ -28,11 +28,10 @@ namespace SpagettiMetoden
                 int iterations = int.Parse(args[7]);
                 int algorithm = int.Parse(args[8]);
 
-                Console.WriteLine("dayInc: {0}, releasedFish: {1}, tempDelta: {2}, depthDelta: {3}, Increment: {4}, Propability: {5}, iterations: {6}, algorithms: {7}, tagId: {8}",
+                Console.WriteLine("Settings:");
+                Console.WriteLine("dayInc: {0}, Simulated Fish: {1}, Temperature Delta: {2}, depthDelta: {3}, Increment: {4}, Propability: {5}, Iterations: {6}, Algorithm: {7}, Tag id: {8}",
                     dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm, tagId);
-
-                Console.WriteLine("Increment: {0}, Probability: {1}, possible pos: {2}", Increment, Probability, iterations);
-                //string answer = "";
+                
 
                 
                 
@@ -44,7 +43,7 @@ namespace SpagettiMetoden
 
                 File.WriteAllLines(@"C:\NCdata\fishData\setup.txt", setup);
 
-                Console.WriteLine("Running algorithm...");
+                Console.WriteLine("Starting simulation...");
                 var watch = Stopwatch.StartNew();
                 bool failed = false;
                 //controller = new Controller(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
@@ -74,11 +73,11 @@ namespace SpagettiMetoden
 
                     if (failed)
                     {
-                        Console.WriteLine("It's a failure like torkel");
+                        Console.WriteLine("Could not start simulation");
                     }
                 } else
                 {
-                    Console.WriteLine("Kjører nr 3");
+                    //Console.WriteLine("Kjører nr 3");
                     ControllerReleaseSteadily controller = new ControllerReleaseSteadily(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
                     controller.RunAlgorithm();
                 }
@@ -86,7 +85,7 @@ namespace SpagettiMetoden
 
                 watch.Stop();
                 double elapsedMs = watch.ElapsedMilliseconds;
-                Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
+                Console.WriteLine("Run time of the program: {0} seconds.", elapsedMs / 1000);
                 //controller.RunAlgorithm();
 
                 Console.ReadLine();

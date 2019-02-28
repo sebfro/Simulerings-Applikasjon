@@ -44,7 +44,7 @@ namespace SpagettiMetoden
         public Controller(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Probability, int iterations, string fishTag)
         {
             FishTag = fishTag;
-            Console.WriteLine("dayInc: {0}, releasedFish: {1}, tempdelta: {2}, depthDelta: {3}, increment: {4}, Probability: {5}, iterations: {6}", dayInc, releasedFish, tempDelta, depthDelta, Increment, Probability, iterations);
+            //Console.WriteLine("dayInc: {0}, releasedFish: {1}, tempdelta: {2}, depthDelta: {3}, increment: {4}, Probability: {5}, iterations: {6}", dayInc, releasedFish, tempDelta, depthDelta, Increment, Probability, iterations);
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
             SetDayIncrement(dayInc);
@@ -84,14 +84,13 @@ namespace SpagettiMetoden
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
             Console.WriteLine("Tagstep: {0}", TagStep);
             bool fishStillAlive = true;
-            Console.WriteLine(FishList[FishTag].TagDataList[TagStep].Date);
-            Console.WriteLine(FishList[FishTag].TagDataList[0].Date);
             for (int i = 0; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
             {
                 //TempContainer.GetHeatMap(FishList[FishTag].TagDataList[i].Date);
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
-                Console.WriteLine("Current date: {0}", FishList[FishTag].TagDataList[i].Date);
-                Console.WriteLine("I iterasjon: " + i / TagStep);
+                //Console.WriteLine("Current date: {0}", FishList[FishTag].TagDataList[i].Date);
+                //Console.WriteLine("In iteration: {0}/{1}", i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
+                ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 bool chosenPosition;
                 if (i == 0)
                 {
@@ -231,19 +230,16 @@ namespace SpagettiMetoden
 
             watch.Stop();
             double elapsedMs = watch.ElapsedMilliseconds;
-            Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs);
             var count = 1;
             string folderName = "Uakseptabel";
             var FishData = FishList[FishTag];
             double captureLat = FishData.CaptureLat;
             double captureLon = FishData.CaptureLon;
 
-
-            Console.WriteLine("Hvor lang tid tok programmet: {0} minutter.", elapsedMs / 60000);
-            Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
-            Console.WriteLine("Fishlist count: {0}", FishList[FishTag].FishRouteList.Count);
-            Console.WriteLine("Dead fish counter: {0}", deadFishCounter);
-            Console.WriteLine("Alive fish counter: {0}", ReleasedFish - deadFishCounter);
+            Console.WriteLine();
+            Console.WriteLine("Program runtime: {0} minutes / {1} seconds.", elapsedMs / 60000, elapsedMs / 1000);
+            Console.WriteLine("Number of failed routes:      {0}", deadFishCounter);
+            Console.WriteLine("Number of successfull routes: {0}", ReleasedFish - deadFishCounter);
             if (deadFishCounter == ReleasedFish)
             {
                 Console.WriteLine("All fish are dead");
