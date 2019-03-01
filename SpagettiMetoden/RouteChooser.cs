@@ -50,7 +50,7 @@ namespace SpagettiMetoden
                     (newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= weight));
             }
 
-            //Denne versjonen var for 
+            //Denne versjonen var for havtrøm implementasjonen som gjorde at fisken følgte havstrømmen 
             //return (newDistanceFromCapture < currDistanceFromCaptureOrRelease && randDouble < (extraWeigth ? weight + 0.4 : weight) || 
             //    newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= (extraWeigth ? weight - 0.4 : weight));
         }
