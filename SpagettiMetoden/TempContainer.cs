@@ -15,9 +15,6 @@ namespace SpagettiMetoden
     {
         private static readonly int add_offset = 10;
         private static readonly double scale_factor = 0.001;
-        public Dictionary<int, Array> tempDictionary = new Dictionary<int, Array>();
-        public int day;
-        public object syncObject = new object();
 
         public Array norkystTempArray;
         public Array barentsTempArray;
@@ -25,7 +22,6 @@ namespace SpagettiMetoden
 
         public string norkystPath;
         public string barentsPath;
-        public bool use_norkyst;
 
         public ConcurrentQueue<Array> HeatMapQueue { get; set; }
 
@@ -126,11 +122,7 @@ namespace SpagettiMetoden
                 barentsTempArray = ds["temp"].GetData();
             }
         }
-
-        public void UpdateDay(int day)
-        {
-            this.day = day;
-        }
+        
 
         /// <summary>
         /// scale_factor og add_offset brukes her for å konvertere en int16

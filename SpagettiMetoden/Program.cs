@@ -23,7 +23,7 @@ namespace SpagettiMetoden
                 int releasedFish = int.Parse(args[2]);
                 double tempDelta = double.Parse(args[3].Replace(",", "."));
                 int DepthDelta = int.Parse(args[4]);
-                double Increment = double.Parse(args[5].Replace(",", "."));
+                double Increment = double.Parse(args[5].Replace(".", ","));
                 double Probability = double.Parse(args[6].Replace(",", "."));
                 int iterations = int.Parse(args[7]);
                 int algorithm = int.Parse(args[8]);
@@ -53,7 +53,7 @@ namespace SpagettiMetoden
                     controller.RunAlgorithm();
                 } else if (algorithm == 1)
                 {
-                    ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                    ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, tagId);
 
                     if (controller.RunAlgorithmFW())
                     {
@@ -89,136 +89,42 @@ namespace SpagettiMetoden
                 //controller.RunAlgorithm();
 
                 Console.ReadLine();
-            } catch {
-                /*
-                double norLon = 50.236;
-                double norLat = 88.642;
-
-                double barLon = 20.698;
-                double barLat = 40.638;
-                
-                float latDiff = (float)(norLat - barLat);
-                if (latDiff < 0)
-                {
-                    latDiff = latDiff * (-1);
-                }
-
-                float lonDiff = (float)(norLon - barLon);
-                if (lonDiff < 0)
-                {
-                    lonDiff = lonDiff * (-1);
-                }
-
-                Console.WriteLine(Math.Abs(norLat-barLat) + Math.Abs(norLon - barLon));
-                Console.WriteLine(latDiff + lonDiff);
-                */
-
-                //SimpleGPUAcceleration.startUp();
-
+            } catch(Exception e) {
+                Console.WriteLine("Exception {0}", e);
                 Program prog = new Program();
-                //Konverter norkyst til barents
-                //prog.ConvertNorkystOrBarents(0, 0, false);
-                //Konverter barents til norkyst
-                //prog.ConvertNorkystOrBarents(39, 314, true);
-                //prog.CreateNewNetCDF();
 
                 Console.WriteLine("Error, bruker standard");
-                //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.5, 30, "742");
-                Controller controller = new Controller(4, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
-                controller.RunAlgorithm();
-                
+                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(2, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
+                //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
+                //controller.RunAlgorithm();
+                bool failed = false;
+                Console.WriteLine("Running FW");
+                if (controller.RunAlgorithmFW())
+                {
+                    Console.WriteLine("Running BW");
+                    if (controller.RunAlgorithmBW())
+                    {
+                        Merge.MergeFwAndBwFiles(0.65, 1);
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                }
+                else
+                {
+                    failed = true;
+                }
+
+                if (failed)
+                {
+                    Console.WriteLine("Could not start simulation");
+                }
                 Console.ReadKey();
                 
             }
                 
         }
-
-        /*
-        //Hvis use_norkyst er true så antar metoden at du skal bytte til norkyst fra barents havet. Omvendt hvis false.
-        //Hvis use_norkyst = false må eta < 902 og xi < 2602. Begger må være større enn 0
-        //Hvis use_norkyst = true må eta < 580 og xi < 1202. Begger må være større enn 0
-        public EtaXi ConvertNorkystOrBarents(int eta, int xi, bool use_norkyst)
-        {
-            int norkyst_eta_rho = 902;
-            int norkyst_xi_rho = 2602;
-            int barents_eta_rho = 580;
-            int barents_xi_rho = 1202;
-
-
-            if ((!use_norkyst && (0 > eta || eta >= norkyst_eta_rho || 0 > xi || xi >= norkyst_xi_rho)) || use_norkyst && (0 > eta || eta >= barents_eta_rho || 0 > xi || xi >= barents_xi_rho))
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            DataSet barentsToNorkyst = DataSet.Open(@"C:\NCdata\barentsSeaMappedToNorkyst.nc");
-            Array barentsToNorkystEta = barentsToNorkyst["eta_rho"].GetData();
-            Array barentsToNorkystXi = barentsToNorkyst["xi_rho"].GetData();
-
-            DataSet norkystToBarents = DataSet.Open(@"C:\NCdata\norkystMappedToBarentsSea.nc");
-            Array NorkystTobarentsEta = norkystToBarents["eta_rho"].GetData();
-            Array NorkystTobarentsXi = norkystToBarents["xi_rho"].GetData();
-
-            DataSet norkystDs = DataSet.Open(@"D:\NCdata\VarmeModell\norkyst_800m_avg.nc");
-            Array norkystLatArray = norkystDs["lat_rho"].GetData();
-            Array norkystLonArray = norkystDs["lon_rho"].GetData();
-
-            DataSet barentsDs = DataSet.Open(@"D:\NCdata\VarmeModell\mndmean_avg_200810.nc");
-            Array barentsLatArray = barentsDs["lat_rho"].GetData();
-            Array barentsLonArray = barentsDs["lon_rho"].GetData();
-
-            
-            int returnEta = 0;
-            int returnXi = 0;
-
-            double norkystLat = 0;
-            double norkystLon = 0;
-
-            double barentsLat = 0;
-            double barentsLon = 0;
-
-            if (use_norkyst)
-            {
-                barentsLat = (double)barentsLatArray.GetValue(eta, xi);
-                barentsLon = (double)barentsLonArray.GetValue(eta, xi);
-
-                returnEta = (int)barentsToNorkystEta.GetValue(eta, xi);
-                returnXi = (int)barentsToNorkystXi.GetValue(eta, xi);
-
-                norkystLat = (double)norkystLatArray.GetValue(returnEta, returnXi);
-                norkystLon = (double)norkystLonArray.GetValue(returnEta, returnXi);
-
-                
-            }
-            else
-            {
-                norkystLat = (double)norkystLatArray.GetValue(eta, xi);
-                norkystLon = (double)norkystLonArray.GetValue(eta, xi);
-                
-                returnEta = (int)NorkystTobarentsEta.GetValue(eta, xi);
-                returnXi = (int)NorkystTobarentsXi.GetValue(eta, xi);
-
-                barentsLat = (double)barentsLatArray.GetValue(returnEta, returnXi);
-                barentsLon = (double)barentsLonArray.GetValue(returnEta, returnXi);
-            }
-
-            Console.WriteLine("Norkyst Lat: {0}, Lon: {1}", norkystLat, norkystLon);
-            Console.WriteLine("Barents Lat: {0}, Lon: {1}", barentsLat, barentsLon);
-
-            Console.WriteLine("Eta: {0}, xi: {1}", eta, xi);
-
-            if ((Math.Abs(norkystLat - barentsLat) + Math.Abs(norkystLon - barentsLon)) < 1)
-            {
-                return new EtaXi(returnEta, returnXi, true);
-            }
-            else
-            {
-                return new EtaXi(eta, xi, false);
-            }
-            
-        }
-        */
-        
-
         public void CreateNewNetCDF()
         {
             int norkyst_eta_rho = 902;

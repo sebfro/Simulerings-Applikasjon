@@ -69,7 +69,7 @@ namespace SpagettiMetoden
         
         public int GenerateIncrement(float min, float max, float divideBy)
         {
-            return (int)(((Increment * ThreadSafeRandom.RandomSpeed(min, max) * 3.6) * (DayInc * 24)) / divideBy);
+            return (int)((((0.71 * Increment * ThreadSafeRandom.RandomSpeed(min, max)) * 3.6) * (DayInc * 24)) / divideBy);
         }
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth, bool use_norkyst)

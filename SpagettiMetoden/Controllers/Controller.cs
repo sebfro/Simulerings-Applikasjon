@@ -75,7 +75,6 @@ namespace SpagettiMetoden
 
         public void RunAlgorithm()
         {
-            double day = GlobalVariables.day;
             int counter = 1;
             int deadFishCounter = 0;
             var watch = Stopwatch.StartNew();
@@ -86,16 +85,11 @@ namespace SpagettiMetoden
             bool fishStillAlive = true;
             for (int i = 0; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
             {
-                //TempContainer.GetHeatMap(FishList[FishTag].TagDataList[i].Date);
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
-                //Console.WriteLine("Current date: {0}", FishList[FishTag].TagDataList[i].Date);
-                //Console.WriteLine("In iteration: {0}/{1}", i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 bool chosenPosition;
                 if (i == 0)
                 {
-                    var watch2 = Stopwatch.StartNew();
-
                     int randInt = 0;
                     PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
                         HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon, use_Norkyst);
@@ -146,16 +140,13 @@ namespace SpagettiMetoden
                             Interlocked.Increment(ref deadFishCounter);
                         }
                     });
-                    //day += DayIncrement;
                 }
                 else
                 {
-                    BlockingCollection<FishRoute> fishRoutes = FishList[FishTag].FishRouteList;
                     TagData tagData = FishList[FishTag].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
                     {
-                        
-                        Parallel.ForEach(fishRoutes, (fishRoute) =>
+                        Parallel.ForEach(FishList[FishTag].FishRouteList, (fishRoute) =>
                         {
                             int randInt = 0;
                             chosenPosition = false;
@@ -225,7 +216,6 @@ namespace SpagettiMetoden
                     }
                     counter++;
                 }
-                //TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
             }
 
             watch.Stop();
@@ -269,11 +259,9 @@ namespace SpagettiMetoden
 
                 }
             }
-            Console.WriteLine("Day is: {0}", day);
 
             foreach (var fishRoute in FishList[FishTag].FishRouteList)
             {
-                //Console.WriteLine("Is fish alive?: " + fishRoute.alive);
                 if (fishRoute.Alive)
                 {
                     var posData = fishRoute.PositionDataList.ElementAt(fishRoute.PositionDataList.Count - 1);

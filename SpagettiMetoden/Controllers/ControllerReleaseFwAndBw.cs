@@ -26,6 +26,11 @@ namespace SpagettiMetoden
         public int ReleasedFish { get; set; }
         public double TempDelta { get; set; }
 
+        private EtaXiConverter EtaXiConverter { get; set; }
+
+        //All these varaibles are used in the Algorithm functions
+        public string FishTag { get; set; }
+        private bool Use_Norkyst { get; set; }
 
         static readonly object syncObject = new object();
 
@@ -37,8 +42,9 @@ namespace SpagettiMetoden
             TagStep = (int)(144 * dayInc);
         }
 
-        public ControllerReleaseFwAndBw(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Probability, int iterations)
+        public ControllerReleaseFwAndBw(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Probability, int iterations, string fishTag)
         {
+            FishTag = fishTag;
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
             SetDayIncrement(dayInc);
@@ -53,9 +59,11 @@ namespace SpagettiMetoden
 
             GlobalVariables.Probability = Probability;
 
+            EtaXiConverter = new EtaXiConverter();
+
             HeatMap = new HeatMap();
             EtaXis = new EtaXi[0];
-            TempContainer = new TempContainer(FishList["742"].TagDataList, TagStep);
+            TempContainer = new TempContainer(FishList[FishTag].TagDataList, TagStep);
             CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
         }
 
@@ -66,392 +74,257 @@ namespace SpagettiMetoden
 
         public bool RunAlgorithmFW()
         {
-            double day = GlobalVariables.day;
             int counter = 1;
             int deadFishCounter = 0;
-            var watch = Stopwatch.StartNew();
-            int halfTagDataCount = (FishList["742"].TagDataList.Count / 2);
-            FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
-            bool use_Norkyst = true;
-
-            Console.WriteLine("Released Fish: {0}", ReleasedFish);
-            Console.WriteLine("Tagstep: {0}", TagStep);
-
-
-            for (int i = 0; i < halfTagDataCount; i += TagStep)
+            Stopwatch Stopwatch = Stopwatch.StartNew();
+            int halfTagDataCount = (FishList[FishTag].TagDataList.Count / 2);
+            FishList[FishTag].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
+            Use_Norkyst = true;
+            bool fishStillAlive = true;
+            
+            for (int i = 0; i < halfTagDataCount && fishStillAlive; i += TagStep)
             {
-
-                Console.WriteLine("I iterasjon: " + i / TagStep);
-                bool chosenPosition;
-
+                TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
+                ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 if (i == 0)
                 {
-                    var watch2 = Stopwatch.StartNew();
-
-                    int randInt = 0;
-                    PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
-                        HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon, use_Norkyst);
-                    BlockingCollection<PositionData> validPositionsDataList =
-                        CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, use_Norkyst),
-                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta, use_Norkyst
-                            );
-
-                    float releaseLat = (float)FishList["742"].ReleaseLat;
-                    float releaseLon = (float)FishList["742"].ReleaseLon;
-
-                    Parallel.For(0, ReleasedFish, (j) =>
-                    {
-
-                        chosenPosition = false;
-                        bool addedToPosDataList = false;
-                        bool addedToFishRouteList = false;
-
-                        if (validPositionsDataList.Count > 0)
-                        {
-                            FishRoute fishRoute = new FishRoute("742", true);
-                            fishRoute.PositionDataList.Add((new PositionData(releaseLat,
-                                releaseLon)));
-
-                            RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList["742"].CaptureLat, FishList["742"].CaptureLon);
-
-                            while (!chosenPosition)
-                            {
-                                randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
-                            }
-
-                            while (!addedToPosDataList)
-                            {
-                                addedToPosDataList = fishRoute.PositionDataList.TryAdd((new PositionData(
-                                    validPositionsDataList.ElementAt(randInt).Lat, validPositionsDataList.ElementAt(randInt).Lon,
-                                    validPositionsDataList.ElementAt(randInt).Depth, validPositionsDataList.ElementAt(randInt).Temp, FishList["742"].TagDataList[i].Depth,
-                                    FishList["742"].TagDataList[i].Temp, validPositionsDataList.ElementAt(randInt).Eta_rho, validPositionsDataList.ElementAt(randInt).Xi_rho)));
-                            }
-
-                            while (!addedToFishRouteList)
-                            {
-                                addedToFishRouteList = FishList["742"].FishRouteList.TryAdd(fishRoute);
-                            }
-                        }
-                        else
-                        {
-                            Interlocked.Increment(ref deadFishCounter);
-                        }
-                    });
-                    //dayCounter++;
-                    day += DayIncrement;
+                    deadFishCounter = RunFirstIterationOfAligorithm(deadFishCounter, i, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon);
                 }
                 else
                 {
-                    
-                    BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
-                    TagData tagData = FishList["742"].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
                     {
 
-                        Parallel.ForEach(fishRoutes, (fishRoute) =>
-                        {
-                            int randInt = 0;
-                            chosenPosition = false;
-                            EtaXi[] possiblePositionsArray;
-                            BlockingCollection<PositionData> validPositionsDataList;
-                            if (fishRoute.Alive)
-                            {
-                                PositionData pData = fishRoute.PositionDataList.ElementAt(counter);
-
-                                lock (syncObject)
-                                {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, FishList["742"].TagDataList[i].Depth, use_Norkyst);
-                                    validPositionsDataList =
-                                        CalculateCoordinates.FindValidPositions(
-                                            possiblePositionsArray,
-                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, use_Norkyst);
-                                }
-
-
-
-                                if (validPositionsDataList.Count > 0)
-                                {
-                                    RouteChooser routeChooser =
-                                            new RouteChooser(pData.Lat, pData.Lon, FishList["742"].CaptureLat, FishList["742"].CaptureLon);
-                                    while (!chosenPosition)
-                                    {
-                                        randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                        chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
-                                    }
-                                    fishRoute.PositionDataList.Add((new PositionData(
-                                            validPositionsDataList.ElementAt(randInt).Lat,
-                                            validPositionsDataList.ElementAt(randInt).Lon,
-                                            validPositionsDataList.ElementAt(randInt).Depth,
-                                            validPositionsDataList.ElementAt(randInt).Temp,
-                                            tagData.Depth, tagData.Temp,
-                                            validPositionsDataList.ElementAt(randInt).Eta_rho,
-                                            validPositionsDataList.ElementAt(randInt).Xi_rho)));
-
-                                }
-
-                                else
-                                {
-                                    Interlocked.Increment(ref deadFishCounter);
-                                    fishRoute.CommitNotAlive();
-                                    /*Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep + " ELIMINERT");
-                                    Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
-                                    Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
-                                    Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
-                                    */
-                                }
-                            }
-                        });
+                        deadFishCounter = RunAllOtherIterationsOfAlgorithm(deadFishCounter, i, counter);
                     }
                     else
                     {
-                        i = FishList["742"].TagDataList.Count;
+                        fishStillAlive = false;
                     }
 
                     counter++;
                 }
-                TempContainer.UpdateTempArray(FishList["742"].TagDataList[i].Date);
-                /*day += DayIncrement;
-                if(Math.Abs(day % 1) <= (double.Epsilon * 100))
-                {
-                    TempContainer.UpdateTempArray(day);
-                }*/
+                TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
             }
 
-            watch.Stop();
-            double elapsedMs = watch.ElapsedMilliseconds;
-            Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs);
-            var count = 1;
-            var FishData = FishList["742"];
-
-
-            Console.WriteLine("Hvor lang tid tok programmet: {0} minutter.", elapsedMs / 60000);
-            Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
-            Console.WriteLine("Fishlist count: {0}", FishList["742"].FishRouteList.Count);
-            Console.WriteLine("Dead fish counter: {0}", deadFishCounter);
-            Console.WriteLine("Alive fish counter: {0}", ReleasedFish - deadFishCounter);
+            Stopwatch.Stop();
+            DisplayStatisticsOfSimulation(Stopwatch.ElapsedMilliseconds, deadFishCounter);
             if (deadFishCounter == ReleasedFish)
             {
                 Console.WriteLine("All fish are dead");
-
             }
             else
             {
-                //SLETTER ALLE FILER I FOLDER AKSEPTABEL OG UAKSEPTABEL !!!!!!!!!!!!!!!!!! Lag backup folder om tester hjemme eller HI
-                DirectoryInfo di = new DirectoryInfo(GlobalVariables.pathToSaveFishData + @"\FW\");
-
-                foreach (FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
+                SaveRoutesToFile("FW");
             }
-            Console.WriteLine("Day is: {0}", day);
-
-            foreach (var fishRoute in FishList["742"].FishRouteList)
-            {
-                //Console.WriteLine("Is fish alive?: " + fishRoute.alive);
-                if (fishRoute.Alive)
-                {
-                    string[] fishData = fishRoute.FromListToString();
-
-                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\FW\" + fishRoute.Id + "_" + count + ".txt", fishData);
-                    count++;
-                }
-            }
-
+            
             return !(deadFishCounter == ReleasedFish);
         }
 
         public bool RunAlgorithmBW()
         {
-            double day = GlobalVariables.lastDay;
             int counter = 1;
             int deadFishCounter = 0;
-            var watch = Stopwatch.StartNew();
-            int halfTagDataCount = (FishList["742"].TagDataList.Count / 2);
-            int tagDataCount = FishList["742"].TagDataList.Count -1;
-            FishList["742"].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
-            bool use_Norkyst = true;
+            Stopwatch Stopwatch = Stopwatch.StartNew();
+            int halfTagDataCount = (FishList[FishTag].TagDataList.Count / 2);
+            int tagDataCount = FishList[FishTag].TagDataList.Count -1;
+            FishList[FishTag].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
+            Use_Norkyst = true;
+            bool fishStillAlive = true;
 
-
-            Console.WriteLine("Released Fish: {0}", ReleasedFish);
-            Console.WriteLine("Tagstep: {0}", TagStep);
-
-            for (int i = tagDataCount; i > halfTagDataCount; i -= TagStep)
+            for (int i = tagDataCount; i > halfTagDataCount && fishStillAlive; i -= TagStep)
             {
-
-                Console.WriteLine("I iterasjon: " + i / TagStep);
-                bool chosenPosition;
-
+                TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
+                ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 if (i == tagDataCount)
                 {
-                    var watch2 = Stopwatch.StartNew();
-
-                    int randInt = 0;
-                    PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
-                        HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].CaptureLat, FishList["742"].CaptureLon, use_Norkyst);
-                    BlockingCollection<PositionData> validPositionsDataList =
-                        CalculateCoordinates.FindValidPositions(
-                            CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList["742"].TagDataList[i].Depth, use_Norkyst),
-                        HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList["742"].TagDataList[i], TempContainer, TempDelta, use_Norkyst
-                            );
-
-                    float captureLat = (float)FishList["742"].CaptureLat;
-                    float captureLon = (float)FishList["742"].CaptureLon;
-
-                    Parallel.For(0, ReleasedFish, (j) =>
-                    {
-
-                        chosenPosition = false;
-                        bool addedToPosDataList = false;
-                        bool addedToFishRouteList = false;
-
-                        if (validPositionsDataList.Count > 0)
-                        {
-                            FishRoute fishRoute = new FishRoute("742", true);
-                            fishRoute.PositionDataList.Add((new PositionData(captureLat,
-                                captureLon)));
-
-                            RouteChooser routeChooser = new RouteChooser(captureLat, captureLon, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
-
-                            while (!chosenPosition)
-                            {
-                                randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
-                            }
-
-                            while (!addedToPosDataList)
-                            {
-                                addedToPosDataList = fishRoute.PositionDataList.TryAdd((new PositionData(
-                                    validPositionsDataList.ElementAt(randInt).Lat, validPositionsDataList.ElementAt(randInt).Lon,
-                                    validPositionsDataList.ElementAt(randInt).Depth, validPositionsDataList.ElementAt(randInt).Temp, FishList["742"].TagDataList[i].Depth,
-                                    FishList["742"].TagDataList[i].Temp, validPositionsDataList.ElementAt(randInt).Eta_rho, validPositionsDataList.ElementAt(randInt).Xi_rho)));
-                            }
-
-                            while (!addedToFishRouteList)
-                            {
-                                addedToFishRouteList = FishList["742"].FishRouteList.TryAdd(fishRoute);
-                            }
-                        }
-                        else
-                        {
-                            Interlocked.Increment(ref deadFishCounter);
-                        }
-                    });
-                    day += DayIncrement;
+                    deadFishCounter = RunFirstIterationOfAligorithm(deadFishCounter, i, FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon);
                 }
                 else
                 {
-                    
-                    BlockingCollection<FishRoute> fishRoutes = FishList["742"].FishRouteList;
-                    TagData tagData = FishList["742"].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
                     {
-
-                        Parallel.ForEach(fishRoutes, (fishRoute) =>
-                        {
-                            int randInt = 0;
-                            chosenPosition = false;
-                            EtaXi[] possiblePositionsArray;
-                            BlockingCollection<PositionData> validPositionsDataList;
-                            if (fishRoute.Alive)
-                            {
-                                PositionData pData = fishRoute.PositionDataList.ElementAt(counter);
-
-                                lock (syncObject)
-                                {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, FishList["742"].TagDataList[i].Depth, use_Norkyst);
-                                    validPositionsDataList =
-                                        CalculateCoordinates.FindValidPositions(
-                                            possiblePositionsArray,
-                                            HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, use_Norkyst);
-                                }
-
-
-
-                                if (validPositionsDataList.Count > 0)
-                                {
-                                    RouteChooser routeChooser =
-                                            new RouteChooser(pData.Lat, pData.Lon, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
-                                    while (!chosenPosition)
-                                    {
-                                        randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                        chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
-                                    }
-                                    fishRoute.PositionDataList.Add((new PositionData(
-                                            validPositionsDataList.ElementAt(randInt).Lat,
-                                            validPositionsDataList.ElementAt(randInt).Lon,
-                                            validPositionsDataList.ElementAt(randInt).Depth,
-                                            validPositionsDataList.ElementAt(randInt).Temp,
-                                            tagData.Depth, tagData.Temp,
-                                            validPositionsDataList.ElementAt(randInt).Eta_rho,
-                                            validPositionsDataList.ElementAt(randInt).Xi_rho)));
-
-                                }
-
-                                else
-                                {
-                                    Interlocked.Increment(ref deadFishCounter);
-                                    fishRoute.CommitNotAlive();
-                                }
-                            }
-                        });
+                        deadFishCounter = RunAllOtherIterationsOfAlgorithm(deadFishCounter, i, counter);
                     }
                     else
                     {
-                        i = halfTagDataCount;
+                        fishStillAlive = false;
                     }
 
                     counter++;
                 }
-                TempContainer.UpdateTempArray(FishList["742"].TagDataList[i].Date);
-                /*day -= DayIncrement;
-                if(Math.Abs(day % 1) <= (double.Epsilon * 100))
-                {
-                    TempContainer.UpdateTempArray(day);
-                }*/
+                TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
             }
 
-            watch.Stop();
-            double elapsedMs = watch.ElapsedMilliseconds;
-            Console.WriteLine("Hvor lang tid tok programmet: " + elapsedMs);
-            var count = 1;
-            var FishData = FishList["742"];
-
-            Console.WriteLine("Hvor lang tid tok programmet: {0} minutter.", elapsedMs / 60000);
-            Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
-            Console.WriteLine("Fishlist count: {0}", FishList["742"].FishRouteList.Count);
-            Console.WriteLine("Dead fish counter: {0}", deadFishCounter);
-            Console.WriteLine("Alive fish counter: {0}", ReleasedFish - deadFishCounter);
+            Stopwatch.Stop();
+            DisplayStatisticsOfSimulation(Stopwatch.ElapsedMilliseconds, deadFishCounter);
             if (deadFishCounter == ReleasedFish)
             {
                 Console.WriteLine("All fish are dead");
-
             }
             else
             {
-                DirectoryInfo di = new DirectoryInfo(GlobalVariables.pathToSaveFishData + @"\BW\");
-
-                foreach (FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
+                SaveRoutesToFile("BW");
             }
-            Console.WriteLine("Day is: {0}", day);
+            return !(deadFishCounter == ReleasedFish);
+        }
+        
+        public void SaveRoutesToFile(string folder)
+        {
+            DirectoryInfo di = new DirectoryInfo(GlobalVariables.pathToSaveFishData + @"\" + folder + @"\");
 
-            foreach (var fishRoute in FishList["742"].FishRouteList)
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+
+            var count = 1;
+
+            foreach (var fishRoute in FishList[FishTag].FishRouteList)
             {
                 if (fishRoute.Alive)
                 {
                     string[] fishData = fishRoute.FromListToString();
 
-                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\BW\" + fishRoute.Id + "_" + count + ".txt", fishData);
+                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\" + folder + @"\" + fishRoute.Id + "_" + count + ".txt", fishData);
                     count++;
                 }
             }
+        }
 
-            return !(deadFishCounter == ReleasedFish);
+        public int RunFirstIterationOfAligorithm(int deadFishCounter, int indeks, double startLat, double startLon)
+        {
+            int localDeadFishCounter = deadFishCounter;
+            int randInt = 0;
+            bool chosenPosition;
+            PositionData positionData = CalculateXiAndEta.GeneratePositionDataArrayList(HeatMap.NorKystLatArray, HeatMap.NorKystLonArray,
+                HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, startLat, startLon, Use_Norkyst);
+            BlockingCollection<PositionData> validPositionsDataList =
+                CalculateCoordinates.FindValidPositions(
+                    CalculateCoordinates.CalculatePossibleEtaXi(positionData.Eta_rho, positionData.Xi_rho, false, FishList[FishTag].TagDataList[indeks].Depth, Use_Norkyst),
+                HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, FishList[FishTag].TagDataList[indeks], TempContainer, TempDelta, Use_Norkyst
+                    );
+
+            float releaseLat = (float)FishList[FishTag].ReleaseLat;
+            float releaseLon = (float)FishList[FishTag].ReleaseLon;
+
+            Parallel.For(0, ReleasedFish, (j) =>
+            {
+
+                chosenPosition = false;
+                bool addedToPosDataList = false;
+                bool addedToFishRoutList = false;
+
+                if (validPositionsDataList.Count > 0)
+                {
+                    FishRoute fishRoute = new FishRoute(FishTag, Use_Norkyst);
+                    fishRoute.PositionDataList.Add((new PositionData(releaseLat,
+                        releaseLon)));
+
+                    RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList[FishTag]);
+
+                    while (!chosenPosition)
+                    {
+                        randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                        chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
+                    }
+
+                    while (!addedToPosDataList)
+                    {
+                        addedToPosDataList = fishRoute.PositionDataList.TryAdd((new PositionData(
+                            validPositionsDataList.ElementAt(randInt).Lat, validPositionsDataList.ElementAt(randInt).Lon,
+                            validPositionsDataList.ElementAt(randInt).Depth, validPositionsDataList.ElementAt(randInt).Temp, FishList[FishTag].TagDataList[indeks].Depth,
+                            FishList[FishTag].TagDataList[indeks].Temp, validPositionsDataList.ElementAt(randInt).Eta_rho, validPositionsDataList.ElementAt(randInt).Xi_rho)));
+                    }
+
+                    while (!addedToFishRoutList)
+                    {
+                        addedToFishRoutList = FishList[FishTag].FishRouteList.TryAdd(fishRoute);
+                    }
+                }
+                else
+                {
+                    Interlocked.Increment(ref localDeadFishCounter);
+                }
+            });
+            return localDeadFishCounter;
+        }
+        public int RunAllOtherIterationsOfAlgorithm(int deadFishCounter, int indeks, int counter)
+        {
+            TagData tagData = FishList[FishTag].TagDataList[indeks];
+            int localDeadFishCounter = deadFishCounter;
+            bool chosenPosition;
+            Parallel.ForEach(FishList[FishTag].FishRouteList, (fishRoute) =>
+            {
+                int randInt = 0;
+                chosenPosition = false;
+                EtaXi[] possiblePositionsArray;
+                BlockingCollection<PositionData> validPositionsDataList;
+                if (fishRoute.Alive)
+                {
+                    PositionData pData = fishRoute.PositionDataList.ElementAt(counter);
+
+                    lock (syncObject)
+                    {
+                        possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
+                        validPositionsDataList =
+                            CalculateCoordinates.FindValidPositions(
+                                possiblePositionsArray,
+                                HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
+
+                        if (validPositionsDataList.Count == 0 && GlobalVariables.allow_switching)
+                        {
+                            fishRoute.Use_Norkyst = !fishRoute.Use_Norkyst;
+
+                            EtaXi etaXi = EtaXiConverter.ConvertNorkystOrBarents(pData.Eta_rho, pData.Xi_rho, fishRoute.Use_Norkyst);
+
+                            fishRoute.PositionDataList.ElementAt(counter).Eta_rho = etaXi.Eta_rho;
+                            fishRoute.PositionDataList.ElementAt(counter).Xi_rho = etaXi.Xi_rho;
+
+                            pData = fishRoute.PositionDataList.ElementAt(counter);
+
+                            possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
+                            validPositionsDataList =
+                                CalculateCoordinates.FindValidPositions(
+                                    possiblePositionsArray,
+                                    HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
+                        }
+
+                    }
+
+                    if (validPositionsDataList.Count > 0)
+                    {
+                        RouteChooser routeChooser =
+                                new RouteChooser(pData.Lat, pData.Lon, FishList[FishTag]);
+                        while (!chosenPosition)
+                        {
+                            randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                            chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
+                        }
+                        fishRoute.PositionDataList.Add((new PositionData(
+                            validPositionsDataList.ElementAt(randInt).Lat,
+                            validPositionsDataList.ElementAt(randInt).Lon,
+                            validPositionsDataList.ElementAt(randInt).Depth,
+                            validPositionsDataList.ElementAt(randInt).Temp,
+                            tagData.Depth, tagData.Temp,
+                            validPositionsDataList.ElementAt(randInt).Eta_rho,
+                            validPositionsDataList.ElementAt(randInt).Xi_rho)));
+                    }
+                    else
+                    {
+                        Interlocked.Increment(ref deadFishCounter);
+                        fishRoute.CommitNotAlive();
+                    }
+                }
+            });
+            return localDeadFishCounter;
+        }
+        public void DisplayStatisticsOfSimulation(double elapsedMs, int deadFishCounter)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Program runtime: {0} minutes / {1} seconds.", elapsedMs / 60000, elapsedMs / 1000);
+            Console.WriteLine("Number of failed routes:      {0}", deadFishCounter);
+            Console.WriteLine("Number of successfull routes: {0}", ReleasedFish - deadFishCounter);
         }
     }
 }
