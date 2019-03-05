@@ -59,7 +59,8 @@ namespace SpagettiMetoden
                     {
                         if (controller.RunAlgorithmBW())
                         {
-                            Merge.MergeFwAndBwFiles(Increment, dayInc);
+                            Merge merge = new Merge(tagId);
+                            merge.MergeFwAndBwFiles(Increment, dayInc);
                         }
                         else
                         {
@@ -94,7 +95,8 @@ namespace SpagettiMetoden
                 Program prog = new Program();
 
                 Console.WriteLine("Error, bruker standard");
-                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(2, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
+                string tagId = "1664";
+                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(3, 10000, 1.2, 30, 0.65, 0.85, 30, tagId);
                 //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
                 //controller.RunAlgorithm();
                 bool failed = false;
@@ -104,7 +106,8 @@ namespace SpagettiMetoden
                     Console.WriteLine("Running BW");
                     if (controller.RunAlgorithmBW())
                     {
-                        Merge.MergeFwAndBwFiles(0.65, 1);
+                        Merge merge = new Merge(tagId);
+                        merge.MergeFwAndBwFiles(0.65, 1);
                     }
                     else
                     {
@@ -115,7 +118,7 @@ namespace SpagettiMetoden
                 {
                     failed = true;
                 }
-
+                
                 if (failed)
                 {
                     Console.WriteLine("Could not start simulation");

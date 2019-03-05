@@ -40,9 +40,7 @@ namespace SpagettiMetoden
         public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapOcean_Avg = basePath + @"VarmeModell\" + "ocean_avg_LatAndLonRho.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
-        public static string pathToBwDirectory = basePath + @"fishData\BW\";
-        public static string pathToFwDirectory = basePath + @"fishData\FW\";
-        public static string pathToMergedDirectory = basePath + @"fishData\Akseptabel\";
+        public static string pathToMergedDirectory = PerformanceBasePath + @"fishData\";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
         public static string pathToSaveFishData = PerformanceBasePath + @"fishData";
         //ALL THE DELTAS:

@@ -76,6 +76,7 @@
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Controllers\ControllerReleaseFwAndBw.cs" />
     <Compile Include="Controllers\ControllerReleaseSteadily.cs" />
+    <Compile Include="HelperFunctions.cs" />
     <Compile Include="Info Containers\DepthData.cs" />
     <Compile Include="Info Containers\EtaXi.cs" />
     <Compile Include="EtaXiConverter.cs" />

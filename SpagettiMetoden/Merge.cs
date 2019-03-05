@@ -13,10 +13,16 @@ namespace SpagettiMetoden
         public string Id { get; set; }
         public double Lat { get; set; }
         public double Lon { get; set; }
-        
+        private string PathToDirectory { get; set; }
+
         public Merge()
         {
 
+        }
+        public Merge(string id)
+        {
+            Id = id;
+            PathToDirectory = @"C:\NCdata\fishData\";
         }
 
         public Merge(string id, string lat, string lon)
@@ -44,10 +50,10 @@ namespace SpagettiMetoden
             return List;
         }
 
-        public static void MergeFwAndBwFiles(double increment, double dayInc)
+        public void MergeFwAndBwFiles(double increment, double dayInc)
         {
-            List<Merge> ForwardList = ReadDirectory(GlobalVariables.pathToFwDirectory);
-            List<Merge> BackwardList = ReadDirectory(GlobalVariables.pathToBwDirectory);
+            List<Merge> ForwardList = ReadDirectory(PathToDirectory  + Id + @"\FW");
+            List<Merge> BackwardList = ReadDirectory(PathToDirectory  + Id + @"\BW");
             int counter = 1;
             bool found;
 
@@ -70,12 +76,12 @@ namespace SpagettiMetoden
             Console.WriteLine("Finished merging files");
         }
 
-        public static bool MergeFiles(string fwId, string bwId, int counter)
+        public bool MergeFiles(string fwId, string bwId, int counter)
         {
             try
             {
-                string pathToFwFile = GlobalVariables.pathToFwDirectory + fwId;
-                string pathToBwFile = GlobalVariables.pathToBwDirectory + bwId;
+                string pathToFwFile = PathToDirectory + fwId;
+                string pathToBwFile = PathToDirectory + bwId;
 
                 List<string> forwardList = new List<string>(File.ReadAllLines(pathToFwFile));
                 List<string> backwardList = new List<string>(File.ReadAllLines(pathToBwFile));
@@ -85,17 +91,14 @@ namespace SpagettiMetoden
 
                 forwardList.AddRange(backwardList);
 
+                string DirecotryPath = @"C:\NCdata\fishData\" + Id + @"\Akseptabel";
+
                 if (counter == 1)
                 {
-                    DirectoryInfo di = new DirectoryInfo(GlobalVariables.pathToMergedDirectory);
-
-                    foreach (FileInfo file in di.GetFiles())
-                    {
-                        file.Delete();
-                    }
+                    HelperFunctions.DeleteFolderContent(DirecotryPath);
                 }
                 
-                TextWriter tw = new StreamWriter(GlobalVariables.pathToMergedDirectory + counter + ".txt");
+                TextWriter tw = new StreamWriter(DirecotryPath + @"\" + Id + @"_" + counter + ".txt");
 
                 foreach (string s in forwardList)
                     tw.WriteLine(s);
@@ -106,6 +109,12 @@ namespace SpagettiMetoden
 
             } catch
             {
+                Console.WriteLine(PathToDirectory + fwId);
+                Console.WriteLine(fwId);
+                Console.WriteLine(PathToDirectory + bwId);
+                Console.WriteLine(bwId);
+                Console.WriteLine(@"C:\NCdata\fishData\" + Id + @"\Akseptabel\" + Id + @"_" + counter + ".txt");
+                Console.ReadKey();
                 return false;
             }
         }

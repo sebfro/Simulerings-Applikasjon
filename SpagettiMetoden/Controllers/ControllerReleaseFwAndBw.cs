@@ -108,7 +108,7 @@ namespace SpagettiMetoden
             }
 
             Stopwatch.Stop();
-            DisplayStatisticsOfSimulation(Stopwatch.ElapsedMilliseconds, deadFishCounter);
+            HelperFunctions.DisplayStatisticsOfSimulation(Stopwatch.ElapsedMilliseconds, deadFishCounter, ReleasedFish);
             if (deadFishCounter == ReleasedFish)
             {
                 Console.WriteLine("All fish are dead");
@@ -157,7 +157,7 @@ namespace SpagettiMetoden
             }
 
             Stopwatch.Stop();
-            DisplayStatisticsOfSimulation(Stopwatch.ElapsedMilliseconds, deadFishCounter);
+            HelperFunctions.DisplayStatisticsOfSimulation(Stopwatch.ElapsedMilliseconds, deadFishCounter, ReleasedFish);
             if (deadFishCounter == ReleasedFish)
             {
                 Console.WriteLine("All fish are dead");
@@ -171,14 +171,10 @@ namespace SpagettiMetoden
         
         public void SaveRoutesToFile(string folder)
         {
-            DirectoryInfo di = new DirectoryInfo(GlobalVariables.pathToSaveFishData + @"\" + folder + @"\");
+            string path = GlobalVariables.pathToSaveFishData + @"\" + FishTag + @"\" + folder + @"\";
+            HelperFunctions.DeleteFolderContent(path);
 
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-
-            var count = 1;
+            int count = 1;
 
             foreach (var fishRoute in FishList[FishTag].FishRouteList)
             {
@@ -186,7 +182,7 @@ namespace SpagettiMetoden
                 {
                     string[] fishData = fishRoute.FromListToString();
 
-                    System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\" + folder + @"\" + fishRoute.Id + "_" + count + ".txt", fishData);
+                    System.IO.File.WriteAllLines(path + fishRoute.Id + "_" + count + ".txt", fishData);
                     count++;
                 }
             }
@@ -319,12 +315,6 @@ namespace SpagettiMetoden
             });
             return localDeadFishCounter;
         }
-        public void DisplayStatisticsOfSimulation(double elapsedMs, int deadFishCounter)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program runtime: {0} minutes / {1} seconds.", elapsedMs / 60000, elapsedMs / 1000);
-            Console.WriteLine("Number of failed routes:      {0}", deadFishCounter);
-            Console.WriteLine("Number of successfull routes: {0}", ReleasedFish - deadFishCounter);
-        }
+        
     }
 }
