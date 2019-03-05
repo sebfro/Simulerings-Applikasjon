@@ -10,7 +10,7 @@ namespace SpagettiMetoden
 {
     class ReadFromFile
     {
-        public void readReleaseAndCapture(Dictionary<string, Fish> FishList, List<string> KeyList)
+        public void ReadReleaseAndCapture(Dictionary<string, Fish> FishList, List<string> KeyList)
         {
             string line;
 
@@ -27,7 +27,7 @@ namespace SpagettiMetoden
             file.Close();
         }
 
-        public void readTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
+        public void ReadTagData(Dictionary<string, Fish> FishList, List<string> KeyList)
         {
             foreach (string id in KeyList)
             {

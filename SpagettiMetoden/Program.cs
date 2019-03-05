@@ -94,7 +94,7 @@ namespace SpagettiMetoden
                 Program prog = new Program();
 
                 Console.WriteLine("Error, bruker standard");
-                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(2, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
+                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(2, 10000, 1.2, 30, 0.65, 0, 30, "742");
                 //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
                 //controller.RunAlgorithm();
                 bool failed = false;
