@@ -54,8 +54,8 @@ namespace SpagettiMetoden
             FishList = new Dictionary<string, Fish>();
             KeyList = new List<string>();
 
-            File.readReleaseAndCapture(FishList, KeyList);
-            File.readTagData(FishList, KeyList);
+            File.ReadReleaseAndCapture(FishList, KeyList);
+            File.ReadTagData(FishList, KeyList);
 
             GlobalVariables.Probability = Probability;
 
