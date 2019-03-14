@@ -87,6 +87,7 @@ namespace SpagettiMetoden
             {
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
+
                 bool chosenPosition;
                 if (i == 0)
                 {
@@ -101,14 +102,13 @@ namespace SpagettiMetoden
 
                     float releaseLat = (float)FishList[FishTag].ReleaseLat;
                     float releaseLon = (float)FishList[FishTag].ReleaseLon;
-
+                    Console.WriteLine("validPositionsDataList.Count: " + validPositionsDataList.Count);
                     Parallel.For(0, ReleasedFish, (j) =>
                     {
                         
                         chosenPosition = false;
                         bool addedToPosDataList = false;
                         bool addedToFishRoutList = false;
-
                         if (validPositionsDataList.Count > 0)
                         {
                             FishRoute fishRoute = new FishRoute(FishTag, use_Norkyst);
@@ -143,6 +143,7 @@ namespace SpagettiMetoden
                 }
                 else
                 {
+                    
                     TagData tagData = FishList[FishTag].TagDataList[i];
                     if (deadFishCounter < ReleasedFish)
                     {

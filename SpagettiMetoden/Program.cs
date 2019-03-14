@@ -23,11 +23,12 @@ namespace SpagettiMetoden
                 int releasedFish = int.Parse(args[2]);
                 double tempDelta = double.Parse(args[3].Replace(",", "."));
                 int DepthDelta = int.Parse(args[4]);
-                double Increment = double.Parse(args[5].Replace(".", ","));
+                double Increment = double.Parse(args[5].Replace(",", "."));
                 double Probability = double.Parse(args[6].Replace(",", "."));
                 int iterations = int.Parse(args[7]);
                 int algorithm = int.Parse(args[8]);
 
+                
                 Console.WriteLine("Settings:");
                 Console.WriteLine("dayInc: {0}, Simulated Fish: {1}, Temperature Delta: {2}, depthDelta: {3}, Increment: {4}, Propability: {5}, Iterations: {6}, Algorithm: {7}, Tag id: {8}",
                     dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm, tagId);
@@ -95,10 +96,20 @@ namespace SpagettiMetoden
                 Program prog = new Program();
 
                 Console.WriteLine("Error, bruker standard");
-                string tagId = "1664";
-                ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(3, 10000, 1.2, 30, 0.65, 0.85, 30, tagId);
-                //Controller controller = new Controller(1, 10000, 1.2, 30, 0.65, 0.85, 30, "742");
-                //controller.RunAlgorithm();
+                string tagId = "742";
+                float tempDelta = 1.2f;
+                int releasedFish = 10000;
+                float dayInc = 2f;
+                int depthDelta = 30;
+                float fishlength = 0.65f;
+                float probability = 0f;
+                int iterations = 30;
+                Console.WriteLine("dayInc: {0}, Simulated Fish: {1}, Temperature Delta: {2}, depthDelta: {3}, iterations: {4}, Propability: {5}, Iterations: {6}, Tag id: {7}",
+                    dayInc, releasedFish, tempDelta, depthDelta, iterations, probability, iterations, tagId);
+                //ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
+                Controller controller = new Controller(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
+                controller.RunAlgorithm();
+                /*
                 bool failed = false;
                 Console.WriteLine("Running FW");
                 if (controller.RunAlgorithmFW())
@@ -123,6 +134,7 @@ namespace SpagettiMetoden
                 {
                     Console.WriteLine("Could not start simulation");
                 }
+                */
                 Console.ReadKey();
                 
             }

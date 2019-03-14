@@ -114,7 +114,6 @@ namespace SpagettiMetoden
             double lon = 0.0;
             DepthData depthData;
 
-
             for (int i = 0; i < etaXis.Length; i++)
             {
                 lock (syncObject)
