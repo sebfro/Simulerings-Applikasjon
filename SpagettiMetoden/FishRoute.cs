@@ -40,14 +40,14 @@ namespace SpagettiMetoden
         }
         */
         
-         public string[] FromListToString()
+         public string[] FromListToString(string[] dateTable)
         {
             int counter = 1;
             string[] strArray = new string[PositionDataList.Count+1];
-            strArray[0] = "Latitude:" + "\t" + "Longitude:" + "\t" + "Tagdata Depth:" + "\t" + "Sea depth:" + "\t" + "Tagdata Temp" + "\t" + "Sea temp";
+            strArray[0] = "Latitude:" + "\t" + "Longitude:" + "\t" + "Tagdata Depth:" + "\t" + "Sea depth:" + "\t" + "Tagdata Temp" + "\t" + "Sea temp" + "\t" + "Date";
             foreach (PositionData pData in PositionDataList)
             {
-               strArray[counter] = pData.Lat + "\t" + pData.Lon + "\t" + pData.TagDataDepth + "\t" + pData.Depth +  "\t" + pData.TagDataTemp + "\t" + pData.Temp;
+               strArray[counter] = pData.Lat + "\t" + pData.Lon + "\t" + pData.TagDataDepth + "\t" + pData.Depth +  "\t" + pData.TagDataTemp + "\t" + pData.Temp + "\t" + dateTable[counter - 1];
                 counter++;
             }
 

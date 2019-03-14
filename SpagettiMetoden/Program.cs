@@ -80,8 +80,8 @@ namespace SpagettiMetoden
                 } else
                 {
                     //Console.WriteLine("Kjører nr 3");
-                    ControllerReleaseSteadily controller = new ControllerReleaseSteadily(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
-                    controller.RunAlgorithm();
+                    //ControllerReleaseSteadily controller = new ControllerReleaseSteadily(dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations);
+                    //controller.RunAlgorithm();
                 }
                  
 
@@ -135,6 +135,7 @@ namespace SpagettiMetoden
                     Console.WriteLine("Could not start simulation");
                 }
                 */
+                Console.WriteLine("Press ENTER to finish...");
                 Console.ReadKey();
                 
             }

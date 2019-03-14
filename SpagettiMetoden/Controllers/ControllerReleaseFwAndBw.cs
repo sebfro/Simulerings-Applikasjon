@@ -25,6 +25,7 @@ namespace SpagettiMetoden
         public double DayIncrement { get; set; }
         public int ReleasedFish { get; set; }
         public double TempDelta { get; set; }
+        public string[] DateTable { get; set; }
 
         private EtaXiConverter EtaXiConverter { get; set; }
 
@@ -65,6 +66,7 @@ namespace SpagettiMetoden
             EtaXis = new EtaXi[0];
             TempContainer = new TempContainer(FishList[FishTag].TagDataList, TagStep);
             CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
+            DateTable = new string[FishList[FishTag].TagDataList.Count / TagStep];
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -85,6 +87,7 @@ namespace SpagettiMetoden
             for (int i = 0; i < halfTagDataCount && fishStillAlive; i += TagStep)
             {
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
+                DateTable[i / TagStep] = FishList[FishTag].TagDataList[i].Date;
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 if (i == 0)
                 {
@@ -135,6 +138,7 @@ namespace SpagettiMetoden
             for (int i = tagDataCount; i > halfTagDataCount && fishStillAlive; i -= TagStep)
             {
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
+                DateTable[i / TagStep] = FishList[FishTag].TagDataList[i].Date;
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 if (i == tagDataCount)
                 {
@@ -180,7 +184,7 @@ namespace SpagettiMetoden
             {
                 if (fishRoute.Alive)
                 {
-                    string[] fishData = fishRoute.FromListToString();
+                    string[] fishData = fishRoute.FromListToString(DateTable);
 
                     System.IO.File.WriteAllLines(path + fishRoute.Id + "_" + count + ".txt", fishData);
                     count++;

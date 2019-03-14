@@ -34,8 +34,8 @@ namespace SpagettiMetoden
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
         public static string ExternalHDDBasePath = @"H:\";
-        public static string pathToNorkystNetCDF = PerformanceBasePath + @"Nye varmeModeller\Norkyst\Uten Havstrom\norkyst_";
-        public static string pathToOceanAvgNetCDF = PerformanceBasePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
+        public static string pathToNorkystNetCDF = basePath + @"Nye varmeModeller\Norkyst\Uten Havstrom\norkyst_";
+        public static string pathToOceanAvgNetCDF = basePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
         public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
         public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapOcean_Avg = basePath + @"VarmeModell\" + "ocean_avg_LatAndLonRho.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";

@@ -28,18 +28,12 @@ namespace SpagettiMetoden
         public int ReleasedFish { get; set; }
         public double TempDelta { get; set; }
         public string FishTag { get; set; }
+        public string[] DateTable { get; set; }
 
         private EtaXiConverter EtaXiConverter { get; set; }
 
         static readonly object syncObject = new object();
-
-        public void SetDayIncrement(double dayInc)
-        {
-            DayIncrement = dayInc;
-            //144 er incrementet for å hoppe 24 timer/1 dag i merkedage
-            //Ganger det med antall dager som skal inkrementeres.
-            TagStep = (int) (144 * dayInc);
-        }
+        
 
         public Controller(double dayInc, int releasedFish, double tempDelta, int depthDelta, double Increment, double Probability, int iterations, string fishTag)
         {
@@ -47,7 +41,11 @@ namespace SpagettiMetoden
             //Console.WriteLine("dayInc: {0}, releasedFish: {1}, tempdelta: {2}, depthDelta: {3}, increment: {4}, Probability: {5}, iterations: {6}", dayInc, releasedFish, tempDelta, depthDelta, Increment, Probability, iterations);
             TempDelta = tempDelta;
             ReleasedFish = releasedFish;
-            SetDayIncrement(dayInc);
+
+            DayIncrement = dayInc;
+            //144 er incrementet for å hoppe 24 timer/1 dag i merkedage
+            //Ganger det med antall dager som skal inkrementeres.
+            TagStep = (int)(144 * dayInc);
 
             File = new ReadFromFile();
 
@@ -65,7 +63,9 @@ namespace SpagettiMetoden
             EtaXis = new EtaXi[0];
             TempContainer = new TempContainer(FishList[FishTag].TagDataList, TagStep);
             CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
-            
+            DateTable = new string[(FishList[FishTag].TagDataList.Count / TagStep) + 2];
+
+
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -81,11 +81,11 @@ namespace SpagettiMetoden
             bool use_Norkyst = true;
             FishList[FishTag].FishRouteList = new BlockingCollection<FishRoute>(boundedCapacity: ReleasedFish);
             Console.WriteLine("Released Fish: {0}", ReleasedFish);
-            Console.WriteLine("Tagstep: {0}", TagStep);
             bool fishStillAlive = true;
             for (int i = 0; i < FishList[FishTag].TagDataList.Count && fishStillAlive; i += TagStep)
             {
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
+                DateTable[i / TagStep] = FishList[FishTag].TagDataList[i].Date;
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
 
                 bool chosenPosition;
@@ -102,7 +102,6 @@ namespace SpagettiMetoden
 
                     float releaseLat = (float)FishList[FishTag].ReleaseLat;
                     float releaseLon = (float)FishList[FishTag].ReleaseLon;
-                    Console.WriteLine("validPositionsDataList.Count: " + validPositionsDataList.Count);
                     Parallel.For(0, ReleasedFish, (j) =>
                     {
                         
@@ -274,7 +273,7 @@ namespace SpagettiMetoden
                     {
                         folderName = "Uakseptabel";
                     }
-                    string[] fishData = fishRoute.FromListToString();
+                    string[] fishData = fishRoute.FromListToString(DateTable);
 
                     System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + FishTag + @"\\" + folderName + "\\" + fishRoute.Id + "_" + count + ".txt", fishData);
                     count++;

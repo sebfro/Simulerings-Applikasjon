@@ -25,6 +25,7 @@ namespace SpagettiMetoden
         public double DayIncrement { get; set; }
         public int RemainingFishToBeReleased { get; set; }
         public double TempDelta { get; set; }
+        public string[] DateTable { get; set; }
 
 
         static readonly object syncObject = new object();
@@ -40,7 +41,7 @@ namespace SpagettiMetoden
         
 
         public ControllerReleaseSteadily(double dayInc, int remainingFishToBeReleased, double tempDelta, int depthDelta,
-            double Increment, double Probability, int iterations)
+            double Increment, double Probability, int iterations, string FishTag)
         {
             TempDelta = tempDelta;
             RemainingFishToBeReleased = remainingFishToBeReleased;
@@ -60,6 +61,7 @@ namespace SpagettiMetoden
             EtaXis = new EtaXi[0];
             TempContainer = new TempContainer(FishList["742"].TagDataList, TagStep);
             CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
+            DateTable = new string[FishList[FishTag].TagDataList.Count / TagStep];
         }
 
         public void SetDepthDelta(int DepthDelta)
@@ -309,7 +311,7 @@ namespace SpagettiMetoden
                     {
                         folderName = "Uakseptabel";
                     }
-                    string[] fishData = fishRoute.FromListToString();
+                    string[] fishData = fishRoute.FromListToString(DateTable);
 
                     System.IO.File.WriteAllLines(GlobalVariables.pathToSaveFishData + @"\\" + folderName + "\\" + fishRoute.Id + "_" + count + ".txt", fishData);
                     count++;
