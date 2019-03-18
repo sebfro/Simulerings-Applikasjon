@@ -15,9 +15,9 @@ namespace SpagettiMetoden
 
             if (use_norkyst)
             {
-                for (int i = 0; i < GlobalVariables.eta_rho_size_ocean_time; i++)
+                for (int i = 0; i < GlobalVariables.eta_rho_size_norkyst; i++)
                 {
-                    for (int j = 0; j < GlobalVariables.xi_rho_size_ocean_time; j++)
+                    for (int j = 0; j < GlobalVariables.xi_rho_size_norkyst; j++)
                     {
                         if (Math.Abs((double)NorkystlatDataSet.GetValue(i, j) - lat) < Delta && Math.Abs((double)NorKystlonDataSet.GetValue(i, j) - lon) < Delta)
                         {

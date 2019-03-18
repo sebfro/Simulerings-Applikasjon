@@ -18,8 +18,8 @@ namespace SpagettiMetoden
         {
             //this.year = year;
             //this.month = month;
-            DataSet ds_Ocean_Time = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
-            Console.WriteLine(GlobalVariables.pathToNcHeatMapOcean_Time);
+            DataSet ds_Ocean_Time = DataSet.Open(GlobalVariables.pathToNcHeatMapnorkyst);
+            Console.WriteLine(GlobalVariables.pathToNcHeatMapnorkyst);
             NorKystLatArray = ds_Ocean_Time["lat_rho"].GetData();
             NorKystLonArray = ds_Ocean_Time["lon_rho"].GetData();
 

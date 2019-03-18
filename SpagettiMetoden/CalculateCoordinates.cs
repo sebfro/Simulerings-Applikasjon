@@ -176,8 +176,8 @@ namespace SpagettiMetoden
             int xi_rho_size;
             if (use_norkyst)
             {
-                eta_rho_size = GlobalVariables.eta_rho_size_ocean_time;
-                xi_rho_size = GlobalVariables.xi_rho_size_ocean_time;
+                eta_rho_size = GlobalVariables.eta_rho_size_norkyst;
+                xi_rho_size = GlobalVariables.xi_rho_size_norkyst;
             }
             else
             {

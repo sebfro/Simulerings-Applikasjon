@@ -24,7 +24,7 @@ namespace SpagettiMetoden
 
         public EtaXiConverter()
         {
-            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
+            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapnorkyst);
             NorkystLatArray = ds["lat_rho"].GetData();
             NorkystLonArray = ds["lon_rho"].GetData();
 

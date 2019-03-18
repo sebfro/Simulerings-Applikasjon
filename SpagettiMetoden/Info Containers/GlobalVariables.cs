@@ -12,10 +12,10 @@ namespace SpagettiMetoden
         /// eta_rho, xi_rho, s_rho og z_rho for norkyst
         /// varmemodellene
         /// </summary>
-        public static int eta_rho_size_ocean_time = 902;
-        public static int xi_rho_size_ocean_time = 2602;
-        public static int s_rho_size_ocean_time = 35;
-        public static int Z_rho_size_ocean_time = 35;
+        public static int eta_rho_size_norkyst = 902;
+        public static int xi_rho_size_norkyst = 2602;
+        public static int s_rho_size_norkyst = 35;
+        public static int Z_rho_size_norkyst = 35;
         /// <summary>
         /// eta_rho, xi_rho, s_rho og z_rho for barentshavet
         /// varmemodellene
@@ -37,7 +37,7 @@ namespace SpagettiMetoden
         public static string pathToNorkystNetCDF = basePath + @"Nye varmeModeller\Norkyst\Uten Havstrom\norkyst_";
         public static string pathToOceanAvgNetCDF = basePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
         public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
-        public static string pathToNcHeatMapOcean_Time = basePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapnorkyst = basePath + @"VarmeModell\norkyst_800m_avg.nc";
         public static string pathToNcHeatMapOcean_Avg = basePath + @"VarmeModell\" + "ocean_avg_LatAndLonRho.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
         public static string pathToNcTagData = basePath + @"Merkedata\";
         public static string pathToMergedDirectory = PerformanceBasePath + @"fishData\";
@@ -49,8 +49,8 @@ namespace SpagettiMetoden
         public static bool allow_switching = true;
 
 
-        //Ocean_time max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)
-        public static int ocean_time_Max = 274;
+        //norkyst max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)
+        public static int norkyst_Max = 274;
 
         /// <summary>
         /// Endrer dewnne til 580, utifra utregningene mine er et døgin i 10 min merkedata 145 step i mellom

@@ -20,7 +20,7 @@ namespace SpagettiMetoden
 
         public ExtractDataFromEtaAndXi(int depthDelta)
         {
-            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapOcean_Time);
+            DataSet ds = DataSet.Open(GlobalVariables.pathToNcHeatMapnorkyst);
             Norkyst_DepthArray = ds["h"].GetData();
             Norkyst_Mask_rhoArray = ds["mask_rho"].GetData();
             Norkyst_Z_Array = DataSet.Open(GlobalVariables.pathToNcHeatMapFolder + "NK800_Z.nc")["Z"].GetData();
@@ -78,7 +78,7 @@ namespace SpagettiMetoden
 
             if (use_norkyst)
             {
-                z_rho_size = GlobalVariables.Z_rho_size_ocean_time;
+                z_rho_size = GlobalVariables.Z_rho_size_norkyst;
                 z_Array = Norkyst_Z_Array;
             }
             else
@@ -86,21 +86,30 @@ namespace SpagettiMetoden
                 z_rho_size = GlobalVariables.Z_rho_size_ocean_avg;
                 z_Array = OceanAvg_Z_Array;
             }
-            for (int k = 0; k < z_rho_size; k++)
-            {
-                double depthFromZ_rho = (double)z_Array.GetValue(k, eta_rho, xi_rho);
-                
-                if (Math.Abs (depthFromZ_rho - tagDataDepth) < DepthDelta)
-                {
-                    potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
-                }
-            }
-            //Sammenligne eta_rho og xi_rho fra de potensielle dybdene med den faktiske dybden og velge denn med minst differanse
-
             double minDelta = 0.0;
             bool deltaHasBeenSet = false;
             DepthData depthData = new DepthData(0, 0.0);
+            for (int k = 0; k < z_rho_size; k++)
+            {
+                double depthFromZ_rho = (double)z_Array.GetValue(k, eta_rho, xi_rho);
+                double newDelta = Math.Abs(depthFromZ_rho - (-tagDataDepth));
 
+                if (!deltaHasBeenSet)
+                {
+                    minDelta = newDelta;
+                    depthData = new DepthData(k, depthFromZ_rho);
+
+                    deltaHasBeenSet = true;
+                }else if (Math.Abs (depthFromZ_rho - tagDataDepth) < DepthDelta && newDelta < minDelta)
+                {
+                    minDelta = newDelta;
+                    depthData = new DepthData(k, depthFromZ_rho);
+                    potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
+                }
+            }
+            //Har kombinert denne for løkken med den over
+            //Sammenligne eta_rho og xi_rho fra de potensielle dybdene med den faktiske dybden og velge denn med minst differanse
+            /*
             foreach (DepthData dData in potentialDepthArray)
             {
                     double newDelta = Math.Abs(dData.Depth - (-tagDataDepth));
@@ -119,7 +128,8 @@ namespace SpagettiMetoden
                         depthData = dData;
                     }
             }
-            if(!deltaHasBeenSet)
+            */
+            if (!deltaHasBeenSet)
             {
                 depthData.Valid = false;
             }
