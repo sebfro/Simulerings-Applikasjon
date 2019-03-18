@@ -21,10 +21,10 @@ namespace SpagettiMetoden
                 string tagId = (args[0]);
                 double dayInc = double.Parse(args[1].Replace(",", "."));
                 int releasedFish = int.Parse(args[2]);
-                double tempDelta = double.Parse(args[3].Replace(",", "."));
+                double tempDelta = double.Parse(args[3].Replace(".", ","));
                 int DepthDelta = int.Parse(args[4]);
-                double Increment = double.Parse(args[5].Replace(",", "."));
-                double Probability = double.Parse(args[6].Replace(",", "."));
+                double Increment = double.Parse(args[5].Replace(".", ","));
+                double Probability = double.Parse(args[6].Replace(".", ","));
                 int iterations = int.Parse(args[7]);
                 int algorithm = int.Parse(args[8]);
 
@@ -99,10 +99,10 @@ namespace SpagettiMetoden
                 string tagId = "742";
                 float tempDelta = 1.2f;
                 int releasedFish = 10000;
-                float dayInc = 2f;
+                float dayInc = 1f;
                 int depthDelta = 30;
                 float fishlength = 0.65f;
-                float probability = 0f;
+                float probability = 0.75f;
                 int iterations = 30;
                 Console.WriteLine("dayInc: {0}, Simulated Fish: {1}, Temperature Delta: {2}, depthDelta: {3}, iterations: {4}, Propability: {5}, Iterations: {6}, Tag id: {7}",
                     dayInc, releasedFish, tempDelta, depthDelta, iterations, probability, iterations, tagId);
@@ -135,11 +135,9 @@ namespace SpagettiMetoden
                     Console.WriteLine("Could not start simulation");
                 }
                 */
-                Console.WriteLine("Press ENTER to finish...");
-                Console.ReadKey();
-                
             }
-                
+            Console.WriteLine("Press ENTER to finish...");
+            Console.ReadKey();
         }
         public void CreateNewNetCDF()
         {

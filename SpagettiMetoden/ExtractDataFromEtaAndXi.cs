@@ -2,6 +2,7 @@
 using SpagettiMetoden.Info_Containers;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace SpagettiMetoden
 {
@@ -68,11 +69,11 @@ namespace SpagettiMetoden
             return (double)latOrLonArray.GetValue(eta_rho, xi_rho);
         }
         //TODO: Kombiner for løkkene i denne funksjonen
-        public DepthData GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, bool use_norkyst)
+        public List<DepthData> GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, bool use_norkyst)
         {
             // the code that you want to measure comes here
-            
-            ArrayList potentialDepthArray = new ArrayList();
+
+            List<DepthData> potentialDepthArray = new List<DepthData>();
             int z_rho_size;
             Array z_Array;
 
@@ -98,13 +99,13 @@ namespace SpagettiMetoden
                 {
                     minDelta = newDelta;
                     depthData = new DepthData(k, depthFromZ_rho);
-
+                    potentialDepthArray.Add(depthData);
                     deltaHasBeenSet = true;
                 }else if (Math.Abs (depthFromZ_rho - tagDataDepth) < DepthDelta && newDelta < minDelta)
                 {
                     minDelta = newDelta;
                     depthData = new DepthData(k, depthFromZ_rho);
-                    potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
+                    potentialDepthArray.Add(depthData);
                 }
             }
             //Har kombinert denne for løkken med den over
@@ -133,7 +134,7 @@ namespace SpagettiMetoden
             {
                 depthData.Valid = false;
             }
-            return depthData;
+            return potentialDepthArray;
         }
         
     }

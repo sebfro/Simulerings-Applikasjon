@@ -109,27 +109,49 @@ namespace SpagettiMetoden
         {
             PositionDataList = new BlockingCollection<PositionData>();
             double depth = 0.0;
-            double temp = 0.0;
+            double temp = 10;
             double lat = 0.0;
             double lon = 0.0;
+            List<DepthData> potentialDepthArray = new List<DepthData>();
             DepthData depthData;
-
             for (int i = 0; i < etaXis.Length; i++)
             {
                 lock (syncObject)
                 {
                     depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
-                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
+                    //depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
+                    potentialDepthArray = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
                 }
-                
-                if(depthData.Valid && (depth - (-tagData.Depth)) > 0)
+                double newTemp = 0.0;
+                /*
+                List<int> depthList = new List<int>();
+                depthList.Add(depthData.Z_rho);
+                if (depthData.Z_rho > 0)
                 {
-                    lock (syncObject)
+                    depthList.Add(depthData.Z_rho - 1);
+                }
+                int z_rho_max = use_norkyst ? GlobalVariables.Z_rho_size_norkyst : GlobalVariables.Z_rho_size_ocean_avg;
+                if (depthData.Z_rho < z_rho_max - 1)
+                {
+                    depthList.Add(depthData.Z_rho + 1);
+                }*/
+                if ((depth - (-tagData.Depth)) > 0)
+                {
+                    //temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
+                    //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                    
+                    foreach(DepthData dData in potentialDepthArray)
                     {
-                        temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
-                        //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                        lock (syncObject)
+                        {
+                            newTemp = tempContainer.GetTemp(dData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
+                            if(Math.Abs(newTemp - tagData.Temp) < tempDelta && Math.Abs(newTemp - tagData.Temp) < Math.Abs(temp - tagData.Temp))
+                            {
+                                temp = newTemp;
+                            }
+                            //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+                        }
                     }
-
 
                     if (Math.Abs(temp - tagData.Temp) < tempDelta)
                     {
