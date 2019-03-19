@@ -210,7 +210,6 @@ namespace SpagettiMetoden
             Console.WriteLine("DIMS:" + barentsSeaMappedToNorkyst["eta_rho"].Dimensions);
 
             Console.WriteLine("NetCDF created");
-            //Console.ReadKey();
             Stopwatch stopWatch1 = new Stopwatch();
             stopWatch1.Start();
             //Disse skal inn i netcdfen som har barents i starten av navnet

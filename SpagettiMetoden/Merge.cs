@@ -114,7 +114,6 @@ namespace SpagettiMetoden
                 Console.WriteLine(PathToDirectory + bwId);
                 Console.WriteLine(bwId);
                 Console.WriteLine(@"C:\NCdata\fishData\" + Id + @"\Akseptabel\" + Id + @"_" + counter + ".txt");
-                Console.ReadKey();
                 return false;
             }
         }

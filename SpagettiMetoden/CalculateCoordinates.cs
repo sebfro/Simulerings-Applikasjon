@@ -69,7 +69,8 @@ namespace SpagettiMetoden
         
         public int GenerateIncrement(float min, float max, float divideBy)
         {
-            return (int)((((0.71 * Increment * ThreadSafeRandom.RandomSpeed(min, max)) * 3.6) * (DayInc * 24)) / divideBy);
+            //Har fjernet 0.71, må finne ut om vi skal ha en annen verdi der eller ikke.
+            return (int)((((0.6 * Increment * ThreadSafeRandom.RandomSpeed(min, max)) * 3.6) * (DayInc * 24)) / divideBy);
         }
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth, bool use_norkyst)
@@ -119,8 +120,8 @@ namespace SpagettiMetoden
                 lock (syncObject)
                 {
                     depth = ExtractDataFromEtaAndXi.GetDepth(etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
-                    //depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
-                    potentialDepthArray = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
+                    depthData = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
+                    //potentialDepthArray = ExtractDataFromEtaAndXi.GetS_rhoValues(etaXis[i].Eta_rho, etaXis[i].Xi_rho, tagData.Depth, use_norkyst);
                 }
                 double newTemp = 0.0;
                 /*
@@ -137,10 +138,17 @@ namespace SpagettiMetoden
                 }*/
                 if ((depth - (-tagData.Depth)) > 0)
                 {
-                    //temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
-                    //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
                     
-                    foreach(DepthData dData in potentialDepthArray)
+                    lock (syncObject)
+                    {
+                        temp = tempContainer.GetTemp(depthData.Z_rho, etaXis[i].Eta_rho, etaXis[i].Xi_rho, use_norkyst);
+                    }
+                    
+                    //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
+
+
+                    /*
+                    foreach (DepthData dData in potentialDepthArray)
                     {
                         lock (syncObject)
                         {
@@ -152,6 +160,8 @@ namespace SpagettiMetoden
                             //tempContainer.getTempFromNorKyst(day, depthData.z_rho, etaXis[i].eta_rho, etaXis[i].xi_rho);
                         }
                     }
+                    */
+
 
                     if (Math.Abs(temp - tagData.Temp) < tempDelta)
                     {
