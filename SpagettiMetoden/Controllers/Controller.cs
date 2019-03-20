@@ -188,12 +188,26 @@ namespace SpagettiMetoden
                                 {
                                     RouteChooser routeChooser =
                                             new RouteChooser(pData.Lat, pData.Lon, FishList[FishTag]);
-                                        while (!chosenPosition)
+                                    /*
+                                    while (!chosenPosition)
+                                    {
+                                        randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                                        chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
+                                    }
+                                    */
+                                    double temp = 10;
+                                    double newTemp = 0;
+                                    int index = 0;
+                                    for (int j = 0; j < validPositionsDataList.Count; j++)
+                                    {
+                                        newTemp = validPositionsDataList.ElementAt(j).TagDataTemp;
+                                        if (newTemp < temp)
                                         {
-                                            randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                            chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
+                                            randInt = j;
+                                            temp = newTemp;
                                         }
-                                        fishRoute.PositionDataList.Add((new PositionData(
+                                    }
+                                    fishRoute.PositionDataList.Add((new PositionData(
                                             validPositionsDataList.ElementAt(randInt).Lat,
                                             validPositionsDataList.ElementAt(randInt).Lon,
                                             validPositionsDataList.ElementAt(randInt).Depth,
