@@ -66,7 +66,7 @@ namespace SpagettiMetoden
             EtaXis = new EtaXi[0];
             TempContainer = new TempContainer(FishList[FishTag].TagDataList, TagStep);
             CalculateCoordinates = new CalculateCoordinates(Increment, depthDelta, dayInc, iterations);
-            DateTable = new string[FishList[FishTag].TagDataList.Count / TagStep];
+            DateTable = new string[(FishList[FishTag].TagDataList.Count / TagStep) + 1];
         }
 
         public void SetDepthDelta(int DepthDelta)
