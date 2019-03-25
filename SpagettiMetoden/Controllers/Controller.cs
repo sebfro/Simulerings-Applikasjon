@@ -114,7 +114,7 @@ namespace SpagettiMetoden
                             fishRoute.PositionDataList.Add((new PositionData(releaseLat,
                                 releaseLon)));
 
-                            RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList[FishTag]);
+                            RouteChooser routeChooser = new RouteChooser(FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon);
 
                             while (!chosenPosition)
                             {
@@ -187,17 +187,18 @@ namespace SpagettiMetoden
                                 if (validPositionsDataList.Count > 0)
                                 {
                                     RouteChooser routeChooser =
-                                            new RouteChooser(pData.Lat, pData.Lon, FishList[FishTag]);
-                                    /*
+                                            new RouteChooser(FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon, pData.Lat, pData.Lon);
+                                    
                                     while (!chosenPosition)
                                     {
                                         randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
                                         chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
                                     }
-                                    */
+
+                                    //Denne lille kode snutten var for å teste hva som ville skjedd hvis vi alltid velger posisjonen med temp nærmest merekdataen
+                                    /*
                                     double temp = 10;
                                     double newTemp = 0;
-                                    int index = 0;
                                     for (int j = 0; j < validPositionsDataList.Count; j++)
                                     {
                                         newTemp = validPositionsDataList.ElementAt(j).TagDataTemp;
@@ -207,6 +208,7 @@ namespace SpagettiMetoden
                                             temp = newTemp;
                                         }
                                     }
+                                    */
                                     fishRoute.PositionDataList.Add((new PositionData(
                                             validPositionsDataList.ElementAt(randInt).Lat,
                                             validPositionsDataList.ElementAt(randInt).Lon,

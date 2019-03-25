@@ -89,8 +89,6 @@ namespace SpagettiMetoden
                 double elapsedMs = watch.ElapsedMilliseconds;
                 Console.WriteLine("Run time of the program: {0} seconds.", elapsedMs / 1000);
                 //controller.RunAlgorithm();
-
-                Console.ReadLine();
             } catch(Exception e) {
                 Console.WriteLine("Exception {0}", e);
                 Program prog = new Program();

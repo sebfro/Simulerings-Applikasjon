@@ -119,7 +119,7 @@ namespace SpagettiMetoden
                             fishRoute.PositionDataList.Add((new PositionData(releaseLat,
                                 releaseLon)));
 
-                            RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList["742"]);
+                            RouteChooser routeChooser = new RouteChooser(FishList["742"].CaptureLat, FishList["742"].CaptureLon, FishList["742"].ReleaseLat, FishList["742"].ReleaseLon);
                             
                             
                             while (!addedToPosDataList)
@@ -175,7 +175,7 @@ namespace SpagettiMetoden
                                 if (validPositionsDataList.Count > 0)
                                 {
                                     RouteChooser routeChooser =
-                                            new RouteChooser(pData.Lat, pData.Lon, FishList["742"]);
+                                            new RouteChooser(FishList["742"].CaptureLat, FishList["742"].CaptureLon, pData.Lat, pData.Lon);
                                     while (!chosenPosition)
                                     {
                                         randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);

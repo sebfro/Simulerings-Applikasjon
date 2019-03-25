@@ -14,19 +14,12 @@ namespace SpagettiMetoden
         public double captureOrReleaseLat;
         public double captureOrReleaseLon;
 
-        public RouteChooser(double lat, double lon, Fish currFish)
+        public RouteChooser(double goalLat, double goalLon, double lat, double lon)
         {
-            currDistanceFromCaptureOrRelease = CalculateCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFish.CaptureLat, currFish.CaptureLon);
-            captureOrReleaseLat = currFish.CaptureLat;
-            captureOrReleaseLon = currFish.CaptureLon;
+            currDistanceFromCaptureOrRelease = CalculateCoordinates.GetDistanceFromLatLonInKm(lat, lon, goalLat, goalLon);
+            captureOrReleaseLat = goalLat;
+            captureOrReleaseLon = goalLon;
 
-        }
-
-        public RouteChooser(double lat, double lon, double currFishCaptureOrReleaseLat, double currFishCaptureOrReleaseLon)
-        {
-            currDistanceFromCaptureOrRelease = CalculateCoordinates.GetDistanceFromLatLonInKm(lat, lon, currFishCaptureOrReleaseLat, currFishCaptureOrReleaseLon);
-            captureOrReleaseLat = currFishCaptureOrReleaseLat;
-            captureOrReleaseLon = currFishCaptureOrReleaseLon;
         }
 
         //TODO Vi må google eller snakke med veileder og finne ut om denne metoden er trådsikker
@@ -36,7 +29,8 @@ namespace SpagettiMetoden
 
             double newDistanceFromCapture = CalculateCoordinates.GetDistanceFromLatLonInKm(
                                         validPositionsDataList.ElementAt(randInt).Lat,
-                                        validPositionsDataList.ElementAt(randInt).Lon, captureOrReleaseLat,
+                                        validPositionsDataList.ElementAt(randInt).Lon, 
+                                        captureOrReleaseLat,
                                         captureOrReleaseLon);
             bool extraWeigth = validPositionsDataList.ElementAt(randInt).ExtraWeigth;
             double weight = GlobalVariables.Probability;

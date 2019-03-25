@@ -69,7 +69,7 @@ namespace SpagettiMetoden
             return (double)latOrLonArray.GetValue(eta_rho, xi_rho);
         }
         //TODO: Kombiner for løkkene i denne funksjonen
-        public List<DepthData> GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, bool use_norkyst)
+        public DepthData GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, bool use_norkyst)
         {
             // the code that you want to measure comes here
 
@@ -137,7 +137,7 @@ namespace SpagettiMetoden
             {
                 depthData.Valid = false;
             }
-            return potentialDepthArray;
+            return depthData;
         }
         
     }

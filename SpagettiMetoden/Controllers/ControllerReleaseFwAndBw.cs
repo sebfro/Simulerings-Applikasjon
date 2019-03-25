@@ -91,14 +91,14 @@ namespace SpagettiMetoden
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 if (i == 0)
                 {
-                    deadFishCounter = RunFirstIterationOfAligorithm(deadFishCounter, i, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon);
+                    deadFishCounter = RunFirstIterationOfAligorithm(deadFishCounter, i, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon, FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon);
                 }
                 else
                 {
                     if (deadFishCounter < ReleasedFish)
                     {
 
-                        deadFishCounter = RunAllOtherIterationsOfAlgorithm(deadFishCounter, i, counter);
+                        deadFishCounter = RunAllOtherIterationsOfAlgorithm(deadFishCounter, i, counter, FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon);
                     }
                     else
                     {
@@ -142,13 +142,13 @@ namespace SpagettiMetoden
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
                 if (i == tagDataCount)
                 {
-                    deadFishCounter = RunFirstIterationOfAligorithm(deadFishCounter, i, FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon);
+                    deadFishCounter = RunFirstIterationOfAligorithm(deadFishCounter, i, FishList[FishTag].CaptureLat, FishList[FishTag].CaptureLon, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon);
                 }
                 else
                 {
                     if (deadFishCounter < ReleasedFish)
                     {
-                        deadFishCounter = RunAllOtherIterationsOfAlgorithm(deadFishCounter, i, counter);
+                        deadFishCounter = RunAllOtherIterationsOfAlgorithm(deadFishCounter, i, counter, FishList[FishTag].ReleaseLat, FishList[FishTag].ReleaseLon);
                     }
                     else
                     {
@@ -192,7 +192,7 @@ namespace SpagettiMetoden
             }
         }
 
-        public int RunFirstIterationOfAligorithm(int deadFishCounter, int indeks, double startLat, double startLon)
+        public int RunFirstIterationOfAligorithm(int deadFishCounter, int indeks, double startLat, double startLon, double goalLat, double goalLon)
         {
             int localDeadFishCounter = deadFishCounter;
             int randInt = 0;
@@ -218,10 +218,9 @@ namespace SpagettiMetoden
                 if (validPositionsDataList.Count > 0)
                 {
                     FishRoute fishRoute = new FishRoute(FishTag, Use_Norkyst);
-                    fishRoute.PositionDataList.Add((new PositionData(releaseLat,
-                        releaseLon)));
+                    fishRoute.PositionDataList.Add((new PositionData(startLat, startLon)));
 
-                    RouteChooser routeChooser = new RouteChooser(releaseLat, releaseLon, FishList[FishTag]);
+                    RouteChooser routeChooser = new RouteChooser(goalLat, goalLon, startLat, startLon);
 
                     while (!chosenPosition)
                     {
@@ -249,7 +248,7 @@ namespace SpagettiMetoden
             });
             return localDeadFishCounter;
         }
-        public int RunAllOtherIterationsOfAlgorithm(int deadFishCounter, int indeks, int counter)
+        public int RunAllOtherIterationsOfAlgorithm(int deadFishCounter, int indeks, int counter, double goalLat, double goalLon)
         {
             TagData tagData = FishList[FishTag].TagDataList[indeks];
             int localDeadFishCounter = deadFishCounter;
@@ -295,7 +294,7 @@ namespace SpagettiMetoden
                     if (validPositionsDataList.Count > 0)
                     {
                         RouteChooser routeChooser =
-                                new RouteChooser(pData.Lat, pData.Lon, FishList[FishTag]);
+                                new RouteChooser(goalLat, goalLon, pData.Lat, pData.Lon);
                         while (!chosenPosition)
                         {
                             randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
