@@ -70,7 +70,7 @@ namespace SpagettiMetoden
         public int GenerateIncrement(float min, float max, float divideBy)
         {
             //Har fjernet 0.71, må finne ut om vi skal ha en annen verdi der eller ikke.
-            return (int)((((1 * Increment * ThreadSafeRandom.RandomSpeed(min, max)) * 3.6) * (DayInc * 24)) / divideBy);
+            return (int)((((1 * Increment * ThreadSafeRandom.RandomDouble(min, max)) * 3.6) * (DayInc * 24)) / divideBy);
         }
 
         public EtaXi[] CalculatePossibleEtaXi(int eta, int xi, bool lowerSpeed, double depth, bool use_norkyst)

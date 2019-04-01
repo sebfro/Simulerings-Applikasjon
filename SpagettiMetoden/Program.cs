@@ -30,13 +30,9 @@ namespace SpagettiMetoden
 
                 
                 Console.WriteLine("Settings:");
-                Console.WriteLine("dayInc: {0}, Simulated Fish: {1}, Temperature Delta: {2}, depthDelta: {3}, Increment: {4}, Propability: {5}, Iterations: {6}, Algorithm: {7}, Tag id: {8}",
-                    dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm, tagId);
+                Console.WriteLine("Day increment: {0}\nSimulated trajectories: {1}\nTemperature Delta: {2}\nDepth delta: {3}\nFish length: {4}\nPropability: {5}\nIterations: {6}\nAlgorithm: {7}\nTag id: {8}",
+                    dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm == 0 ? "Forward" : "Merge", tagId);
                 
-
-                
-                
-
 
                 //Skriv til setup fil
                 string[] setup = { "ID:\t Days:\t Numb of fish\t Temp delta:\t Depth delta:\t Increment 1: \t Increment 2:\t", args[0] + "\t" + args[1] + "\t" + args[2] + "\t"
@@ -102,7 +98,7 @@ namespace SpagettiMetoden
                 float fishlength = 0.65f;
                 float probability = 0.75f;
                 int iterations = 30;
-                Console.WriteLine("dayInc: {0}, Simulated Fish: {1}, Temperature Delta: {2}, depthDelta: {3}, iterations: {4}, Propability: {5}, Iterations: {6}, Tag id: {7}",
+                Console.WriteLine("Day increment: {0} \nSimulated Trajectories: {1} \nTemperature delta: {2} \nDepth delta: {3} \nIterations: {4} \nPropability: {5} \nIterations: {6} \nTag id: {7}",
                     dayInc, releasedFish, tempDelta, depthDelta, iterations, probability, iterations, tagId);
                 //ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
                 Controller controller = new Controller(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
