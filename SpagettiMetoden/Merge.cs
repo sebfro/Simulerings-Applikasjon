@@ -32,7 +32,7 @@ namespace SpagettiMetoden
             Lon = double.Parse(lon);
         }
 
-        public static List<Merge> ReadDirectory(string filePath)
+        public List<Merge> ReadDirectory(string filePath)
         {
             int intLocation;
             string lastLine;
@@ -43,7 +43,7 @@ namespace SpagettiMetoden
                 lastLine = File.ReadLines(file).Last();
                 string[] strArray = lastLine.Split('\t');
 
-                intLocation = file.IndexOf("742");
+                intLocation = file.IndexOf(Id);
 
                 List.Add(new Merge(file.Substring(intLocation), strArray[0], strArray[1]));
             }

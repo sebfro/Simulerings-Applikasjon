@@ -268,9 +268,7 @@ namespace SpagettiMetoden
             double captureLon = FishData.CaptureLon;
 
 
-            Console.WriteLine("Hvor lang tid tok programmet: {0} minutter.", elapsedMs / 60000);
-            Console.WriteLine("Hvor lang tid tok programmet: {0} sekunder.", elapsedMs / 1000);
-            Console.WriteLine("Fishlist count: {0}", FishList["742"].FishRouteList.Count);
+            Console.WriteLine("Program runtime: {0} minutes / {1} seconds.", elapsedMs / 60000, elapsedMs / 1000);
             Console.WriteLine("Dead fish counter: {0}", deadFishCounter);
             Console.WriteLine("Alive fish counter: {0}", totalNumberOfFish - deadFishCounter);
             Console.WriteLine("totalnumberoffish: {0}", totalNumberOfFish);

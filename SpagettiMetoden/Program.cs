@@ -90,45 +90,45 @@ namespace SpagettiMetoden
                 Program prog = new Program();
 
                 Console.WriteLine("Error, bruker standard");
-                string tagId = "742";
-                float tempDelta = 1.2f;
+                string tagId = "1663";
+                float tempDelta = 1f;
                 int releasedFish = 10000;
                 float dayInc = 1f;
                 int depthDelta = 30;
                 float fishlength = 0.65f;
-                float probability = 0.75f;
+                float probability = 0.7f;
                 int iterations = 30;
+                int algorithm = 0;
                 Console.WriteLine("Day increment: {0} \nSimulated Trajectories: {1} \nTemperature delta: {2} \nDepth delta: {3} \nIterations: {4} \nPropability: {5} \nIterations: {6} \nTag id: {7}",
                     dayInc, releasedFish, tempDelta, depthDelta, iterations, probability, iterations, tagId);
-                //ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
-                Controller controller = new Controller(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
-                controller.RunAlgorithm();
-                /*
-                bool failed = false;
-                Console.WriteLine("Running FW");
-                if (controller.RunAlgorithmFW())
+                
+                if (algorithm == 0)
                 {
-                    Console.WriteLine("Running BW");
-                    if (controller.RunAlgorithmBW())
+                    Controller controller = new Controller(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
+                    controller.RunAlgorithm();
+                } else
+                {
+                    ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
+                    Console.WriteLine("Running Forward");
+                    if (controller.RunAlgorithmFW())
                     {
-                        Merge merge = new Merge(tagId);
-                        merge.MergeFwAndBwFiles(0.65, 1);
+                        Console.WriteLine("Running Backward");
+                        if (controller.RunAlgorithmBW())
+                        {
+                            Merge merge = new Merge(tagId);
+                            merge.MergeFwAndBwFiles(fishlength, dayInc);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Backawards simulation could not be started.");
+                        }
                     }
                     else
                     {
-                        failed = true;
+                        Console.WriteLine("Forwards simulation could not be started.");
                     }
+                    
                 }
-                else
-                {
-                    failed = true;
-                }
-                
-                if (failed)
-                {
-                    Console.WriteLine("Could not start simulation");
-                }
-                */
             }
             Console.WriteLine("Press ENTER to finish...");
             Console.ReadKey();

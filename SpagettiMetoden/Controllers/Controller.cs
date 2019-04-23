@@ -272,7 +272,11 @@ namespace SpagettiMetoden
                     Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag);
                     Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag + @"\Akseptabel");
                     Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag + @"\Uakseptabel");
-
+                    Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag + @"\Saved");
+                }
+                if (!Directory.Exists(@"C:\NCdata\fishData\" + FishTag + @"\Saved"))
+                {
+                    Directory.CreateDirectory(@"C:\NCdata\fishData\" + FishTag + @"\Saved");
                 }
             }
 
