@@ -62,7 +62,7 @@ namespace SpagettiMetoden
                 found = false;
                 for (int i = 0; i < BackwardList.Count && !found; i++)
                 {
-                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(fwPos.Lat, fwPos.Lon, BackwardList[i].Lat, BackwardList[i].Lon) < (increment * 3.6 * (dayInc * 24)))
+                    if (CalculateCoordinates.GetDistanceFromLatLonInKm(fwPos.Lat, fwPos.Lon, BackwardList[i].Lat, BackwardList[i].Lon) <= ((increment * 3.6 * (dayInc * 24)) * 2))
                     {
                         if (MergeFiles(fwPos.Id, BackwardList[i].Id, counter))
                         {
@@ -73,6 +73,8 @@ namespace SpagettiMetoden
                     }
                 }
             }
+            Console.WriteLine("Files merged: {0} ", counter);
+            Console.WriteLine(counter);
             Console.WriteLine("Finished merging files");
         }
 

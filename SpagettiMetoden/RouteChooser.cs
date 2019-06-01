@@ -21,18 +21,19 @@ namespace SpagettiMetoden
             captureOrReleaseLon = goalLon;
 
         }
-
-        //TODO Vi må google eller snakke med veileder og finne ut om denne metoden er trådsikker
+        //Lat: 77 og Lon: 53
+        //Rreturnerer sant hvis den velger indeksen for posisjonen som ble sendt, ellers rerturneres falsk
+        //Hvis vektingen er 0 så returnerer den alltid true.
         public bool ChosenRoute(BlockingCollection<PositionData> validPositionsDataList, int randInt)
         {
             randDouble = ThreadSafeRandom.NextDouble();
 
             double newDistanceFromCapture = CalculateCoordinates.GetDistanceFromLatLonInKm(
                                         validPositionsDataList.ElementAt(randInt).Lat,
-                                        validPositionsDataList.ElementAt(randInt).Lon, 
+                                        validPositionsDataList.ElementAt(randInt).Lon,
                                         captureOrReleaseLat,
                                         captureOrReleaseLon);
-            bool extraWeigth = validPositionsDataList.ElementAt(randInt).ExtraWeigth;
+            //bool extraWeigth = validPositionsDataList.ElementAt(randInt).ExtraWeigth;
             double weight = GlobalVariables.Probability;
 
             if(weight == 0)
@@ -47,6 +48,29 @@ namespace SpagettiMetoden
             //Denne versjonen var for havtrøm implementasjonen som gjorde at fisken følgte havstrømmen 
             //return (newDistanceFromCapture < currDistanceFromCaptureOrRelease && randDouble < (extraWeigth ? weight + 0.4 : weight) || 
             //    newDistanceFromCapture >= currDistanceFromCaptureOrRelease && randDouble >= (extraWeigth ? weight - 0.4 : weight));
+        }
+        //Går gjennom all posisjonene i validPositionsDataList og finner den med temp mærmest DST temp
+        public int ChoosePosWithClosestTemp(BlockingCollection<PositionData> validPositionsDataList, double DSTtemp)
+        {
+            int index = 0;
+            double currTempDelta = 0;
+            for (int i = 0; i < validPositionsDataList.Count; i++)
+            {
+                if(i == 0)
+                {
+                    currTempDelta = Math.Abs(validPositionsDataList.ElementAt(i).Temp - DSTtemp);
+                }
+                else
+                {
+                        double localTempDelta = Math.Abs(validPositionsDataList.ElementAt(i).Temp - DSTtemp);
+                    if (currTempDelta > localTempDelta)
+                        {
+                        index = i;
+                        currTempDelta = localTempDelta;
+                        }
+                }
+            }
+            return index;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace SpagettiMetoden
             try
             {
                 string tagId = (args[0]);
-                double dayInc = double.Parse(args[1].Replace(",", "."));
+                double dayInc = double.Parse(args[1].Replace(".", ","));
                 int releasedFish = int.Parse(args[2]);
                 double tempDelta = double.Parse(args[3].Replace(".", ","));
                 int DepthDelta = int.Parse(args[4]);
@@ -31,7 +31,7 @@ namespace SpagettiMetoden
                 
                 Console.WriteLine("Settings:");
                 Console.WriteLine("Day increment: {0}\nSimulated trajectories: {1}\nTemperature Delta: {2}\nDepth delta: {3}\nFish length: {4}\nPropability: {5}\nIterations: {6}\nAlgorithm: {7}\nTag id: {8}",
-                    dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm == 0 ? "Forward" : "Merge", tagId);
+                    dayInc, releasedFish, tempDelta, DepthDelta, Increment, Probability, iterations, algorithm == 0 ? "General" : "Merge", tagId);
                 
 
                 //Skriv til setup fil
@@ -86,28 +86,38 @@ namespace SpagettiMetoden
                 Console.WriteLine("Run time of the program: {0} seconds.", elapsedMs / 1000);
                 //controller.RunAlgorithm();
             } catch(Exception e) {
-                Console.WriteLine("Exception {0}", e);
-                Program prog = new Program();
 
+                Console.WriteLine(e);
                 Console.WriteLine("Error, bruker standard");
-                string tagId = "1663";
-                float tempDelta = 1f;
+                string tagId = "742";
+                float tempDelta = 1.2f;
                 int releasedFish = 10000;
                 float dayInc = 1f;
                 int depthDelta = 30;
-                float fishlength = 0.65f;
-                float probability = 0.7f;
+                float fishlength = 0.82f;
+                float probability = 0.75f;
                 int iterations = 30;
-                int algorithm = 0;
-                Console.WriteLine("Day increment: {0} \nSimulated Trajectories: {1} \nTemperature delta: {2} \nDepth delta: {3} \nIterations: {4} \nPropability: {5} \nIterations: {6} \nTag id: {7}",
-                    dayInc, releasedFish, tempDelta, depthDelta, iterations, probability, iterations, tagId);
+                int algorithm = 1;
+                GlobalVariables.select_random_location = true;
+                Console.WriteLine("Day increment: {0} \nSimulated Trajectories: {1} \nTemperature delta: {2} \nDepth delta: {3} \nIterations: {4} \nPropability: {5} \nFish Lenght: {6} \nTag id: {7}",
+                    dayInc, releasedFish, tempDelta, depthDelta, iterations, probability, fishlength, tagId);
+                if (GlobalVariables.select_random_location)
+                {
+                    Console.WriteLine("Chooses valid location at random.");
+                } else
+                {
+                    Console.WriteLine("Chooses valid location with temperature closest to DST temperature");
+                }
+                
                 
                 if (algorithm == 0)
                 {
+                    Console.WriteLine("Algorithm: General");
                     Controller controller = new Controller(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
                     controller.RunAlgorithm();
-                } else
+                } else if(algorithm == 1)
                 {
+                    Console.WriteLine("Algorithm: Merge");
                     ControllerReleaseFwAndBw controller = new ControllerReleaseFwAndBw(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
                     Console.WriteLine("Running Forward");
                     if (controller.RunAlgorithmFW())
@@ -128,11 +138,17 @@ namespace SpagettiMetoden
                         Console.WriteLine("Forwards simulation could not be started.");
                     }
                     
+                } else if(algorithm == 2)
+                {
+                    ControllerReleaseSteadily controller = new ControllerReleaseSteadily(dayInc, releasedFish, tempDelta, depthDelta, fishlength, probability, iterations, tagId);
+                    controller.RunAlgorithm();
                 }
             }
-            Console.WriteLine("Press ENTER to finish...");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
             Console.ReadKey();
         }
+
         public void CreateNewNetCDF()
         {
             int norkyst_eta_rho = 902;

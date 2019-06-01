@@ -45,13 +45,11 @@ namespace SpagettiMetoden
         {
             bool run = true;
 
-            int tagId = 742;
             double dayInc = 1;
             int releasedFish = 10000;
             double tempDelta = 10;
             int DepthDelta = 30;
             double Increment = 65;
-            double Increment2 = 45;
             double probability = 0.5;
             int possiblePaths = 30;
 
@@ -91,9 +89,6 @@ namespace SpagettiMetoden
                 Increment = double.Parse(Console.ReadLine());
                 Console.WriteLine("Increment will be {0}.", Increment);
 
-                Console.Write("Enter the Increment2:");
-                Increment2 = double.Parse(Console.ReadLine());
-                Console.WriteLine("Increment2 will be {0}.", Increment2);
 
                 /*
                 Console.Write("Enter the depth delta:");
@@ -148,10 +143,6 @@ namespace SpagettiMetoden
                         Console.Write("Enter Increment:");
                         Increment = double.Parse(Console.ReadLine());
                         Console.WriteLine("Increment will be {0}.", Increment);
-
-                        Console.Write("Enter the Increment2:");
-                        Increment2 = double.Parse(Console.ReadLine());
-                        Console.WriteLine("Increment2 will be {0}.", Increment2);
 
                         /*
                         Console.Write("Enter the depth delta:");

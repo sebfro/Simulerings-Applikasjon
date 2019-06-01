@@ -32,7 +32,7 @@ namespace SpagettiMetoden
         public bool norkystExists = true;
         public bool barentsExists = true;
 
-        
+        public string currDate = "";
 
         public TempContainer(List<TagData> tagDatas, int tagStep)
         {
@@ -55,10 +55,8 @@ namespace SpagettiMetoden
             if(!norkystExists && !barentsExists)
             {
                 throw new FileNotFoundException();
-            } else if(norkystExists || barentsExists)
-            {
-                GlobalVariables.allow_switching = false;
             }
+            GlobalVariables.allow_switching = (norkystExists && barentsExists);
         }
 
         public bool CheckIfNetCdfAreAvailable(string path)
@@ -110,16 +108,19 @@ namespace SpagettiMetoden
 
         public void UpdateTempArray(string date)
         {
-            DataSet ds;
-            if (norkystExists)
-            {
-                ds = DataSet.Open(norkystPath + date + ".nc");
-                norkystTempArray = ds["temp"].GetData();
-            }
-            if (barentsExists)
-            {
-                ds = DataSet.Open(barentsPath + date + ".nc");
-                barentsTempArray = ds["temp"].GetData();
+            if(currDate != date){
+                currDate = date;
+                DataSet ds;
+                if (norkystExists)
+                {
+                    ds = DataSet.Open(norkystPath + date + ".nc");
+                    norkystTempArray = ds["temp"].GetData();
+                }
+                if (barentsExists)
+                {
+                    ds = DataSet.Open(barentsPath + date + ".nc");
+                    barentsTempArray = ds["temp"].GetData();
+                }
             }
         }
         

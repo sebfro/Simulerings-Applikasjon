@@ -20,7 +20,7 @@ namespace SpagettiMetoden
         EtaXi[] EtaXis { get; set; }
         public TempContainer TempContainer { get; set; }
         public CalculateCoordinates CalculateCoordinates { get; set; }
-
+        public string FishTag { get; set; }
         public int TagStep { get; set; }
         public double DayIncrement { get; set; }
         public int RemainingFishToBeReleased { get; set; }
@@ -43,6 +43,7 @@ namespace SpagettiMetoden
         public ControllerReleaseSteadily(double dayInc, int remainingFishToBeReleased, double tempDelta, int depthDelta,
             double Increment, double Probability, int iterations, string FishTag)
         {
+            this.FishTag = FishTag;
             TempDelta = tempDelta;
             RemainingFishToBeReleased = remainingFishToBeReleased;
             SetDayIncrement(dayInc);
@@ -72,7 +73,6 @@ namespace SpagettiMetoden
         public void RunAlgorithm()
         {
             int dayCounter = 0;
-            int day = GlobalVariables.day;
             int counter = 1;
             int deadFishCounter = 0;
             int fishToBeReleased = RemainingFishToBeReleased;
@@ -85,8 +85,10 @@ namespace SpagettiMetoden
 
             for (int i = 0; i < FishList["742"].TagDataList.Count; i += TagStep)
             {
-
+                TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
                 Console.WriteLine("I iterasjon: " + i / TagStep);
+                Console.WriteLine("Dead Fish: " + deadFishCounter);
+
                 bool chosenPosition;
 
                 if (i == 0)
@@ -181,6 +183,10 @@ namespace SpagettiMetoden
                                         randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
                                         chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
                                     }
+                                    FishRoute localFishRoute = new FishRoute("742", true)
+                                    {
+                                        PositionDataList = fishRoute.PositionDataList
+                                    };
                                     fishRoute.PositionDataList.Add((new PositionData(
                                         validPositionsDataList.ElementAt(randInt).Lat,
                                         validPositionsDataList.ElementAt(randInt).Lon,
@@ -193,17 +199,14 @@ namespace SpagettiMetoden
                                         if (fishToBeReleased > 0 && validPositionsDataList.Count > 1)
                                         {
                                         int newRandInt = 0;
-                                        bool newChosenPosition = false;
+                                        //bool newChosenPosition = false;
                                         for (int j = 0; j < validPositionsDataList.Count; j++)
                                             {
                                             newRandInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                            newChosenPosition = routeChooser.ChosenRoute(validPositionsDataList, newRandInt);
-                                                if (j != randInt && newChosenPosition)
+                                            //newChosenPosition = routeChooser.ChosenRoute(validPositionsDataList, newRandInt);
+                                                if (j != randInt)
                                                 {
-                                                    FishRoute tempFishRoute = new FishRoute("742", true)
-                                                    {
-                                                        PositionDataList = fishRoute.PositionDataList
-                                                    };
+                                                FishRoute tempFishRoute = localFishRoute;
                                                     lock (FishList["742"])
                                                     {
                                                             tempFishRoute.PositionDataList.Add((new PositionData(
@@ -220,18 +223,12 @@ namespace SpagettiMetoden
                                                 }
                                             }
                                             
-                                            //Interlocked.Add(ref fishToBeReleased, (Interlocked.Decrement(ref releasedFish)) * (-1));
                                         }
 
 
                                 } else {
                                     Interlocked.Increment(ref deadFishCounter);
                                     fishRoute.CommitNotAlive();
-                                    /*Console.WriteLine("I iterasjon: " + i / GlobalVariables.tagStep + " ELIMINERT");
-                                    Console.WriteLine("eta: " + pData.eta_rho + ", xi: " + pData.xi_rho);
-                                    Console.WriteLine("dybde: " + tagData.depth + ", temp: " + tagData.temp);
-                                    Console.WriteLine("dybde: " + pData.depth + ", temp: " + pData.temp);
-                                    */
                                 }
 
                                
@@ -242,19 +239,7 @@ namespace SpagettiMetoden
                     {
                         i = FishList["742"].TagDataList.Count;
                     }
-
-                    dayCounter++;
                     counter++;
-                }
-
-                if (dayCounter == 2 && DayIncrement < 1)
-                {
-                    dayCounter = 0;
-                    day++;
-                }
-                else if (DayIncrement >= 1)
-                {
-                    day += (int)DayIncrement;
                 }
             }
 
@@ -293,7 +278,6 @@ namespace SpagettiMetoden
                     file.Delete();
                 }
             }
-            Console.WriteLine("Day is: {0}", day);
 
             foreach (var fishRoute in FishList["742"].FishRouteList)
             {

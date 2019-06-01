@@ -17,7 +17,7 @@ namespace SpagettiMetoden
         public ReadFromFile File { get; set; }
         Dictionary<string, Fish> FishList { get; set; }
         List<string> KeyList { get; set; }
-
+        BlockingCollection<FishRoute> TempList { get; set; }
         HeatMap HeatMap { get; set; }
         EtaXi[] EtaXis { get; set; }
         public TempContainer TempContainer { get; set; }
@@ -51,6 +51,7 @@ namespace SpagettiMetoden
 
             FishList = new Dictionary<string, Fish>();
             KeyList = new List<string>();
+            BlockingCollection<FishRoute> TempList = new BlockingCollection<FishRoute>();
 
             File.ReadReleaseAndCapture(FishList, KeyList);
             File.ReadTagData(FishList, KeyList);
@@ -87,6 +88,19 @@ namespace SpagettiMetoden
                 TempContainer.UpdateTempArray(FishList[FishTag].TagDataList[i].Date);
                 DateTable[i / TagStep] = FishList[FishTag].TagDataList[i].Date;
                 ConsoleUI.DrawTextProgressBar(i / TagStep, FishList[FishTag].TagDataList.Count / TagStep);
+
+                //Denne kodesnutten brukes til å bytte mellom å vekte banen mot og vekk fra gjenfangst punktet. basert på måneden
+                /*
+                int month = short.Parse(FishList[FishTag].TagDataList[i].Date.Substring(4, 2));
+                Debug.Write(month);
+                if ((month == 5 || month == 11) && GlobalVariables.Probability != 0)
+                {
+                    GlobalVariables.Probability = Math.Abs(GlobalVariables.Probability - 1);
+                    //GlobalVariables.use_Recapture_Weigthing = !GlobalVariables.use_Recapture_Weigthing;
+                }
+                */
+                
+
 
                 bool chosenPosition;
                 if (i == 0)
@@ -158,24 +172,24 @@ namespace SpagettiMetoden
 
                                 lock (syncObject)
                                 {
-                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
+                                    possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth + tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
                                     validPositionsDataList =
                                         CalculateCoordinates.FindValidPositions(
                                             possiblePositionsArray,
                                             HeatMap.NorKystLatArray, HeatMap.NorKystLonArray, HeatMap.BarentsSeaLatArray, HeatMap.BarentsSeaLonArray, tagData, TempContainer, TempDelta, fishRoute.Use_Norkyst);
+
                                     
-                                    if(validPositionsDataList.Count == 0 && GlobalVariables.allow_switching)
+                                    //if (((validPositionsDataList.Count == 0) || ((pData.Lat >= 71 && (pData.Lon >= 25) && fishRoute.Use_Norkyst)) || (pData.Lat < 71 && pData.Lon < 25 && !fishRoute.Use_Norkyst)) && GlobalVariables.allow_switching)
+                                    if ((validPositionsDataList.Count == 0 && GlobalVariables.allow_switching))
                                     {
                                         fishRoute.Use_Norkyst = !fishRoute.Use_Norkyst;
-
                                         EtaXi etaXi = EtaXiConverter.ConvertNorkystOrBarents(pData.Eta_rho, pData.Xi_rho, fishRoute.Use_Norkyst);
-
                                         fishRoute.PositionDataList.ElementAt(counter).Eta_rho = etaXi.Eta_rho;
                                         fishRoute.PositionDataList.ElementAt(counter).Xi_rho = etaXi.Xi_rho;
 
                                         pData = fishRoute.PositionDataList.ElementAt(counter);
 
-                                        possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth - tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
+                                        possiblePositionsArray = CalculateCoordinates.CalculatePossibleEtaXi(pData.Eta_rho, pData.Xi_rho, Math.Abs(pData.Depth + tagData.Depth) < 30, tagData.Depth, fishRoute.Use_Norkyst);
                                         validPositionsDataList =
                                             CalculateCoordinates.FindValidPositions(
                                                 possiblePositionsArray,
@@ -191,24 +205,17 @@ namespace SpagettiMetoden
                                     
                                     while (!chosenPosition)
                                     {
-                                        randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
-                                        chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
-                                    }
-
-                                    //Denne lille kode snutten var for å teste hva som ville skjedd hvis vi alltid velger posisjonen med temp nærmest merekdataen
-                                    /*
-                                    double temp = 10;
-                                    double newTemp = 0;
-                                    for (int j = 0; j < validPositionsDataList.Count; j++)
-                                    {
-                                        newTemp = validPositionsDataList.ElementAt(j).TagDataTemp;
-                                        if (newTemp < temp)
+                                        if (GlobalVariables.select_random_location)
                                         {
-                                            randInt = j;
-                                            temp = newTemp;
+                                            randInt = ThreadSafeRandom.Next(validPositionsDataList.Count);
+                                            chosenPosition = routeChooser.ChosenRoute(validPositionsDataList, randInt);
+                                        }
+                                        else
+                                        {
+                                            randInt = routeChooser.ChoosePosWithClosestTemp(validPositionsDataList, tagData.Temp);
+                                            chosenPosition = true;
                                         }
                                     }
-                                    */
                                     fishRoute.PositionDataList.Add((new PositionData(
                                             validPositionsDataList.ElementAt(randInt).Lat,
                                             validPositionsDataList.ElementAt(randInt).Lon,
@@ -217,6 +224,7 @@ namespace SpagettiMetoden
                                             tagData.Depth, tagData.Temp,
                                             validPositionsDataList.ElementAt(randInt).Eta_rho,
                                             validPositionsDataList.ElementAt(randInt).Xi_rho)));
+
                                 }
                                 else
                                 {

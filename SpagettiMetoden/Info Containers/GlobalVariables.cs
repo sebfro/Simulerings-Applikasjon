@@ -33,14 +33,14 @@ namespace SpagettiMetoden
         public static string basePath = @"D:\NCdata\";
         //Adressen til SSDen, bruk basePath for the som ligger på en hdd
         public static string PerformanceBasePath = @"C:\NCdata\";
-        public static string PerformanceRyzenBasePath = @"F:\NCdata\";
+        public static string PerformanceRyzenBasePath = @"H:\NCdata\";
         public static string ExternalHDDBasePath = @"H:\";
         public static string pathToNorkystNetCDF = PerformanceRyzenBasePath + @"Nye varmeModeller\Norkyst\Uten Havstrom\norkyst_";
         public static string pathToOceanAvgNetCDF = PerformanceRyzenBasePath + @"Nye varmemodeller\Ocean_Avg\Uten havstrom\ocean_avg_";
-        public static string pathToNcHeatMapFolder = basePath + @"VarmeModell\";
-        public static string pathToNcHeatMapnorkyst = basePath + @"VarmeModell\norkyst_800m_avg.nc";
-        public static string pathToNcHeatMapOcean_Avg = basePath + @"VarmeModell\" + "ocean_avg_LatAndLonRho.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
-        public static string pathToNcTagData = basePath + @"Merkedata\";
+        public static string pathToNcHeatMapFolder = PerformanceRyzenBasePath + @"VarmeModell\";
+        public static string pathToNcHeatMapnorkyst = PerformanceRyzenBasePath + @"VarmeModell\norkyst_800m_avg.nc";
+        public static string pathToNcHeatMapOcean_Avg = PerformanceRyzenBasePath + @"VarmeModell\" + "ocean_avg_LatAndLonRho.nc";//basePath + @"ocean_avg_LatAndLonRho.nc";
+        public static string pathToNcTagData = PerformanceRyzenBasePath + @"Merkedata\";
         public static string pathToMergedDirectory = PerformanceBasePath + @"fishData\";
         //Husk å endre, visser for rutene som algoritmen finner skal lagres
         public static string pathToSaveFishData = PerformanceBasePath + @"fishData";
@@ -48,7 +48,11 @@ namespace SpagettiMetoden
         public static double TempDelta = 1;
         public static double DepthDelta = 10;
         public static bool allow_switching = true;
+        //Choose location with best temp or a random location
+        public static bool select_random_location = true;
 
+        //Switch Weight point
+        public static bool use_Recapture_Weigthing = true;
 
         //norkyst max value, denne er for Norkyst. Den går fra 1-274 (0-273 i kode)
         public static int norkyst_Max = 274;

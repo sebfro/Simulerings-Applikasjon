@@ -2,6 +2,7 @@
 using SpagettiMetoden.Info_Containers;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace SpagettiMetoden
@@ -38,8 +39,6 @@ namespace SpagettiMetoden
         //er i havet
         public bool IsOnLand(int eta_rho, int xi_rho, bool use_norkyst)
         {
-            //eta_rho -= 1;
-            //xi_rho -= 1;
             if (use_norkyst)
             {
                 return (double)Norkyst_Mask_rhoArray.GetValue(eta_rho, xi_rho) == 0.0;
@@ -52,8 +51,7 @@ namespace SpagettiMetoden
 
         public double GetDepth(int eta_rho, int xi_rho, bool use_norkyst)
         {
-            //eta_rho = eta_rho == 0 ? eta_rho : eta_rho - 1;
-            //xi_rho = xi_rho == 0 ? xi_rho : xi_rho - 1;
+
             if (use_norkyst)
             {
                 return (double)Norkyst_DepthArray.GetValue(eta_rho, xi_rho);
@@ -68,11 +66,9 @@ namespace SpagettiMetoden
         {
             return (double)latOrLonArray.GetValue(eta_rho, xi_rho);
         }
-        //TODO: Kombiner for løkkene i denne funksjonen
+
         public DepthData GetS_rhoValues(int eta_rho, int xi_rho, double tagDataDepth, bool use_norkyst)
         {
-            // the code that you want to measure comes here
-
             List<DepthData> potentialDepthArray = new List<DepthData>();
             int z_rho_size;
             Array z_Array;
@@ -93,8 +89,7 @@ namespace SpagettiMetoden
             for (int k = 0; k < z_rho_size; k++)
             {
                 double depthFromZ_rho = (double)z_Array.GetValue(k, eta_rho, xi_rho);
-                double newDelta = Math.Abs(depthFromZ_rho - (-tagDataDepth));
-
+                double newDelta = Math.Abs(depthFromZ_rho - (tagDataDepth));
                 if (!deltaHasBeenSet)
                 {
                     minDelta = newDelta;
@@ -111,28 +106,6 @@ namespace SpagettiMetoden
                     potentialDepthArray.Add(new DepthData(k, depthFromZ_rho));
                 }
             }
-            //Har kombinert denne for løkken med den over
-            //Sammenligne eta_rho og xi_rho fra de potensielle dybdene med den faktiske dybden og velge denn med minst differanse
-            /*
-            foreach (DepthData dData in potentialDepthArray)
-            {
-                    double newDelta = Math.Abs(dData.Depth - (-tagDataDepth));
-
-                    if (!deltaHasBeenSet)
-                    {
-                        minDelta = newDelta;
-                        depthData = dData;
-
-                        deltaHasBeenSet = true;
-                    }
-                    
-                    if( newDelta < minDelta)
-                    {
-                        minDelta =  newDelta;
-                        depthData = dData;
-                    }
-            }
-            */
             if (!deltaHasBeenSet)
             {
                 depthData.Valid = false;

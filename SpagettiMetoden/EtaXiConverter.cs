@@ -56,6 +56,12 @@ namespace SpagettiMetoden
             {
                 throw new ArgumentOutOfRangeException();
             }
+            int returnEta;
+            int returnXi;
+            double norkystLat;
+            double norkystLon;
+            double barentsLat;
+            double barentsLon;
 
             /*
              DataSet barentsToNorkyst = DataSet.Open(@"C:\NCdata\barentsSeaMappedToNorkyst.nc");
@@ -74,16 +80,6 @@ namespace SpagettiMetoden
              Array barentsLatArray = barentsDs["lat_rho"].GetData();
              Array barentsLonArray = barentsDs["lon_rho"].GetData();
              */
-
-
-            int returnEta = 0;
-            int returnXi = 0;
-
-            double norkystLat = 0;
-            double norkystLon = 0;
-
-            double barentsLat = 0;
-            double barentsLon = 0;
 
             if (use_norkyst)
             {
