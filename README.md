@@ -1,4 +1,4 @@
-# SDSLiteVS2017
+# The SDSLite part of the project
 
 This is simply SDSLite with one change. Instead of importing the methods from NetCDF.dll using the NuGet package DynamicInterop
 they are import using the [DllImport("netcdf.dll", CallingConvention = CallingConvention.Cdecl)] instead. Otherwise it should be
