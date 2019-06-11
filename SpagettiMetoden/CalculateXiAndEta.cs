@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class CalculateXiAndEta
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class FishRoute
     {

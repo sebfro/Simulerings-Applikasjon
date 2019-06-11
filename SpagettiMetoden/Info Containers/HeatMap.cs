@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Research.Science.Data;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class HeatMap
     {

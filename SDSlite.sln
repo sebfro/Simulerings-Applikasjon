@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2016
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FetchClimate1", "FetchClimate1", "{540EC0ED-4A07-4AC9-A68E-E06BDD4FF89A}"
 EndProject
@@ -32,7 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{031C2D
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpagettiMetoden", "SpagettiMetoden\SpagettiMetoden.csproj", "{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimuleringsApplikasjonen", "SpagettiMetoden\SimuleringsApplikasjonen.csproj", "{31BCF5B6-BA04-4AB7-82FF-ADE2154CF903}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

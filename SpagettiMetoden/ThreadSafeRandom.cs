@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     public static class ThreadSafeRandom
     {

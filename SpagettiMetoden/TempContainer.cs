@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class TempContainer
     {

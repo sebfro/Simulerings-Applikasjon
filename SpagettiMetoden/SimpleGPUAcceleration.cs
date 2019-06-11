@@ -9,7 +9,7 @@ using Cudafy.Host;
 using Microsoft.Research.Science.Data;
 using System.Diagnostics;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class SimpleGPUAcceleration
     {

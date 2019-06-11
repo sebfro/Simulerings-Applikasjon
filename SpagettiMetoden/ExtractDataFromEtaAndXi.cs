@@ -1,11 +1,11 @@
 ﻿using Microsoft.Research.Science.Data;
-using SpagettiMetoden.Info_Containers;
+using SimuleringsApplikasjonen.Info_Containers;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class ExtractDataFromEtaAndXi
     {

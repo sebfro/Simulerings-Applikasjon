@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class TagData
     {

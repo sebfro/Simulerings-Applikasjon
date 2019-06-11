@@ -10,7 +10,7 @@ using System.Threading;
 using MathNet.Numerics.Statistics;
 using System.Globalization;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class Program
     {

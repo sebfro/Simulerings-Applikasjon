@@ -1,5 +1,5 @@
 ﻿
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class EtaXi
     {

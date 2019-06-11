@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Mono.CSharp;
-using SpagettiMetoden.Info_Containers;
+using SimuleringsApplikasjonen.Info_Containers;
 
-namespace SpagettiMetoden
+namespace SimuleringsApplikasjonen
 {
     class CalculateCoordinates
     {

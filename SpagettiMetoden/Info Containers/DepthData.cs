@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpagettiMetoden.Info_Containers
+namespace SimuleringsApplikasjonen.Info_Containers
 {
     class DepthData
     {
